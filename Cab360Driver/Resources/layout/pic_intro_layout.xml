@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <android.support.v7.widget.Toolbar
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@android:color/white"
+        app:title="Take your profile photo"
+        app:titleTextAppearance="?android:attr/textAppearanceMedium"
+    />
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/take_ya_pp_txt"
+            android:text="Before you begin, please make sure:"
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp"
+            android:layout_marginBottom="8dp"
+            android:layout_marginTop="24dp"
+            android:textSize="18sp"
+            android:textColor="@android:color/black"
+        />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/take_ya_pp_txt1"
+            android:layout_below="@+id/take_ya_pp_txt"
+            android:text="1. Whole face and tops of shoulders is showing"
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp"
+            android:textSize="14sp"
+            android:fontFamily="sans-serif-light"
+            android:textColor="@android:color/black"
+        />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/take_ya_pp_txt2"
+            android:layout_below="@+id/take_ya_pp_txt1"
+            android:text="2. You dont have sunglasses and hat on"
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp"
+            android:textSize="14sp"
+            android:fontFamily="sans-serif-light"
+            android:textColor="@android:color/black"
+        />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/take_ya_pp_txt3"
+            android:layout_below="@+id/take_ya_pp_txt2"
+            android:text="3. Your environment is well-lit"
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp"
+            android:textSize="14sp"
+            android:fontFamily="sans-serif-light"
+            android:textColor="@android:color/black"
+        />
+
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:layout_width="256dp"
+            android:layout_height="256dp"
+            android:id="@+id/preview_iv1"
+            android:src="@drawable/boy_new"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="16dp"
+            android:layout_marginTop="16dp"
+            android:scaleType="centerCrop"
+            android:layout_below="@+id/take_ya_pp_txt3"
+            android:layout_centerInParent="true"
+        />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_alignParentBottom="true"
+            android:background="@drawable/bg_bottomsheet_dg"
+            android:elevation="8dp">
+
+            <Button
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="16dp"
+                android:background="@drawable/primary_btn_bg"
+                android:textColor="@android:color/white"
+                android:text="take photo"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:id="@+id/intro_takephoto_btn"
+                android:fontFamily="sans-serif-light"
+            />
+
+        </LinearLayout>
+
+    </RelativeLayout>
+
+</LinearLayout>

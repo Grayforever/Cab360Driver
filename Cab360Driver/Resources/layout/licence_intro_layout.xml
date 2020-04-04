@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <android.support.v7.widget.Toolbar
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@android:color/white"
+        app:titleTextAppearance="?android:attr/textAppearanceMedium"
+    />
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/take_ya_flp_txt"
+            android:text="Take a photo of your Ghana Driver's License"
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp"
+            android:layout_marginBottom="8dp"
+            android:layout_marginTop="24dp"
+            android:textSize="18sp"
+            android:textColor="@android:color/black"
+        />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/take_ya_flp_txt1"
+            android:layout_below="@+id/take_ya_flp_txt"
+            android:text="Please make sure the details appear readable"
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp"
+            android:textSize="14sp"
+            android:fontFamily="sans-serif-light"
+            android:textColor="@android:color/black"
+        />
+
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="156dp"
+            android:layout_centerInParent="true"
+            android:id="@+id/license_prev_iv"
+            android:scaleType="centerCrop"
+            android:layout_margin="16dp"
+        />
+
+        <android.support.design.chip.Chip
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:text="Zoom"
+            android:id="@+id/zoom_chip"
+            android:layout_below="@+id/license_prev_iv"
+            android:layout_centerHorizontal="true"
+            android:elevation="4dp"
+            app:chipBackgroundColor="@color/colorAccent"
+            android:textColor="@android:color/white"
+            android:clickable="true"
+            app:rippleColor="@android:color/white"
+            app:chipIcon="@android:drawable/ic_menu_zoom"
+            
+        />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_alignParentBottom="true"
+            android:background="@drawable/bg_bottomsheet_dg"
+            android:elevation="8dp">
+
+            <Button
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="16dp"
+                android:background="@drawable/primary_btn_bg"
+                android:textColor="@android:color/white"
+                android:text="take photo"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:id="@+id/intro_takelicense_btn1"
+                android:fontFamily="sans-serif-light"
+            />
+
+        </LinearLayout>
+
+    </RelativeLayout>
+
+</LinearLayout>

@@ -1,0 +1,112 @@
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@android:color/white">
+
+    <ImageButton
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:background="@android:color/white"
+        android:layout_marginStart="16dp"
+        android:id="@+id/back_btn"
+        android:layout_marginTop="8dp"
+        android:tint="@android:color/black"
+        android:foreground="?android:attr/selectableItemBackground"
+        android:src="@drawable/quantum_ic_arrow_back_grey600_24"
+    />
+
+    <Refractored.Controls.CircleImageView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:id="@+id/preview_iv"
+        android:layout_weight="0.6"
+        android:src="@drawable/boy_new"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginBottom="24dp"
+        android:scaleType="centerCrop"
+    />
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="0.4"
+        android:layout_marginBottom="16dp">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/wanna_txt"
+            android:text="Want to use this photo?"
+            android:layout_centerHorizontal="true"
+            android:textSize="24sp"
+            android:gravity="center"
+            android:textStyle="bold"
+            android:fontFamily="sans-serif-light"
+            android:textColor="@android:color/black"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="16dp"
+            android:layout_marginBottom="8dp"
+        />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/wanna_txt2"
+            android:layout_below="@+id/wanna_txt"
+            android:text="By tapping SAVE, you agree that Cab360 may collect and process your photos with technology that allows us to verify your identity"
+            android:textAlignment="center"
+            android:inputType="textMultiLine"
+            android:layout_centerHorizontal="true"
+            android:textSize="16sp"
+            android:fontFamily="sans-serif-light"
+            android:textColor="@android:color/black"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="16dp"
+        />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_alignParentBottom="true"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="16dp"
+            android:layout_marginBottom="24dp"
+            >
+
+            <Button
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="0.5"
+                android:id="@+id/prev_retake_btn"
+                android:background="@drawable/outline_btn_bg"
+                android:textColor="@color/colorAccent"
+                android:textSize="16sp"
+                android:text="retake"
+                android:textStyle="bold"
+                android:fontFamily="sans-serif-light"
+                android:layout_marginEnd="8dp"
+            />
+
+            <Button
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="0.5"
+                android:id="@+id/prev_save_btn"
+                android:background="@drawable/primary_btn_bg"
+                android:textColor="@android:color/white"
+                android:textSize="16sp"
+                android:text="save"
+                android:textStyle="bold"
+                android:fontFamily="sans-serif-light"
+                android:layout_marginStart="8dp"
+            />
+        </LinearLayout>
+    </RelativeLayout>
+
+</LinearLayout>

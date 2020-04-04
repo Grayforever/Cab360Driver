@@ -1,0 +1,130 @@
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:app="http://schemas.android.com/apk/res-auto"
+	xmlns:tools="http://schemas.android.com/tools"
+	android:orientation="vertical"
+	android:layout_width="match_parent"
+	android:minWidth="300dp"
+	android:layout_height="wrap_content"
+	android:background="@android:color/white">
+	
+	 <TextView
+		android:textStyle="bold"
+		android:text="New Ride Request!"
+		android:layout_height="40dp"
+		android:layout_width="match_parent"
+		android:layout_gravity="center"
+		android:gravity="center"
+		android:textSize="18sp"
+		android:textColor="@android:color/black"
+	/>
+
+	<android.support.v7.widget.CardView
+		android:layout_width="match_parent"
+		android:layout_height="48dp"
+		android:layout_margin="8dp"
+        app:cardCornerRadius="8dp">
+
+		<RelativeLayout
+			android:layout_height="match_parent"
+			android:layout_width="match_parent">
+
+			<ImageView
+				android:layout_height="32dp"
+				android:layout_width="32dp"
+				android:tint="@android:color/holo_green_dark"
+				android:src="@drawable/ic_location"
+				android:layout_alignParentStart="true"
+				android:layout_centerVertical="true"
+				android:id="@+id/ic_loc1"
+				android:layout_marginEnd="8dp"
+			/>
+
+			<TextView
+				android:id="@+id/newridePickupText"
+				android:layout_height="wrap_content"
+				android:layout_width="wrap_content"
+				android:text="CMS Bus Stop Expressway 1, Lagos"
+				android:maxLines="2"
+				android:layout_toEndOf="@+id/ic_loc1"
+				android:layout_centerVertical="true"
+				android:textColor="@android:color/black"
+			/>
+		</RelativeLayout>
+
+
+	</android.support.v7.widget.CardView>
+
+
+	 <android.support.v7.widget.CardView
+		android:layout_width="match_parent"
+		android:layout_height="48dp"
+		android:layout_margin="8dp"
+        app:cardCornerRadius="8dp">
+		
+		<RelativeLayout
+			android:layout_height="match_parent"
+			android:layout_width="match_parent">
+
+			<ImageView
+				android:layout_height="32dp"
+				android:layout_width="32dp"
+				android:tint="@android:color/holo_red_dark"
+				android:src="@drawable/ic_location"
+				android:layout_alignParentStart="true"
+				android:layout_centerVertical="true"
+				android:id="@+id/ic_loc2"
+				android:layout_marginEnd="8dp"
+			/>
+
+			<TextView
+				android:id="@+id/newrideDestinationText"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:text="CMS Bus Stop Expressway 1, Lagos"
+				android:maxLines="2"
+				android:layout_toEndOf="@+id/ic_loc2"
+				android:layout_centerVertical="true"
+				android:textColor="@android:color/black"
+			/>
+		</RelativeLayout>
+	</android.support.v7.widget.CardView>
+	 
+
+	<LinearLayout
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:orientation="horizontal"
+		android:weightSum="2"
+		android:layout_marginStart="8dp"
+		android:layout_marginEnd="8dp"
+        android:layout_marginBottom="8dp">
+
+		<Button
+			android:layout_width="0dp"
+			android:layout_height="wrap_content"
+			android:layout_weight="1"
+			android:id="@+id/ride_decline_btn"
+			android:background="@drawable/outline_btn_bg"
+			android:text="Decline"
+			android:textColor="@color/colorAccent"
+			android:textSize="16sp"
+			android:textStyle="bold"
+			android:layout_margin="4dp"
+		/>
+
+		<Button
+			android:layout_width="0dp"
+			android:layout_height="wrap_content"
+			android:layout_weight="1"
+			android:id="@+id/ride_accept_btn"
+			android:background="@drawable/primary_btn_bg"
+			android:text="Accept"
+			android:textColor="@android:color/white"
+			android:textSize="16sp"
+			android:textStyle="bold"
+			android:layout_margin="4dp"
+		/>
+
+	</LinearLayout>
+</LinearLayout>

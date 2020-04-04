@@ -1,0 +1,113 @@
+
+<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+	xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:id="@+id/drv_signin_root"
+    android:background="@android:color/white">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/drv_signin_rel1">
+
+        <Toolbar
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/drv_signup_toolbar"
+            android:background="@android:color/white"
+            android:elevation="4dp">
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Please sign in"
+                    android:textSize="24sp"
+                    android:textColor="@android:color/black"
+                    android:drawableStart="@drawable/quantum_ic_arrow_back_grey600_24"
+                    android:drawableTint="@android:color/black"
+                    android:clickable="true"
+                    android:id="@+id/drv_signin_hd_txt"
+                    android:fontFamily="sans-serif-light"
+                />
+
+            </RelativeLayout>
+
+        </Toolbar>
+
+        <android.support.design.widget.TextInputLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/drv_signin_email_et"
+            android:layout_marginTop="32dp"
+            android:layout_marginBottom="16dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="16dp"
+            android:layout_below="@id/drv_signup_toolbar">
+
+            <android.support.design.widget.TextInputEditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Email"
+                android:inputType="textEmailAddress"
+                android:fontFamily="sans-serif-light"
+            />
+
+        </android.support.design.widget.TextInputLayout>
+
+        <android.support.design.widget.TextInputLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/drv_signin_pass_et"
+            android:layout_marginTop="16dp"
+            android:layout_below="@+id/drv_signin_email_et"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="16dp">
+
+            <android.support.design.widget.TextInputEditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Password"
+                android:inputType="textPassword"
+                android:fontFamily="sans-serif-light"
+            />
+
+        </android.support.design.widget.TextInputLayout>
+
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="56dp"
+            android:text="I forgot my password"
+            android:layout_alignParentBottom="true"
+            android:gravity="center"
+            android:id="@+id/drv_signin_fpas_tv"
+            android:textSize="16sp"
+            android:textColor="@color/colorAccent"
+            android:layout_marginBottom="16dp"
+            android:fontFamily="sans-serif-light"
+            android:layout_marginStart="16dp"
+            android:paddingStart="8dp"
+            android:paddingEnd="8dp"
+        />
+        
+    </RelativeLayout>
+
+    <android.support.design.widget.FloatingActionButton
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/fab1"
+        app:useCompatPadding="true"
+        app:layout_anchor="@+id/drv_signin_rel1"
+        app:layout_anchorGravity="end| bottom"
+            
+    />
+
+    
+
+</android.support.design.widget.CoordinatorLayout>

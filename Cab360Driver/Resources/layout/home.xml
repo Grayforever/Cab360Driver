@@ -1,0 +1,114 @@
+
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+	xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="fill_parent"
+	android:background="@android:color/white"
+    android:layout_height="fill_parent">
+
+	<fragment
+		android:id="@+id/map"
+		android:layout_height="match_parent"
+		android:layout_width="match_parent"
+		class="com.google.android.gms.maps.SupportMapFragment"
+	/>
+
+	<ImageView
+		android:id="@+id/centerMarker"
+		android:layout_height="48dp"
+		android:layout_width="48dp"
+		android:layout_gravity="center"
+		android:visibility="invisible"
+		android:src="@drawable/ic_car_online"
+	/>
+	
+    <LinearLayout
+        android:id="@+id/rideInfoLayout"
+        android:layout_height="128dp"
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:background="@drawable/bg_bottomsheet_dg"
+        android:layout_gravity="bottom"
+        android:padding="8dp"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
+        android:layout_marginBottom="25dp"
+        android:elevation="8dp"
+        android:visibility="invisible">
+        
+        <RelativeLayout
+            android:layout_height="0dp"
+            android:layout_width="match_parent"
+            android:layout_weight="0.5">
+
+            <TextView
+                android:id="@+id/riderNameText"
+                android:text="Cab 360"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:layout_alignParentLeft="true"
+                android:layout_centerVertical="true"
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
+                android:textColor="@android:color/black"
+            />
+            
+             <ImageButton
+                android:id="@+id/cancelTripButton"
+                android:layout_centerVertical="true"
+                android:layout_alignParentRight="true"
+                android:layout_height="40dp"
+                android:layout_width="40dp"
+                android:padding="10dp"
+                android:tint="@color/colorAccent"
+                android:src="@drawable/abc_ic_clear_material"
+                android:scaleType="centerCrop" />
+                
+                <ImageButton
+                    android:id="@+id/callRiderButton"
+                    android:layout_marginRight="10dp"
+                    android:layout_toLeftOf="@+id/cancelTripButton"
+                    android:layout_centerVertical="true"
+                    android:layout_height="40dp"
+                    android:layout_width="40dp"
+                    android:padding="10dp"
+                    android:tint="@color/colorAccent"
+                    android:src="@android:drawable/ic_menu_call"
+                    android:scaleType="centerCrop" />
+
+                <ImageButton                                          
+                    android:id="@+id/navigateButton"
+                    android:layout_marginRight="10dp"
+                    android:layout_toLeftOf="@+id/callRiderButton"
+                    android:layout_centerVertical="true"
+                    android:layout_height="40dp"
+                    android:layout_width="40dp"
+                    android:padding="10dp"
+                    android:tint="@color/colorAccent"
+                    android:src="@drawable/ic_navigation"
+                    android:scaleType="centerCrop" />
+            
+            
+            
+        </RelativeLayout>
+        
+        
+        <Button
+            android:id="@+id/tripButton"
+            android:layout_height="0dp"
+            android:layout_width="match_parent"
+            android:layout_weight="0.5"
+            android:text="Arrived PickUp"
+            android:textAllCaps="false"
+            android:translationZ="2dp"
+            android:textSize="16sp"
+            android:textColor="@color/colorAccent"
+            android:background="@drawable/outline_btn_bg" 
+            android:layout_margin="4dp"
+            android:layout_gravity="center"
+            android:textStyle="bold"
+        />
+        
+    </LinearLayout>
+    
+</FrameLayout>

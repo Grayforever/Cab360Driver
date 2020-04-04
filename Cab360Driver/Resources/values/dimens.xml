@@ -1,0 +1,17 @@
+<resources xmlns:app="http://schemas.android.com/apk/res-auto"
+	xmlns:tools="http://schemas.android.com/tools">
+  <dimen name="app_bar_height">180dp</dimen>
+  <dimen name="fab_margin">16dp</dimen>
+  <dimen name="text_margin">16dp</dimen>
+  <dimen name="headerTextSize">28sp</dimen>
+
+  <dimen name="bottom_sheet_corner_radius">16dp</dimen>
+  <dimen name="bottom_sheet_top_padding">8dp</dimen>
+  <dimen name="marrgin_start_end">24dp</dimen>
+  <dimen name="margin_bottom">16dp</dimen>
+  <dimen name="circular_radius">100dp</dimen>
+  <dimen name="image_width">120dp</dimen>
+  <dimen name="image_final_width">32dp</dimen>
+  <dimen name="spacing_normal">16dp</dimen>
+
+</resources>
