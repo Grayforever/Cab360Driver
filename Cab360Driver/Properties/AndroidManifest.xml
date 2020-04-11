@@ -1,6 +1,17 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android" android:versionCode="1" android:versionName="1.0" package="com.graylabs.cab360driver" android:installLocation="auto">
-	<application android:allowBackup="true" android:icon="@mipmap/ic_launcher" android:label="@string/app_name" android:roundIcon="@mipmap/ic_launcher_round" android:largeHeap="true" android:supportsRtl="true" android:theme="@style/AppTheme">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android" 
+	android:versionCode="1" 
+	android:versionName="1.0" 
+	package="com.graylabs.cab360driver" 
+	android:installLocation="auto">
+	<application android:allowBackup="true" 
+		android:icon="@mipmap/ic_launcher" 
+		android:label="@string/app_name" 
+		android:roundIcon="@mipmap/ic_launcher_round"
+		android:largeHeap="true" 
+		android:supportsRtl="true"
+		android:hardwareAccelerated="true"
+		android:theme="@style/AppTheme">
 		<meta-data android:name="com.google.android.geo.API_KEY" android:value="@string/mapKey" />
 		<meta-data android:name="com.google.firebase.ml.vision.DEPENDENCIES" android:value="face" />
 		<provider android:name="android.support.v4.content.FileProvider" 

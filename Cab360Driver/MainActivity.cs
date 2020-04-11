@@ -6,6 +6,7 @@ using Android.Graphics;
 using Android.Media;
 using Android.Net;
 using Android.OS;
+using Android.Support.Design.BottomAppBar;
 using Android.Support.Design.Widget;
 using Android.Support.V4.App;
 using Android.Support.V4.Content;
@@ -166,6 +167,7 @@ namespace Cab360Driver
 
         void ConnectViews()
         {
+            
             fabToggleOnline = FindViewById<FloatingActionButton>(Resource.Id.fab_toggle_online);
             fabToggleOnline.Click += FabToggleOnline_Click;
 
@@ -217,14 +219,14 @@ namespace Cab360Driver
             {
                 availablityStatus = true;
                 homeFragment.GoOnline();
-                fabToggleOnline.SetImageDrawable(ContextCompat.GetDrawable(this, Resource.Drawable.ic_car_online));
+                fabToggleOnline.SetBackgroundColor(Color.LightGreen);
             }
         }
 
         private void WarningEvent_OnConfirmClick(object sender, EventArgs e)
         {
             homeFragment.GoOffline();
-            fabToggleOnline.SetImageDrawable(ContextCompat.GetDrawable(this, Resource.Drawable.ic_car_offline));
+            fabToggleOnline.SetBackgroundColor(Color.OrangeRed);
             availablityStatus = false;
             TakeDriverOffline();
         }

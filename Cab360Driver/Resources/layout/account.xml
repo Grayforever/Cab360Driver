@@ -3,75 +3,8 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@color/colorTransparent">
-
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="240dp"
-        android:background="@drawable/grad" />
-
-    <!--Top Header Layout-->
-    <LinearLayout
-        android:id="@+id/topbar"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:gravity="center_vertical"
-        android:padding="16dp"
-        android:elevation="4dp">
-
-        <ImageView
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:padding="10dp"
-            android:tint="@android:color/white"
-            android:clickable="true"
-            android:id="@+id/account_backbtn"
-            android:foreground="?android:attr/selectableItemBackground"
-            android:src="@drawable/quantum_ic_arrow_back_grey600_24" />
-
-        <Space
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="1" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Account"
-            android:textColor="@android:color/white"
-            android:textSize="20sp"
-            android:textStyle="bold" />
-
-        <Space
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="1" />
-
-        <RelativeLayout
-            android:layout_width="50dp"
-            android:layout_height="50dp">
-
-            <ImageView
-                android:layout_width="40dp"
-                android:layout_height="40dp"
-                android:layout_centerInParent="true"
-                android:padding="6dp"
-                android:src="@drawable/ic_bell" />
-
-            <ImageView
-                android:layout_width="20dp"
-                android:layout_height="20dp"
-                android:layout_alignParentTop="true"
-                android:layout_alignParentEnd="true"
-                android:layout_margin="8dp"
-                android:padding="4dp"
-                android:src="@drawable/circleyellowfil" />
-        </RelativeLayout>
-
-    </LinearLayout>
-
+    android:layout_height="match_parent">
+    
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -81,23 +14,23 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:orientation="vertical"
-            android:paddingLeft="20dp"
-            android:paddingTop="10dp"
-            android:paddingRight="20dp">
+            android:orientation="vertical">
 
             <!--Top Profile Section -->
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:padding="16dp"
+                android:padding="8dp"
+                android:layout_marginStart="16dp"
+                android:layout_marginEnd="16dp"
+                android:elevation="4dp"
                 android:background="@drawable/circularbordersolid">
 
                 <Refractored.Controls.CircleImageView        
                     android:layout_width="128dp"
                     android:layout_height="128dp"
                     android:scaleType="centerCrop"
-                    android:src="@drawable/boy_new"
+                    android:src="@drawable/ic_account_plchldr"
                     android:id="@+id/iv_pp"
                     android:layout_centerHorizontal="true"
                     android:layout_alignParentTop="true"
@@ -109,33 +42,34 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="10dp"
                     android:text="Berlinda Ababio"
-                    android:textSize="21sp"
+                    android:textSize="24sp"
                     android:textStyle="bold"
                     android:id="@+id/username_tv"
                     android:layout_below="@id/iv_pp"
+                    android:textColor="@android:color/black"
                     android:layout_centerHorizontal="true"
-                    android:paddingTop="8dp"
                 />
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Driver"
-                    android:textSize="14sp" 
+                    android:textSize="16sp" 
                     android:id="@+id/user_role_tv"
+                    android:textColor="@android:color/black"
                     android:layout_below="@+id/username_tv"
                     android:layout_centerHorizontal="true"
-                    android:paddingBottom="8dp"
                 />
 
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_below="@+id/user_role_tv">
+                    android:layout_below="@+id/user_role_tv"
+                    android:orientation="horizontal">
 
-                    <LinearLayout
-                        android:layout_width="wrap_content"
+                    <RelativeLayout          
+                        android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="0.5"
                         android:gravity="center"
@@ -144,35 +78,36 @@
                         <ImageView
                             android:layout_width="48dp"
                             android:layout_height="48dp"
+                            android:id="@+id/trips_iv1"
                             android:background="@drawable/circular_grey_bordersolid"
                             android:padding="10dp"
+                            android:layout_marginEnd="8dp"
+                            android:layout_alignParentStart="true"
                             android:tint="@color/colorAccent"
                             android:src="@drawable/tickinsidecircle" />
 
-                        <LinearLayout
+                        <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_marginLeft="10dp"
-                            android:orientation="vertical">
+                            android:id="@+id/trip_summary_tv1"
+                            android:text="654"
+                            android:layout_toEndOf="@+id/trips_iv1"
+                            android:textSize="16sp"
+                            android:textColor="@android:color/black"
+                            android:textStyle="bold" />
 
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="97%"
-                                android:textSize="12sp"
-                                android:textStyle="bold" />
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="2dp"
+                            android:layout_toEndOf="@+id/trips_iv1"
+                            android:layout_below="@+id/trip_summary_tv1"
+                            android:text="Trips"
+                            android:textSize="16sp" />
+                    </RelativeLayout>
 
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_marginTop="2dp"
-                                android:text="Job success"
-                                android:textSize="12sp" />
-                        </LinearLayout>
-                    </LinearLayout>
-
-                    <LinearLayout
-                        android:layout_width="wrap_content"
+                    <RelativeLayout          
+                        android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="0.5"
                         android:gravity="center"
@@ -181,32 +116,35 @@
                         <ImageView
                             android:layout_width="48dp"
                             android:layout_height="48dp"
+                            android:id="@+id/ratings_iv1"
                             android:background="@drawable/circular_grey_bordersolid"
                             android:padding="10dp"
+                            android:layout_marginEnd="8dp"
+                            android:layout_alignParentStart="true"
                             android:tint="@color/colorAccent"
-                            android:src="@drawable/star" />
+                            android:src="@drawable/abc_ic_star_black_36dp" />
 
-                        <LinearLayout
+                        <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_marginLeft="10dp"
-                            android:orientation="vertical">
+                            android:id="@+id/rating_summary_tv1"
+                            android:text="654"
+                            android:layout_toEndOf="@+id/ratings_iv1"
+                            android:textSize="16sp"
+                            android:textColor="@android:color/black"
+                            android:textStyle="bold" />
 
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="4.8/5"
-                                android:textSize="12sp"
-                                android:textStyle="bold" />
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="2dp"
+                            android:layout_toEndOf="@+id/ratings_iv1"
+                            android:layout_below="@+id/rating_summary_tv1"
+                            android:text="Rating"
+                            android:textSize="16sp" />
+                    </RelativeLayout>
 
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_marginTop="2dp"
-                                android:text="Ratings"
-                                android:textSize="12sp" />
-                        </LinearLayout>
-                    </LinearLayout>
+                        
 
                 </LinearLayout>
             </RelativeLayout>
@@ -217,10 +155,10 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
-                android:background="@drawable/circularbordersolid"
+                android:background="@drawable/circle_border_outline"
                 android:id="@+id/radioGroup_account"
-                android:layout_marginTop="8dp"
-                android:layout_marginBottom="8dp">
+                android:layout_margin="16dp"
+                android:elevation="2dp">
 
 
                 <RadioButton
@@ -232,7 +170,7 @@
                     android:singleLine="true"
                     android:gravity="center"
                     android:padding="8dp"
-                    android:textSize="16sp"
+                    android:textSize="16sp" 
                     android:checked="true"
                     android:textColor="@drawable/radio_txt_selector"
                     android:button="@android:color/transparent"
@@ -240,10 +178,7 @@
                     android:background="@drawable/radio_selector_start"
                 />
 
-                <View
-                    android:layout_width="1dp"
-                    android:layout_height="match_parent"
-                    android:background="@android:color/darker_gray" />
+                    
 
                 <RadioButton
                     android:id="@+id/radioExp"
@@ -261,17 +196,14 @@
                     android:background="@drawable/radio_selector"
                 />
 
-                <View
-                    android:layout_width="1dp"
-                    android:layout_height="match_parent"
-                    android:background="@android:color/darker_gray" />
+                    
 
                 <RadioButton
                     android:id="@+id/radioReview"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="reviews"
+                    android:text="compliments"
                     android:singleLine="true"
                     android:gravity="center"
                     android:padding="8dp"
@@ -303,11 +235,14 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"/>
 
+            
+
         </LinearLayout>
 
         
 
     </ScrollView>
-
-
+    
+    
+    
 </RelativeLayout>

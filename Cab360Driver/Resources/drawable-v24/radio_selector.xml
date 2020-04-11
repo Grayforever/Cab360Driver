@@ -2,7 +2,7 @@
   <!-- disable state. -->
   <item android:state_checked="true">
     <shape android:shape="rectangle">
-      <solid android:color="@color/colorAccent"/>
+      <solid android:color="@color/quantum_lightblue"/>
     </shape>
   </item>
 

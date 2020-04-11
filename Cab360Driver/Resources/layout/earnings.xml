@@ -1,7 +1,81 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/earnings_root"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="?android:attr/colorPrimary">
 
-</LinearLayout>
+    <Toolbar
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/earnings_toolbar"
+        android:background="?android:attr/colorPrimary"
+        android:elevation="4dp">
+
+        <RadioGroup
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:background="@drawable/circle_border_outline"
+            android:id="@+id/radioGroup_earnings"
+            android:layout_gravity="center">
+
+            <RadioButton
+                android:id="@+id/radioSummary"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Summary"
+                android:singleLine="true"
+                android:gravity="center"
+                android:padding="8dp"
+                android:textSize="16sp" 
+                android:checked="true"
+                android:textColor="@drawable/radio_txt_selector"
+                android:button="@android:color/transparent"
+                android:textAllCaps="true"
+                android:background="@drawable/radio_selector_start"
+            />
+
+            <RadioButton
+                android:id="@+id/radioHistory"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="History"
+                android:singleLine="true"
+                android:gravity="center"
+                android:padding="8dp"
+                android:textSize="16sp"
+                android:textAllCaps="true"
+                android:textColor="@drawable/radio_txt_selector"
+                android:background="@drawable/radio_selector_end"
+                android:button="@android:color/transparent"
+            />
+
+        </RadioGroup>
+
+    </Toolbar>
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scrollbars="none"
+        android:layout_below="@+id/earnings_toolbar">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <include
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                layout="@layout/earn_sum_tab1"/>
+
+        </LinearLayout>
+    </ScrollView>
+
+</RelativeLayout>

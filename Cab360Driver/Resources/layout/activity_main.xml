@@ -3,36 +3,38 @@
 	xmlns:app="http://schemas.android.com/apk/res-auto"
 	xmlns:tools="http://schemas.android.com/tools"
 	android:layout_width="match_parent"
-	android:layout_height="match_parent"
-	style="@style/AppTheme">
+	android:layout_height="match_parent">
 
 	<RelativeLayout
-		android:layout_height = "match_parent"
-		android:layout_width="match_parent"
-		android:id="@+id/rl1">
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
 
 		<android.support.v4.view.ViewPager
 			android:id="@+id/viewpager"
 			android:layout_height="match_parent"
-			android:layout_width="match_parent"
-			android:layout_above="@+id/bnve"
-			android:layout_alignParentTop="true"
+			android:layout_width="wrap_content"
 			app:layout_behavior="@string/appbar_scrolling_view_behavior"
-			android:overScrollMode="always"
+			android:overScrollMode="never"
+			android:layout_above="@id/bnve"
+		
 		/>
 
 		<com.ittianyu.bottomnavigationviewex.BottomNavigationViewEx
 			android:id="@+id/bnve"
 			android:layout_width="match_parent"
 			android:layout_height="wrap_content"
-			android:layout_alignParentBottom="true"
-			android:background="?attr/colorPrimary"
+			android:background="?android:attr/colorPrimary"
 			app:menu="@menu/bottomnav"
 			app:itemIconTint="#919daa"
 			app:itemTextColor="#919daa"
-		/>
+			android:layout_gravity="bottom"
+			android:layout_alignParentBottom="true"
+			app:layout_behavior="@string/hide_bottom_view_on_scroll_behavior"
+			
+			/>
 
 	</RelativeLayout>
+	
 
 	<android.support.design.widget.FloatingActionButton
         android:layout_width="wrap_content"
@@ -40,14 +42,14 @@
 		android:id="@+id/fab_toggle_online"
 		app:layout_anchor="@+id/bnve"
 		app:layout_anchorGravity="center_horizontal"
-		app:backgroundTint="?attr/colorPrimary"
-		app:useCompatPadding="true"
 		app:rippleColor="@color/colorAccent"
 		android:src="@drawable/ic_car_offline"
+		app:useCompatPadding="true"
 		app:fabSize="normal"
 		android:clickable="true"
 		app:maxImageSize="32dp"
-		app:elevation="4dp"
+		app:elevation="8dp"
+		
 	/>
 
 </android.support.design.widget.CoordinatorLayout>

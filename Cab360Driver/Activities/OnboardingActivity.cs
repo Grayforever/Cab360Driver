@@ -50,6 +50,7 @@ namespace Cab360Driver.Activities
 
         protected override void OnCreate(Bundle savedInstanceState)
         {
+            Xamarin.Essentials.Platform.Init(this, savedInstanceState);
             base.OnCreate(savedInstanceState);
             SetContentView(Resource.Layout.container_main);
             GetControls();
@@ -143,7 +144,7 @@ namespace Cab360Driver.Activities
 
         public override void OnRequestPermissionsResult(int requestCode, string[] permissions, Android.Content.PM.Permission[] grantResults)
         {
-            Plugin.Permissions.PermissionsImplementation.Current.OnRequestPermissionsResult(requestCode, permissions, grantResults);
+            Xamarin.Essentials.Platform.OnRequestPermissionsResult(requestCode, permissions, grantResults);
         }
 
         private void SaveDriverPersonal(Driver driverPersonal)
