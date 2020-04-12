@@ -1,19 +1,19 @@
 
-<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
 	xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:id="@+id/driver_partner_root"
-    android:background="@android:color/white">
+    android:id="@+id/driver_partner_root">
 
-    <Toolbar
+    <androidx.appcompat.widget.Toolbar
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/driver_partner_toolbar"
         android:elevation="4dp"
-        android:title="Cab 360"
         android:background="@android:color/white"
+        style="@style/Widget.MaterialComponents.Toolbar"
+        app:navigationIcon="@drawable/quantum_ic_arrow_back_grey600_24"
     />
 
     <RelativeLayout
@@ -34,7 +34,7 @@
             android:fontFamily="sans-serif-light"
         />
 
-        <android.support.v7.widget.CardView
+        <androidx.cardview.widget.CardView
             android:layout_width="match_parent"
             android:layout_height="120dp"
             android:id="@+id/drv_part_c1"
@@ -78,9 +78,9 @@
                 />
 
             </LinearLayout>
-        </android.support.v7.widget.CardView>
+        </androidx.cardview.widget.CardView>
 
-        <android.support.v7.widget.CardView
+        <androidx.cardview.widget.CardView
             android:layout_width="match_parent"
             android:layout_height="120dp"
             android:id="@+id/drv_part_c2"
@@ -124,7 +124,7 @@
                 />
 
             </LinearLayout>
-        </android.support.v7.widget.CardView>
+        </androidx.cardview.widget.CardView>
 
 
         <LinearLayout
@@ -152,4 +152,4 @@
 
     </RelativeLayout>
 
-</android.support.design.widget.CoordinatorLayout>
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

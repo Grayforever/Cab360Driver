@@ -6,8 +6,6 @@ using Android.Graphics;
 using Android.Media;
 using Android.Net;
 using Android.OS;
-using Android.Support.Design.BottomAppBar;
-using Android.Support.Design.Widget;
 using Android.Support.V4.App;
 using Android.Support.V4.Content;
 using Android.Support.V4.View;
@@ -22,6 +20,7 @@ using Cab360Driver.Fragments;
 using Cab360Driver.Helpers;
 using CN.Pedant.SweetAlert;
 using Com.Ittianyu.Bottomnavigationviewex;
+using Google.Android.Material.FloatingActionButton;
 using System;
 using static CN.Pedant.SweetAlert.SweetAlertDialog;
 

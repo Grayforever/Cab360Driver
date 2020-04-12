@@ -33,7 +33,7 @@ namespace Cab360Driver.BroadcastReceivers
         {
             ConnectivityManager cm = (ConnectivityManager)context.GetSystemService(Context.ConnectivityService);
             NetworkInfo networkInfo = cm.ActiveNetworkInfo;
-            bool isConnected = networkInfo != null && networkInfo.IsConnectedOrConnecting;
+            bool isConnected = networkInfo != null && networkInfo.IsConnected;
             if(connectivityReceiverListener != null)
             {
                 connectivityReceiverListener.IOnNetworkConnectionChanged(isConnected);

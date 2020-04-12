@@ -5,9 +5,10 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <android.support.v7.widget.Toolbar
+    <androidx.appcompat.widget.Toolbar
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        style="@style/Widget.MaterialComponents.Toolbar"
         android:background="@android:color/white"
         app:title="Take your profile photo"
         app:titleTextAppearance="?android:attr/textAppearanceMedium"
@@ -88,7 +89,7 @@
             android:orientation="horizontal"
             android:layout_alignParentBottom="true"
             android:background="@drawable/bg_bottomsheet_dg"
-            android:elevation="8dp">
+            android:elevation="4dp">
 
             <Button
                 android:layout_width="match_parent"

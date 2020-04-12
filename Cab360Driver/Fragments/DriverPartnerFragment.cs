@@ -2,9 +2,9 @@
 using Android.Content.Res;
 using Android.Graphics;
 using Android.OS;
-using Android.Support.V7.Widget;
 using Android.Views;
 using Android.Widget;
+using AndroidX.CardView.Widget;
 using Cab360Driver.EnumsConstants;
 using System;
 using static Android.Views.View;

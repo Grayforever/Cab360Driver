@@ -1,24 +1,19 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
-using Android.App;
+﻿using Android.App;
 using Android.Content;
-using Android.Content.Res;
 using Android.Gms.Tasks;
 using Android.OS;
 using Android.Runtime;
-using Android.Support.Design.Widget;
 using Android.Text;
 using Android.Util;
 using Android.Views;
 using Android.Widget;
-using Cab360Driver.DataModels;
 using Cab360Driver.Helpers;
 using Firebase.Auth;
 using Firebase.Database;
+using Google.Android.Material.FloatingActionButton;
+using Google.Android.Material.TextField;
 using Java.Lang;
+using System;
 using static Android.Views.View;
 
 namespace Cab360Driver.Fragments

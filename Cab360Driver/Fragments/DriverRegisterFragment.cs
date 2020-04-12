@@ -1,7 +1,6 @@
 ﻿using Android.App;
 using Android.OS;
 using Android.Runtime;
-using Android.Support.Design.Widget;
 using Android.Text;
 using Android.Views;
 using Android.Widget;
@@ -10,6 +9,7 @@ using Cab360Driver.EventListeners;
 using Cab360Driver.Helpers;
 using Firebase.Auth;
 using Firebase.Database;
+using Google.Android.Material.TextField;
 using Java.Lang;
 using System;
 using static Android.Views.View;

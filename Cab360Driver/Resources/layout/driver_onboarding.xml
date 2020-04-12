@@ -10,14 +10,14 @@
     <FrameLayout            
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="3"
+        android:layout_weight="4"
         android:background="@color/colorAccent">
     </FrameLayout>
 
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="2"
+        android:layout_weight="1"
         android:background="@android:color/white"
         android:padding="8dp">
 
@@ -39,7 +39,7 @@
             android:layout_marginTop="8dp"
             android:orientation="horizontal"
             android:id="@+id/onbd_linear1"
-            android:layout_centerInParent="true">
+            android:layout_alignParentBottom="true">
 
             <Button
                 android:layout_width="0dp"
@@ -51,7 +51,7 @@
                 android:textSize="16sp"
                 android:textColor="@color/colorAccent"
                 android:textStyle="bold"
-                android:layout_margin="4dp"
+                android:layout_margin="8dp"
                 android:fontFamily="sans-serif-light"
             />
 
@@ -59,13 +59,13 @@
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:id="@+id/onbd_signup_btn"
-                android:text="Register"
+                android:text="Sign up"
                 android:layout_weight="1"
                 android:background="@drawable/primary_btn_bg"
                 android:textSize="16sp"
                 android:textColor="@android:color/white"
                 android:textStyle="bold"
-                android:layout_margin="4dp"
+                android:layout_margin="8dp"
                 android:fontFamily="sans-serif-light"
                 
             />

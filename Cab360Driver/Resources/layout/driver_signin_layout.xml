@@ -1,91 +1,75 @@
 
-<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
 	xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:id="@+id/drv_signin_root"
-    android:background="@android:color/white">
+    android:id="@+id/drv_signin_root">
 
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:id="@+id/drv_signin_rel1">
 
-        <Toolbar
+        <androidx.appcompat.widget.Toolbar
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/drv_signup_toolbar"
+            android:elevation="4dp"
             android:background="@android:color/white"
-            android:elevation="4dp">
+            app:navigationIcon="@drawable/quantum_ic_arrow_back_grey600_24"
+            style="@style/Widget.MaterialComponents.Toolbar">
 
-            <RelativeLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent">
+        </androidx.appcompat.widget.Toolbar>
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Please sign in"
-                    android:textSize="24sp"
-                    android:textColor="@android:color/black"
-                    android:drawableStart="@drawable/quantum_ic_arrow_back_grey600_24"
-                    android:drawableTint="@android:color/black"
-                    android:clickable="true"
-                    android:id="@+id/drv_signin_hd_txt"
-                    android:fontFamily="sans-serif-light"
-                />
-
-            </RelativeLayout>
-
-        </Toolbar>
-
-        <android.support.design.widget.TextInputLayout
+        <com.google.android.material.textfield.TextInputLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/drv_signin_email_et"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
             android:layout_marginTop="32dp"
+            android:hint="Email"
             android:layout_marginBottom="16dp"
             android:layout_marginStart="16dp"
             android:layout_marginEnd="16dp"
             android:layout_below="@id/drv_signup_toolbar">
 
-            <android.support.design.widget.TextInputEditText
+            <com.google.android.material.textfield.TextInputEditText
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Email"
                 android:inputType="textEmailAddress"
-                android:fontFamily="sans-serif-light"
+                
             />
 
-        </android.support.design.widget.TextInputLayout>
+        </com.google.android.material.textfield.TextInputLayout>
 
-        <android.support.design.widget.TextInputLayout
+        <com.google.android.material.textfield.TextInputLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/drv_signin_pass_et"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
             android:layout_marginTop="16dp"
+            android:hint="Password"
             android:layout_below="@+id/drv_signin_email_et"
             android:layout_marginStart="16dp"
-            android:layout_marginEnd="16dp">
+            android:layout_marginEnd="16dp"
+            app:passwordToggleEnabled="true">
 
-            <android.support.design.widget.TextInputEditText
+            <com.google.android.material.textfield.TextInputEditText
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Password"
                 android:inputType="textPassword"
-                android:fontFamily="sans-serif-light"
             />
 
-        </android.support.design.widget.TextInputLayout>
+        </com.google.android.material.textfield.TextInputLayout>
 
 
         <TextView
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="56dp"
             android:text="I forgot my password"
             android:layout_alignParentBottom="true"
-            android:gravity="center"
+            android:gravity="start| center"
             android:id="@+id/drv_signin_fpas_tv"
             android:textSize="16sp"
             android:textColor="@color/colorAccent"
@@ -93,21 +77,26 @@
             android:fontFamily="sans-serif-light"
             android:layout_marginStart="16dp"
             android:paddingStart="8dp"
-            android:paddingEnd="8dp"
+            android:clickable="true"
+            android:foreground="?android:attr/selectableItemBackground"
         />
         
     </RelativeLayout>
 
-    <android.support.design.widget.FloatingActionButton
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/fab1"
         app:useCompatPadding="true"
+        android:src="@drawable/abc_ic_go_search_api_material"
+        app:maxImageSize="32dp"
+        android:tint="@android:color/white"
         app:layout_anchor="@+id/drv_signin_rel1"
+        app:elevation="8dp"
         app:layout_anchorGravity="end| bottom"
             
     />
 
     
 
-</android.support.design.widget.CoordinatorLayout>
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

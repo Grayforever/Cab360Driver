@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
-    <android.support.v7.widget.CardView
+    <androidx.cardview.widget.CardView
         android:layout_width="match_parent"
         android:layout_height="96dp"
         app:cardBackgroundColor="@color/colorAccent"
@@ -43,24 +43,26 @@
                 android:textStyle="bold"
             />
 
-            <android.support.design.button.MaterialButton
+            <com.google.android.material.button.MaterialButton
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textAppearance="?android:attr/textAppearanceSmall"
                 android:text="Cash out"
                 android:textColor="@color/colorAccent"
                 android:padding="8dp"
-                android:backgroundTint="@android:color/white"
+                app:backgroundTint="@android:color/white"
+                app:rippleColor="@color/colorAccent"
                 android:layout_alignParentEnd="true"
                 android:layout_centerVertical="true"
                 android:textAllCaps="true"
                 android:textSize="16sp"
+                
             />
 
         </RelativeLayout>
 
 
-    </android.support.v7.widget.CardView>
+    </androidx.cardview.widget.CardView>
 
     <RelativeLayout
         android:layout_width="match_parent"
