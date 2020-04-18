@@ -9,6 +9,6 @@
         public string Phone { get; set; }
         public string City { get; set; }
         public string Code { get; set; }
-        public int IsPartner { get; set; }
+        public string  IsPartner { get; set; }
     }
 }

@@ -4,13 +4,13 @@
 	xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:id="@+id/driver_partner_root">
+    android:id="@+id/driver_partner_root"
+    android:background="@android:color/white">
 
     <androidx.appcompat.widget.Toolbar
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/driver_partner_toolbar"
-        android:elevation="4dp"
         android:background="@android:color/white"
         style="@style/Widget.MaterialComponents.Toolbar"
         app:navigationIcon="@drawable/quantum_ic_arrow_back_grey600_24"
@@ -39,7 +39,7 @@
             android:layout_height="120dp"
             android:id="@+id/drv_part_c1"
             android:layout_below="@+id/drv_part_intro_txt"
-            app:cardBackgroundColor="@android:color/white"
+            app:cardBackgroundColor="@drawable/cardview_focus_bg_tggl"
             android:stateListAnimator="@animator/lift_on_touch"
             android:layout_marginStart="16dp"
             android:layout_marginEnd="16dp"
@@ -47,8 +47,7 @@
             app:cardCornerRadius="8dp"
             android:clickable="true"
             android:focusable="true"
-            android:focusableInTouchMode="true"
-            app:cardElevation="4dp">
+            android:focusableInTouchMode="true">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -85,7 +84,7 @@
             android:layout_height="120dp"
             android:id="@+id/drv_part_c2"
             android:layout_below="@+id/drv_part_c1"
-            app:cardBackgroundColor="@android:color/white"
+            app:cardBackgroundColor="@drawable/cardview_focus_bg_tggl"
             android:stateListAnimator="@animator/lift_on_touch"
             android:layout_marginStart="16dp"
             android:layout_marginEnd="16dp"
@@ -93,8 +92,7 @@
             app:cardCornerRadius="8dp"
             android:clickable="true"
             android:focusable="true"
-            android:focusableInTouchMode="true"
-            app:cardElevation="4dp">
+            android:focusableInTouchMode="true">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -133,19 +131,21 @@
             android:orientation="horizontal"
             android:layout_alignParentBottom="true"
             android:background="@drawable/bg_bottomsheet_dg"
-            android:elevation="4dp">
+            android:elevation="6dp">
 
-            <Button
+            <com.google.android.material.button.MaterialButton
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_margin="16dp"
-                android:background="@drawable/primary_btn_bg"
                 android:textColor="@android:color/white"
                 android:text="continue"
-                android:textSize="16sp"
                 android:textStyle="bold"
                 android:id="@+id/drv_part_cnt_btn"
+                android:textAllCaps="true"
                 android:fontFamily="sans-serif-light"
+                app:rippleColor="@color/colorPrimary"
+                style="@android:style/Widget.Material.Button.Colored"
+                android:textAppearance="?android:attr/textAppearanceMedium"
             />
 
         </LinearLayout>

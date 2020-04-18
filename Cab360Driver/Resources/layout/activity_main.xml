@@ -16,19 +16,26 @@
 			app:layout_behavior="@string/appbar_scrolling_view_behavior"
 			android:overScrollMode="never"
 			android:layout_above="@id/bnve"
-		
+			android:clipToPadding="false"
+			android:fitsSystemWindows="true"
 		/>
 
-		<com.ittianyu.bottomnavigationviewex.BottomNavigationViewEx
+		<com.google.android.material.bottomnavigation.BottomNavigationView
+                                         
 			android:id="@+id/bnve"
 			android:layout_width="match_parent"
 			android:layout_height="wrap_content"
 			android:background="?android:attr/colorPrimary"
 			app:menu="@menu/bottomnav"
-			app:itemIconTint="#919daa"
-			app:itemTextColor="#919daa"
+			app:itemIconTint="@drawable/bottomnav_iconstate_list"
+			app:itemTextColor="@drawable/bottomnav_iconstate_list"
+			app:elevation="6dp"
 			android:layout_gravity="bottom"
+			app:labelVisibilityMode="labeled"
 			android:layout_alignParentBottom="true"
+			app:itemTextAppearanceInactive="?android:attr/textAppearanceSmall"
+			app:itemTextAppearanceActive="?android:attr/textAppearanceSmall"
+			style="@style/Widget.MaterialComponents.BottomNavigationView"
 			app:layout_behavior="@string/hide_bottom_view_on_scroll_behavior"
 			
 			/>
@@ -41,15 +48,13 @@
         android:layout_height="wrap_content"
 		android:id="@+id/fab_toggle_online"
 		app:layout_anchor="@+id/bnve"
-		app:layout_anchorGravity="center_horizontal"
-		app:rippleColor="@color/colorAccent"
-		android:src="@drawable/ic_car_offline"
+		app:layout_anchorGravity="center_horizontal|bottom"
 		app:useCompatPadding="true"
+		app:rippleColor="?android:attr/colorPrimary"
 		app:fabSize="normal"
 		android:clickable="true"
 		app:maxImageSize="32dp"
 		app:elevation="8dp"
-		
 	/>
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

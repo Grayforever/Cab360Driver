@@ -5,14 +5,13 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <androidx.appcompat.widget.Toolbar
-        android:layout_width="match_parent"
+    <ImageButton
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/pic_prev_toolbar"
-        android:background="@android:color/white"
-        android:elevation="4dp"
-        style="@style/Widget.MaterialComponents.Toolbar"
-        app:navigationIcon="@drawable/quantum_ic_arrow_back_grey600_24"
+        android:id="@+id/back_btn"
+        android:src="@drawable/quantum_ic_arrow_back_grey600_24"
+        android:layout_margin="16dp"
+        android:backgroundTint="@android:color/white"
     />
 
     <Refractored.Controls.CircleImageView
@@ -27,18 +26,18 @@
         android:scaleType="centerCrop"
     />
 
-    <RelativeLayout
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="0.4"
-        android:layout_marginBottom="16dp">
+        android:orientation="vertical">
 
         <TextView
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="0dp"
             android:id="@+id/wanna_txt"
+            android:layout_weight="1"
             android:text="Want to use this photo?"
-            android:layout_centerHorizontal="true"
             android:textSize="24sp"
             android:gravity="center"
             android:textStyle="bold"
@@ -51,14 +50,15 @@
 
         <TextView
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="0dp"
             android:id="@+id/wanna_txt2"
-            android:layout_below="@+id/wanna_txt"
+            android:layout_weight="2"
+            android:layout_centerInParent="true"
             android:text="By tapping SAVE, you agree that Cab360 may collect and process your photos with technology that allows us to verify your identity"
             android:textAlignment="center"
             android:inputType="textMultiLine"
-            android:layout_centerHorizontal="true"
-            android:textSize="16sp"
+            android:gravity="center"
+            android:textSize="15sp"
             android:fontFamily="sans-serif-light"
             android:textColor="@android:color/black"
             android:layout_marginStart="16dp"
@@ -67,42 +67,50 @@
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="0dp"
             android:orientation="horizontal"
             android:layout_alignParentBottom="true"
             android:layout_marginStart="16dp"
             android:layout_marginEnd="16dp"
-            android:layout_marginBottom="24dp"
-            >
+            android:layout_weight="2">
 
-            <Button
+            <com.google.android.material.button.MaterialButton
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="0.5"
                 android:id="@+id/prev_retake_btn"
-                android:background="@drawable/outline_btn_bg"
-                android:textColor="@color/colorAccent"
-                android:textSize="16sp"
                 android:text="retake"
                 android:textStyle="bold"
                 android:fontFamily="sans-serif-light"
+                android:layout_marginBottom="16dp"
+                app:strokeWidth="2dp"
+                android:textColor="@color/colorAccent"
+                android:textAllCaps="true"
+                android:padding="10dp"
+                android:layout_marginStart="2dp"
                 android:layout_marginEnd="8dp"
+                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                android:textAppearance="?android:attr/textAppearanceMedium"
             />
 
-            <Button
+            <com.google.android.material.button.MaterialButton
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="0.5"
                 android:id="@+id/prev_save_btn"
-                android:background="@drawable/primary_btn_bg"
-                android:textColor="@android:color/white"
-                android:textSize="16sp"
                 android:text="save"
                 android:textStyle="bold"
                 android:fontFamily="sans-serif-light"
                 android:layout_marginStart="8dp"
+                android:textAllCaps="true"
+                android:textColor="@drawable/btn_txt_clr_tggl"
+                android:layout_marginBottom="16dp"
+                app:backgroundTint="@color/colorAccent"
+                android:layout_marginEnd="2dp"
+                style="@android:style/Widget.Material.Button.Colored"
+                android:textAppearance="?android:attr/textAppearanceMedium"
             />
         </LinearLayout>
-    </RelativeLayout>
+    </LinearLayout>
 
 </LinearLayout>

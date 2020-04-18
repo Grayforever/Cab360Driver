@@ -1,19 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
-using Android.App;
-using Android.Content;
-using Android.OS;
-using Android.Runtime;
-using Android.Util;
+﻿using Android.OS;
 using Android.Views;
-using Android.Widget;
+using Google.Android.Material.Button;
+using System;
 
 namespace Cab360Driver.Fragments
 {
-    public class BeforeUSnapFragment : Android.Support.V4.App.DialogFragment
+    public class BeforeUSnapFragment : AndroidX.Fragment.App.DialogFragment
     {
         public event EventHandler StartCameraAsync;
         public override void OnCreate(Bundle savedInstanceState)
@@ -34,7 +26,7 @@ namespace Cab360Driver.Fragments
         {
             base.OnViewCreated(view, savedInstanceState);
 
-            var btn_take = view.FindViewById<Button>(Resource.Id.intro_takephoto_btn);
+            var btn_take = view.FindViewById<MaterialButton>(Resource.Id.intro_takephoto_btn);
             btn_take.Click += Btn_take_Click;
         }
 

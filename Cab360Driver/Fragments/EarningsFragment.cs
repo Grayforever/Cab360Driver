@@ -13,7 +13,7 @@ using Android.Widget;
 
 namespace Cab360Driver.Fragments
 {
-    public class EarningsFragment : Android.Support.V4.App.Fragment
+    public class EarningsFragment : AndroidX.Fragment.App.Fragment
     {
         public override void OnCreate(Bundle savedInstanceState)
         {

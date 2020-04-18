@@ -2,17 +2,18 @@
 using Android.OS;
 using Android.Views;
 using Android.Widget;
+using Google.Android.Material.Button;
 using Refractored.Controls;
 using System;
 
 namespace Cab360Driver.Fragments
 {
-    public class PicDisplayFragment : Android.Support.V4.App.DialogFragment
+    public class PicDisplayFragment : AndroidX.Fragment.App.DialogFragment
     {
         public static Bitmap _bitmap;
         public event EventHandler RetakePic;
         public event EventHandler<HasImageEventArgs> SavePic;
-        //private ImageButton backBtn;
+        private ImageButton backBtn;
 
         public class HasImageEventArgs : EventArgs
         {
@@ -42,11 +43,11 @@ namespace Cab360Driver.Fragments
             base.OnViewCreated(view, savedInstanceState);
             var profileImage = view.FindViewById<CircleImageView>(Resource.Id.preview_iv);
 
-            //backBtn = view.FindViewById<ImageButton>(Resource.Id.back_btn);
-            //backBtn.Click += BackBtn_Click;
+            backBtn = view.FindViewById<ImageButton>(Resource.Id.back_btn);
+            backBtn.Click += BackBtn_Click;
 
-            var retakeBtn = view.FindViewById<Button>(Resource.Id.prev_retake_btn);
-            var saveBtn = view.FindViewById<Button>(Resource.Id.prev_save_btn);
+            var retakeBtn = view.FindViewById<MaterialButton>(Resource.Id.prev_retake_btn);
+            var saveBtn = view.FindViewById<MaterialButton>(Resource.Id.prev_save_btn);
             retakeBtn.Click += RetakeBtn_Click;
             saveBtn.Click += SaveBtn_Click;
 
@@ -62,12 +63,12 @@ namespace Cab360Driver.Fragments
 
         }
 
-        //private void BackBtn_Click(object sender, EventArgs e)
-        //{
-        //    RetakePic = null;
-        //    SavePic = null;
-        //    Dismiss();
-        //}
+        private void BackBtn_Click(object sender, EventArgs e)
+        {
+            RetakePic = null;
+            SavePic = null;
+            Dismiss();
+        }
 
         private void RetakeBtn_Click(object sender, EventArgs e)
         {

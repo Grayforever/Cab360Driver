@@ -3,8 +3,7 @@
   <item android:state_enabled="false">
     <shape android:shape="rectangle">
       <corners android:radius="10dp"/>
-      <solid android:color="#e0e0e0"/>
-      <stroke android:color="#e0e0e0" android:width="2dp"/>
+      <solid android:color="@color/mtrl_btn_bg_color_disabled"/>
     </shape>
   </item>
 
@@ -13,7 +12,6 @@
     <shape android:shape="rectangle">
       <corners android:radius="10dp"/>
       <solid android:color="@color/colorAccent"/>
-      <stroke android:color="@color/colorAccent" android:width="2dp"/>
     </shape>
   </item>
 
@@ -21,8 +19,7 @@
   <item android:state_pressed="true">
     <shape android:shape="rectangle">
       <corners android:radius="10dp"/>
-      <solid android:color="@color/facebookPrimary"/>
-      <stroke android:color="@color/facebookPrimary" android:width="2dp"/>
+      <solid android:color="?android:attr/colorPrimary"/>
     </shape>
   </item>
 

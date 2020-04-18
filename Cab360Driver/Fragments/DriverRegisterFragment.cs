@@ -3,12 +3,15 @@ using Android.OS;
 using Android.Runtime;
 using Android.Text;
 using Android.Views;
-using Android.Widget;
+using AndroidX.AppCompat.Widget;
+using AndroidX.CoordinatorLayout.Widget;
 using Cab360Driver.DataModels;
 using Cab360Driver.EventListeners;
 using Cab360Driver.Helpers;
 using Firebase.Auth;
 using Firebase.Database;
+using Google.Android.Material.Button;
+using Google.Android.Material.Snackbar;
 using Google.Android.Material.TextField;
 using Java.Lang;
 using System;
@@ -16,11 +19,13 @@ using static Android.Views.View;
 
 namespace Cab360Driver.Fragments
 {
-    public class DriverRegisterFragment : Android.Support.V4.App.Fragment, IOnKeyListener, ITextWatcher
+    public class DriverRegisterFragment : AndroidX.Fragment.App.Fragment, IOnKeyListener, ITextWatcher
     {
-        private TextInputLayout FnameText, LnameText, EmailText, PhoneText, CityText, PassText, CodeText;
-        private Button SubmitBtn;
+        private TextInputLayout FnameText, LnameText, EmailText, PhoneText, PassText, CodeText;
+        private AppCompatAutoCompleteTextView CityText;
+        private MaterialButton SubmitBtn;
         private Driver DriverPersonal;
+        private CoordinatorLayout driverSignupRoot;
         private FirebaseDatabase FireDatabase;
         private FirebaseAuth FireAuth;
         private TaskCompletionListeners TaskCompletionListener = new TaskCompletionListeners();
@@ -29,6 +34,18 @@ namespace Cab360Driver.Fragments
         public class StageOnePassEventArgs : EventArgs
         {
             public Driver driver { get; set; }
+        }
+
+        public override void OnActivityCreated(Bundle savedInstanceState)
+        {
+            base.OnActivityCreated(savedInstanceState);
+
+            //var api_key = GetString(Resource.String.mapKey);
+
+            //if (!PlacesApi.IsInitialized)
+            //{
+            //    PlacesApi.Initialize(Activity, api_key);
+            //}
         }
 
         public event EventHandler<StageOnePassEventArgs> StageOnePassEvent;
@@ -50,12 +67,15 @@ namespace Cab360Driver.Fragments
         {
             base.OnViewCreated(view, savedInstanceState);
             GetControls(view);
+            
         }
 
         private void GetControls(View view)
         {
+            driverSignupRoot = view.FindViewById<CoordinatorLayout>(Resource.Id.drv_signup_root);
+
             //button
-            SubmitBtn = view.FindViewById<Button>(Resource.Id.drv_signup_sbmtbtn);
+            SubmitBtn = view.FindViewById<MaterialButton>(Resource.Id.drv_signup_sbmtbtn);
             SubmitBtn.Click += SubmitBtn_Click;
 
             //edittexts
@@ -81,9 +101,13 @@ namespace Cab360Driver.Fragments
             PassText.EditText.AddTextChangedListener(this);
             PassText.SetOnKeyListener(this);
 
-            CityText = view.FindViewById<TextInputLayout>(Resource.Id.drv_signup_city_et);
+            var names = new string[] { "Accra", "Kumasi", "Taadi" };
+            Android.Widget.ArrayAdapter arrayAdapter = new Android.Widget.ArrayAdapter<string>(Activity, Resource.Layout.support_simple_spinner_dropdown_item, names);
+
+            CityText = view.FindViewById<AppCompatAutoCompleteTextView>(Resource.Id.autocity_et);
+            CityText.Adapter = arrayAdapter;
             CityText.SetOnKeyListener(this);
-            CityText.EditText.AddTextChangedListener(this);
+            CityText.AddTextChangedListener(this);
         }
 
         private void CheckIfEmpty()
@@ -91,7 +115,7 @@ namespace Cab360Driver.Fragments
             var email = EmailText.EditText.Text;
             var fname = FnameText.EditText.Text;
             var lname = LnameText.EditText.Text;
-            var city = CityText.EditText.Text;
+            var city = CityText.Text;
             var code = CodeText.EditText.Text;
             var phone = PhoneText.EditText.Text;
             var pass = PassText.EditText.Text;
@@ -102,17 +126,18 @@ namespace Cab360Driver.Fragments
 
         private void SubmitBtn_Click(object sender, EventArgs e)
         {
-            
+            //Snackbar.Make(driverSignupRoot, "Hello world", Snackbar.LengthShort).Show(); 
+
             DriverPersonal = new Driver
             {
                 Fname = FnameText.EditText.Text,
                 Lname = LnameText.EditText.Text,
                 Phone = PhoneText.EditText.Text,
-                City = CityText.EditText.Text,
+                City = CityText.Text,
                 Code = CodeText.EditText.Text,
                 Email = EmailText.EditText.Text,
-                IsPartner = 0
-                
+                IsPartner = "0"
+
             };
 
             FireAuth.CreateUserWithEmailAndPassword(DriverPersonal.Email, PassText.EditText.Text)
@@ -126,10 +151,28 @@ namespace Cab360Driver.Fragments
 
             TaskCompletionListener.Failure += (s2, e2) =>
             {
-                Toast.MakeText(Application.Context, "Error", ToastLength.Long).Show();
+                Android.Widget.Toast.MakeText(Application.Context, "Error", Android.Widget.ToastLength.Long).Show();
             };
 
-            
+
+        }
+
+        private void StartAutoComplete()
+        {
+            //List<Place.Field> fields = new List<Place.Field>
+            //{
+            //    Place.Field.Id,
+            //    Place.Field.Name,
+            //    Place.Field.LatLng,
+            //    Place.Field.Address
+            //};
+
+            //var intent = new Autocomplete.IntentBuilder(AutocompleteActivityMode.Fullscreen, fields)
+            //    .SetCountry("GH")
+            //    .SetTypeFilter(TypeFilter.Cities)
+            //    .Build(Activity);
+
+            //StartActivityForResult(intent, 56);
         }
 
         public bool OnKey(View v, [GeneratedEnum] Keycode keyCode, KeyEvent e)

@@ -1,24 +1,19 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
-using Android.App;
-using Android.Content;
-using Android.Gms.Location;
+﻿using Android.Gms.Location;
 using Android.Gms.Maps;
 using Android.Gms.Maps.Model;
 using Android.OS;
 using Android.Runtime;
-using Android.Util;
 using Android.Views;
 using Android.Widget;
 using Cab360Driver.Helpers;
+using Google.Android.Material.FloatingActionButton;
+using System;
+using static Android.Widget.ViewSwitcher;
 using static Cab360Driver.Helpers.LocationCallbackHelper;
 
 namespace Cab360Driver.Fragments
 {
-    public class HomeFragment : Android.Support.V4.App.Fragment, IOnMapReadyCallback
+    public class HomeFragment : AndroidX.Fragment.App.Fragment, IOnMapReadyCallback, IViewFactory
     {
         public EventHandler<OnLocationCaptionEventArgs> CurrentLocation;
         public GoogleMap mainMap;
@@ -37,17 +32,19 @@ namespace Cab360Driver.Fragments
         static int DISPLACEMENT = 1; //METRES;
 
         //Layout
-        LinearLayout rideInfoLayout;
+        RelativeLayout rideInfoLayout;
 
         //TextView
         TextView riderNameText;
 
         //Button
-        ImageButton cancelTripButton;
-        ImageButton callRiderButton;
-        ImageButton navigateButton;
+        FloatingActionButton cancelTripButton;
+        FloatingActionButton callRiderButton;
+        FloatingActionButton navigateButton;
         Button tripButton;
 
+        private TextSwitcher StatusSwitcher;
+        private static string[] status = {"OFFLINE", "ONLINE"};
         //Flags
         bool tripCreated = false;
         bool driverArrived = false;
@@ -72,22 +69,42 @@ namespace Cab360Driver.Fragments
         {
             // Use this to return your custom view for this Fragment
             View view = inflater.Inflate(Resource.Layout.home, container, false);
-            SupportMapFragment mapFragment = (SupportMapFragment)ChildFragmentManager.FindFragmentById(Resource.Id.map);
+            SupportMapFragment mapFragment = ChildFragmentManager.FindFragmentById(Resource.Id.map).JavaCast<SupportMapFragment>();
             centerMarker = (ImageView)view.FindViewById(Resource.Id.centerMarker);
             mapFragment.GetMapAsync(this);
 
-            cancelTripButton = (ImageButton)view.FindViewById(Resource.Id.cancelTripButton);
-            callRiderButton = (ImageButton)view.FindViewById(Resource.Id.callRiderButton);
-            navigateButton = (ImageButton)view.FindViewById(Resource.Id.navigateButton);
+            StatusSwitcher = (TextSwitcher)view.FindViewById(Resource.Id.ts_temperature);
+            InitSwitcher();
+
+            cancelTripButton = (FloatingActionButton)view.FindViewById(Resource.Id.cancelTripButton);
+            callRiderButton = (FloatingActionButton)view.FindViewById(Resource.Id.callRiderButton);
+            navigateButton = (FloatingActionButton)view.FindViewById(Resource.Id.navigateButton);
             tripButton = (Button)view.FindViewById(Resource.Id.tripButton);
             riderNameText = (TextView)view.FindViewById(Resource.Id.riderNameText);
-            rideInfoLayout = (LinearLayout)view.FindViewById(Resource.Id.rideInfoLayout);
+            rideInfoLayout = (RelativeLayout)view.FindViewById(Resource.Id.linear_home1);
 
             tripButton.Click += TripButton_Click;
             callRiderButton.Click += CallRiderButton_Click;
             navigateButton.Click += NavigateButton_Click;
 
             return view;
+        }
+
+        void InitSwitcher()
+        {
+
+            StatusSwitcher.SetFactory(this);
+            StatusSwitcher.SetInAnimation(Activity, Resource.Animation.slide_in_right);
+            StatusSwitcher.SetOutAnimation(Activity, Resource.Animation.slide_out_left);
+            StatusSwitcher.SetCurrentText(status[0]);
+        }
+
+        public View MakeView()
+        {
+            var textOnline = new TextView(Activity);
+            textOnline.Gravity = GravityFlags.Center| GravityFlags.CenterVertical;
+            textOnline.SetTextAppearance(Resource.Style.TextAppearance_AppCompat_Subhead);
+            return textOnline;
         }
 
         void NavigateButton_Click(object sender, EventArgs e)
@@ -129,8 +146,22 @@ namespace Cab360Driver.Fragments
 
 
         public void OnMapReady(GoogleMap googleMap)
-        {
+        {  
+            try
+            {
+                bool success = googleMap.SetMapStyle(MapStyleOptions.LoadRawResourceStyle(Activity, Resource.Raw.gray_mapstyle));
+
+                if (!success)
+                {
+                    Toast.MakeText(Activity, "style passing failed", ToastLength.Short).Show();
+                }
+            }
+            catch (Exception e)
+            {
+                Toast.MakeText(Activity, e.Message, ToastLength.Short).Show();
+            }
             mainMap = googleMap;
+
         }
 
         void CreateLocationRequest()
@@ -171,12 +202,14 @@ namespace Cab360Driver.Fragments
         public void GoOnline()
         {
             centerMarker.Visibility = ViewStates.Visible;
+            StatusSwitcher.SetText(status[1]);
             StartLocationUpdates();
         }
 
         public void GoOffline()
         {
             centerMarker.Visibility = ViewStates.Invisible;
+            StatusSwitcher.SetText(status[0]);
             StopLocationUpdates();
         }
 
@@ -203,5 +236,7 @@ namespace Cab360Driver.Fragments
             mainMap.UiSettings.ZoomControlsEnabled = false;
 
         }
+
+        
     }
 }

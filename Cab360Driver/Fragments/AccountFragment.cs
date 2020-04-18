@@ -6,7 +6,7 @@ using static Android.Widget.RadioGroup;
 
 namespace Cab360Driver.Fragments
 {
-    public class AccountFragment : Android.Support.V4.App.Fragment, IOnCheckedChangeListener
+    public class AccountFragment : AndroidX.Fragment.App.Fragment, IOnCheckedChangeListener
     {
         private LinearLayout tab1;
         private LinearLayout tab2;

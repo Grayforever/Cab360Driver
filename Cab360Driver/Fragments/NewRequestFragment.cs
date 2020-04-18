@@ -1,21 +1,23 @@
 ﻿using Android.OS;
 using Android.Views;
 using Android.Widget;
+using Google.Android.Material.Button;
+using Google.Android.Material.FloatingActionButton;
 using System;
 
 namespace Cab360Driver.Fragments
 {
-    public class NewRequestFragment : Android.Support.V4.App.DialogFragment
+    public class NewRequestFragment : AndroidX.Fragment.App.DialogFragment
     {
 
         //Views
-        private Button acceptRideButton;
-        private Button rejectRideButton;
-        private TextView pickupAddressText;
-        private TextView destinationAddressText;
+        private MaterialButton acceptRideButton;
+        private FloatingActionButton rejectRideButton;
 
         string mPickupAddress;
         string mDestinationAddress;
+        string mDuration;
+        string mDistance;
 
         //Events
         public event EventHandler RideAccepted;
@@ -35,7 +37,7 @@ namespace Cab360Driver.Fragments
 
         public override View OnCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
         {
-            var view =   inflater.Inflate(Resource.Layout.newrequest_dialogue, container, false);
+            var view =   inflater.Inflate(Resource.Layout.new_ride_request_overlay, container, false);
 
             GetControls(view);
 
@@ -44,14 +46,8 @@ namespace Cab360Driver.Fragments
 
         private void GetControls(View view)
         {
-            pickupAddressText = (TextView)view.FindViewById(Resource.Id.newridePickupText);
-            destinationAddressText = (TextView)view.FindViewById(Resource.Id.newrideDestinationText);
-
-            pickupAddressText.Text = mPickupAddress;
-            destinationAddressText.Text = mDestinationAddress;
-
-            acceptRideButton = (Button)view.FindViewById(Resource.Id.ride_accept_btn);
-            rejectRideButton = (Button)view.FindViewById(Resource.Id.ride_decline_btn);
+            acceptRideButton = (MaterialButton)view.FindViewById(Resource.Id.accept_ride_btn);
+            rejectRideButton = (FloatingActionButton)view.FindViewById(Resource.Id.decline_ride_fab);
 
             acceptRideButton.Click += AcceptRideButton_Click;
             rejectRideButton.Click += RejectRideButton_Click;

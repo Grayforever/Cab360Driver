@@ -1,24 +1,24 @@
-﻿using Android.App;
-using Android.Content.Res;
+﻿using Android.Content.Res;
 using Android.Graphics;
 using Android.OS;
 using Android.Views;
 using Android.Widget;
 using AndroidX.CardView.Widget;
 using Cab360Driver.EnumsConstants;
+using Google.Android.Material.Button;
 using System;
 using static Android.Views.View;
 
 namespace Cab360Driver.Fragments
 {
-    public class DriverPartnerFragment : Android.Support.V4.App.Fragment, IOnFocusChangeListener
+    public class DriverPartnerFragment : AndroidX.Fragment.App.Fragment, IOnFocusChangeListener
     {
         private CardView CardPartner, CardDriver;
         private TextView PartnerHeaderText, PartnerDetTxt, DriverHeaderTxt, DriverDetTxt;
 
         private PartnershipEnum partnershipEnum;
 
-        private Button ContinueBtn;
+        private MaterialButton ContinueBtn;
 
         public class StageTwoEventArgs : EventArgs
         {
@@ -43,7 +43,7 @@ namespace Cab360Driver.Fragments
             GetControls(view);
 
             CardPartner.RequestFocus();
-            ChangeColorOnFocus(CardPartner, PartnerHeaderText, PartnerDetTxt);
+            ChangeColorOnFocus(PartnerHeaderText, PartnerDetTxt);
             partnershipEnum = PartnershipEnum.IsPartner;
         }
 
@@ -61,7 +61,7 @@ namespace Cab360Driver.Fragments
             PartnerHeaderText = view.FindViewById<TextView>(Resource.Id.drv_vehi_txt);
             PartnerDetTxt = view.FindViewById<TextView>(Resource.Id.drv_vehidetails_txt);
 
-            ContinueBtn = view.FindViewById<Button>(Resource.Id.drv_part_cnt_btn);
+            ContinueBtn = view.FindViewById<MaterialButton>(Resource.Id.drv_part_cnt_btn);
             ContinueBtn.Click += ContinueBtn_Click;
         }
 
@@ -74,12 +74,12 @@ namespace Cab360Driver.Fragments
                 case Resource.Id.drv_part_c1:
                     if (hasFocus == true)
                     {
-                        ChangeColorOnFocus(CardPartner, PartnerHeaderText, PartnerDetTxt);
+                        ChangeColorOnFocus(PartnerHeaderText, PartnerDetTxt);
                         partnershipEnum = PartnershipEnum.IsPartner;
                     }
                     else
                     {
-                        ChangeColorToDefault(CardPartner, PartnerHeaderText, PartnerDetTxt);
+                        ChangeColorToDefault(PartnerHeaderText, PartnerDetTxt);
                     }
 
                     break;
@@ -87,12 +87,12 @@ namespace Cab360Driver.Fragments
                 case Resource.Id.drv_part_c2:
                     if (hasFocus == true)
                     {
-                        ChangeColorOnFocus(CardDriver, DriverHeaderTxt, DriverDetTxt);
+                        ChangeColorOnFocus(DriverHeaderTxt, DriverDetTxt);
                         partnershipEnum = PartnershipEnum.IsDriver;
                     }
                     else
                     {
-                        ChangeColorToDefault(CardDriver, DriverHeaderTxt, DriverDetTxt);
+                        ChangeColorToDefault(DriverHeaderTxt, DriverDetTxt);
                     }
                     break;
 
@@ -107,16 +107,14 @@ namespace Cab360Driver.Fragments
             StageTwoPassEvent?.Invoke(this, new StageTwoEventArgs { IsPartner = (int)partnershipEnum });
         }
 
-        private void ChangeColorOnFocus(CardView card, TextView t1, TextView t2)
+        private void ChangeColorOnFocus(TextView t1, TextView t2)
         {
-            card.CardBackgroundColor = ColorStateList.ValueOf(Color.Blue);
             t1.SetTextColor(Color.White);
             t2.SetTextColor(Color.White);
         }
 
-        private void ChangeColorToDefault(CardView card, TextView t1, TextView t2)
+        private void ChangeColorToDefault(TextView t1, TextView t2)
         {
-            card.CardBackgroundColor = ColorStateList.ValueOf(Color.White);
             t1.SetTextColor(Color.Black);
             t2.SetTextColor(Color.Black);
         }

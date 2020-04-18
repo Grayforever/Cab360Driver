@@ -1,24 +1,16 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
-using Android.App;
+﻿using Android.App;
 using Android.Content;
 using Android.OS;
-using Android.Runtime;
-using Android.Support.V7.App;
 using Android.Views;
 using Android.Widget;
-using Cab360Driver.EventListeners;
+using AndroidX.AppCompat.App;
 using Cab360Driver.Helpers;
 using Firebase.Auth;
 using Firebase.Database;
-using Java.Lang;
 
 namespace Cab360Driver.Activities
 {
-    [Activity(Label = "@string/app_name", MainLauncher = true, Theme = "@style/AppTheme", ConfigurationChanges = Android.Content.PM.ConfigChanges.ScreenSize, ScreenOrientation = Android.Content.PM.ScreenOrientation.Portrait, WindowSoftInputMode = SoftInput.AdjustResize)]
+    [Activity(Label = "@string/app_name", MainLauncher = true, Theme = "@style/AppTheme", ConfigurationChanges = Android.Content.PM.ConfigChanges.ScreenSize, ScreenOrientation = Android.Content.PM.ScreenOrientation.Portrait)]
     public class SplashActivity : AppCompatActivity, IValueEventListener
     {
         private FirebaseUser firebaseUser = AppDataHelper.GetCurrentUser();
@@ -32,7 +24,7 @@ namespace Cab360Driver.Activities
 
         public void OnDataChange(DataSnapshot snapshot)
         {
-            if(snapshot.Value != null)
+            if (snapshot.Value != null)
             {
                 var stage = snapshot.Child("stage_of_registration").Value.ToString();
                 try
@@ -52,16 +44,16 @@ namespace Cab360Driver.Activities
             if(stage == "1" || stage == "2")
             {
                 var intent1 = new Intent(this, typeof(OnboardingActivity));
-                
+                intent1.AddFlags(ActivityFlags.ClearTask | ActivityFlags.ClearTop | ActivityFlags.NewTask);
                 StartActivity(intent1);
-                Finish();
+                
             }
             else
             {
                 var intent3 = new Intent(this, typeof(MainActivity));
-                
+                intent3.AddFlags(ActivityFlags.ClearTask | ActivityFlags.ClearTop | ActivityFlags.NewTask);
                 StartActivity(intent3);
-                Finish();
+                
             }
             editor.PutString("stage_before_exit", stage);
             editor.Apply();
@@ -76,17 +68,19 @@ namespace Cab360Driver.Activities
         protected override void OnResume()
         {
             base.OnResume();
-            if (firebaseUser == null)
-            {
-                var intent2 = new Intent(this, typeof(OnboardingActivity));
-                StartActivity(intent2);
-            }
-            else
-            {
-                var uid = firebaseUser.Uid;
-                CheckStatus(uid);
-            }
-            //StartActivity(typeof(MainActivity));
+            //if (firebaseUser == null)
+            //{
+            //    var intent2 = new Intent(this, typeof(OnboardingActivity));
+            //    intent2.AddFlags(ActivityFlags.ClearTask | ActivityFlags.ClearTop | ActivityFlags.NewTask);
+            //    StartActivity(intent2);
+            //}
+            //else
+            //{
+            //    var uid = firebaseUser.Uid;
+            //    CheckStatus(uid);
+            //}
+            StartActivity(typeof(MainActivity));
+            
         }
 
         private void CheckStatus(string uid)

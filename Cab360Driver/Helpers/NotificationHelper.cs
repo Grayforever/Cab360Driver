@@ -3,6 +3,7 @@ using Android.App;
 using Android.Content;
 using Android.Graphics;
 using Android.Media;
+using Java.Lang;
 
 namespace Cab360Driver.Helpers
 {
@@ -35,7 +36,7 @@ namespace Cab360Driver.Helpers
             intent.AddFlags(ActivityFlags.SingleTop);
             PendingIntent pendingIntent = PendingIntent.GetActivity(context, 0, intent, PendingIntentFlags.CancelCurrent);
 
-            Notification.Builder builder = new Notification.Builder(context)
+            Notification.Builder builder = new Notification.Builder(context, PRIMARY_CHANNEL)
                 .SetContentTitle("Uber Driver")
                 .SetSmallIcon(Resource.Drawable.ic_location)
                 .SetLargeIcon(BitmapFactory.DecodeResource(res, Resource.Mipmap.ic_launcher))
@@ -49,9 +50,9 @@ namespace Cab360Driver.Helpers
                 
         }
          
-        public void NotifyOtherVersions(Context context, Android.Content.Res.Resources res, Android.App.NotificationManager manager)
+        [Obsolete]
+        public void NotifyOtherVersions(Context context, Android.Content.Res.Resources res, NotificationManager manager)
         {
-
             Intent intent = new Intent(context, typeof(MainActivity));
             intent.AddFlags(ActivityFlags.SingleTop);
             PendingIntent pendingIntent = PendingIntent.GetActivity(context, 0, intent, PendingIntentFlags.CancelCurrent);

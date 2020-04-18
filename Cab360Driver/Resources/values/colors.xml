@@ -7,4 +7,23 @@
   <color name="facebookPrimary">#FF1870D0</color>
   <color name="colorTransparent">#43000000</color>
   <color name="colorAccentLight">#EAE8F6</color>
+  <color name="colorIvory">#FFCF66</color>
+  <color name="colorCardTint">#e0e0e0</color>
+
+  <!--white transparencies-->
+  <color name="colorTransparentWhite_95">#f2ffffff</color>
+  <color name="colorTransparentWhite_90">#e6ffffff</color>
+  <color name="colorTransparentWhite_85">#d9ffffff</color>
+  <color name="colorTransparentWhite_80">#ccffffff</color>
+  <color name="colorTransparentWhite_75">#bfffffff</color>
+  <color name="colorTransparentWhite_70">#b3ffffff</color>
+  <color name="colorTransparentWhite_65">#a6ffffff</color>
+  <color name="colorTransparentWhite_60">#99ffffff</color>
+  <color name="colorTransparentWhite_55">#8cffffff</color>
+  <color name="colorTransparentWhite_50">#80ffffff</color>
+  <color name="colorTransparentWhite_45">#73ffffff</color>
+  <color name="colorTransparentWhite_40">#66ffffff</color>
+  <color name="colorTransparentWhite_35">#59ffffff</color>
+  <color name="colorTransparentWhite_30">#4dffffff</color>
+
 </resources>

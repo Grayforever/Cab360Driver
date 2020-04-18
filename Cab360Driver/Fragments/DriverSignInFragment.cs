@@ -18,7 +18,7 @@ using static Android.Views.View;
 
 namespace Cab360Driver.Fragments
 {
-    public class DriverSignInFragment : Android.Support.V4.App.Fragment, ITextWatcher, IOnKeyListener, IOnSuccessListener, IOnFailureListener, IValueEventListener
+    public class DriverSignInFragment : AndroidX.Fragment.App.Fragment, ITextWatcher, IOnKeyListener, IOnSuccessListener, IOnFailureListener, IValueEventListener
     {
         private TextInputLayout EmailText, PassText;
         private FloatingActionButton ContinueFab;

@@ -6,12 +6,11 @@ using Android.Graphics;
 using Android.Media;
 using Android.Net;
 using Android.OS;
-using Android.Support.V4.App;
-using Android.Support.V4.Content;
-using Android.Support.V4.View;
-using Android.Support.V7.App;
 using Android.Views;
 using Android.Widget;
+using AndroidX.AppCompat.App;
+using AndroidX.Core.Content;
+using AndroidX.ViewPager.Widget;
 using Cab360Driver.Adapters;
 using Cab360Driver.BroadcastReceivers;
 using Cab360Driver.DataModels;
@@ -19,10 +18,9 @@ using Cab360Driver.EventListeners;
 using Cab360Driver.Fragments;
 using Cab360Driver.Helpers;
 using CN.Pedant.SweetAlert;
-using Com.Ittianyu.Bottomnavigationviewex;
+using Google.Android.Material.BottomNavigation;
 using Google.Android.Material.FloatingActionButton;
 using System;
-using static CN.Pedant.SweetAlert.SweetAlertDialog;
 
 namespace Cab360Driver
 {
@@ -34,7 +32,7 @@ namespace Cab360Driver
 
         //Views
         ViewPager viewpager;
-        BottomNavigationViewEx bnve;
+        BottomNavigationView bnve;
 
         //Fragments
         HomeFragment homeFragment = new HomeFragment();
@@ -170,17 +168,9 @@ namespace Cab360Driver
             fabToggleOnline = FindViewById<FloatingActionButton>(Resource.Id.fab_toggle_online);
             fabToggleOnline.Click += FabToggleOnline_Click;
 
-            bnve = (BottomNavigationViewEx)FindViewById(Resource.Id.bnve);
-            bnve.EnableItemShiftingMode(false);
-            bnve.EnableShiftingMode(false);
+            bnve = (BottomNavigationView)FindViewById(Resource.Id.bnve);
 
-            bnve.NavigationItemSelected += Bnve_NavigationItemSelected;
-
-
-            var img0 = bnve.GetIconAt(0);
-            var txt0 = bnve.GetLargeLabelAt(0);
-            img0.SetColorFilter(Color.Rgb(88, 96, 240));
-            txt0.SetTextColor(Color.Rgb(88, 96, 240));
+            bnve.NavigationItemSelected += Bnve_NavigationItemSelected1;
 
             viewpager = (ViewPager)FindViewById(Resource.Id.viewpager);
             viewpager.OffscreenPageLimit = 3;
@@ -194,6 +184,35 @@ namespace Cab360Driver
             homeFragment.Navigate += HomeFragment_Navigate;
             homeFragment.TripActionStartTrip += HomeFragment_TripActionStartTrip;
             homeFragment.TripActionEndTrip += HomeFragment_TripActionEndTrip;
+
+            
+        }
+
+        private void Bnve_NavigationItemSelected1(object sender, BottomNavigationView.NavigationItemSelectedEventArgs e)
+        {
+            var itemID = e.Item.ItemId;
+            switch (itemID)
+            {
+                case Resource.Id.action_earning:
+                    viewpager.SetCurrentItem(1, true);
+                    break;
+
+                case Resource.Id.action_home:
+                    viewpager.SetCurrentItem(0, true);
+                    break;
+
+                case Resource.Id.action_rating:
+                    viewpager.SetCurrentItem(2, true);
+                    break;
+
+                case Resource.Id.action_account:
+                    viewpager.SetCurrentItem(3, true);
+                    break;
+
+                default:
+                    return;
+
+            }
         }
 
         private void FabToggleOnline_Click(object sender, EventArgs e)
@@ -283,6 +302,9 @@ namespace Cab360Driver
 
         private void HomeFragment_Navigate(object sender, EventArgs e)
         {
+            if (newRideDetails == null)
+                return;
+
             string uriString = "";
 
             if (status == "ACCEPTED")
@@ -311,6 +333,10 @@ namespace Cab360Driver
 
         void HomeFragment_CallRider(object sender, EventArgs e)
         {
+            if (newRideDetails == null)
+                CreateNewRequestDialogue();
+                //return;
+
             var uri = Android.Net.Uri.Parse("tel:" + newRideDetails.RiderPhone);
             Intent intent = new Intent(Intent.ActionDial, uri);
             StartActivity(intent);
@@ -550,69 +576,6 @@ namespace Cab360Driver
 
             Toast.MakeText(this, "New trip was cancelled", ToastLength.Short).Show();
             availablityListener.ReActivate();
-        }
-  
-        private void Bnve_NavigationItemSelected(object sender, Android.Support.Design.Widget.BottomNavigationView.NavigationItemSelectedEventArgs e)
-        {
-            var itemID = e.Item.ItemId;
-            switch (itemID)
-            {
-                case Resource.Id.action_earning:
-                    viewpager.SetCurrentItem(1, true);
-                    BnveToAccentColor(1);
-                    break;
-
-                case Resource.Id.action_home:
-                    viewpager.SetCurrentItem(0, true);
-                    BnveToAccentColor(0);
-                    break;
-
-                case Resource.Id.action_rating:
-                    viewpager.SetCurrentItem(2, true);
-                    BnveToAccentColor(3);
-                    break;
-
-                case Resource.Id.action_account:
-                    viewpager.SetCurrentItem(3, true);
-                    BnveToAccentColor(4);
-                    break;
-
-                default:
-                    return;
-                    
-            }
-
-        }
-
-        void BnveToAccentColor(int index)
-        {
-            //Set all to gray
-            var img = bnve.GetIconAt(1);
-            var txt = bnve.GetLargeLabelAt(1);
-            img.SetColorFilter(Color.Rgb(145, 157, 170));
-            txt.SetTextColor(Color.Rgb(145, 157, 170));
-
-            var img0 = bnve.GetIconAt(0);
-            var txt0 = bnve.GetLargeLabelAt(0);
-            img0.SetColorFilter(Color.Rgb(145, 157, 170));
-            txt0.SetTextColor(Color.Rgb(145, 157, 170));
-
-            var img2 = bnve.GetIconAt(4);
-            var txt2 = bnve.GetLargeLabelAt(4);
-            img2.SetColorFilter(Color.Rgb(145, 157, 170));
-            txt2.SetTextColor(Color.Rgb(145, 157, 170));
-
-            var img3 = bnve.GetIconAt(3);
-            var txt3 = bnve.GetLargeLabelAt(3);
-            img3.SetColorFilter(Color.Rgb(145, 157, 170));
-            txt3.SetTextColor(Color.Rgb(145, 157, 170));
-
-            //Sets Accent Color
-            var imgindex = bnve.GetIconAt(index);
-            var textindex = bnve.GetLargeLabelAt(index);
-            imgindex.SetColorFilter(Color.Rgb(88, 96, 240));
-            textindex.SetTextColor(Color.Rgb(88, 96, 240));
-
         }
 
         private void SetupViewPager()

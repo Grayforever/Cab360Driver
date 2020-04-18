@@ -74,7 +74,7 @@
             android:layout_width="256dp"
             android:layout_height="256dp"
             android:id="@+id/preview_iv1"
-            android:src="@drawable/boy_new"
+            android:src="@drawable/ic_user"
             android:layout_marginStart="16dp"
             android:layout_marginEnd="16dp"
             android:layout_marginTop="16dp"
@@ -91,17 +91,19 @@
             android:background="@drawable/bg_bottomsheet_dg"
             android:elevation="4dp">
 
-            <Button
+            <com.google.android.material.button.MaterialButton
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_margin="16dp"
-                android:background="@drawable/primary_btn_bg"
-                android:textColor="@android:color/white"
                 android:text="take photo"
-                android:textSize="16sp"
                 android:textStyle="bold"
+                android:textAllCaps="true"
+                app:backgroundTint="@color/colorAccent"
+                android:textColor="@drawable/btn_txt_clr_tggl"
                 android:id="@+id/intro_takephoto_btn"
                 android:fontFamily="sans-serif-light"
+                style="@android:style/Widget.Material.Button.Colored"
+                android:textAppearance="?android:attr/textAppearanceMedium"
             />
 
         </LinearLayout>

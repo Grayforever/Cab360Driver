@@ -14,7 +14,7 @@ using Android.Widget;
 
 namespace Cab360Driver.Fragments
 {
-    public class CollectPaymentFragment : Android.Support.V4.App.DialogFragment
+    public class CollectPaymentFragment : AndroidX.Fragment.App.DialogFragment
     {
         readonly double mfares;
 

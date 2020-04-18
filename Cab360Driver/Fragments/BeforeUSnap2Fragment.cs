@@ -1,19 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
-using Android.App;
-using Android.Content;
-using Android.OS;
-using Android.Runtime;
-using Android.Util;
+﻿using Android.OS;
 using Android.Views;
 using Android.Widget;
+using System;
 
 namespace Cab360Driver.Fragments
 {
-    public class BeforeUSnap2Fragment : Android.Support.V4.App.DialogFragment
+    public class BeforeUSnap2Fragment : AndroidX.Fragment.App.DialogFragment
     {
         public event EventHandler StartLicenseCamera;
         public override void OnCreate(Bundle savedInstanceState)

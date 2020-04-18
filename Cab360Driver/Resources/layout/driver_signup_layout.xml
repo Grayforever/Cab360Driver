@@ -4,27 +4,35 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:id="@+id/drv_signup_root">
+    android:id="@+id/drv_signup_root"
+    android:background="@android:color/white">
 
-    <RelativeLayout
+    <com.google.android.material.appbar.AppBarLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="wrap_content"
+        android:id="@+id/appbar1"
+        app:liftOnScroll="true">
 
         <androidx.appcompat.widget.Toolbar
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/drv_signup_toolbar"
-            android:elevation="4dp"
             android:background="@android:color/white"
             app:navigationIcon="@drawable/quantum_ic_arrow_back_grey600_24"
             style="@style/Widget.MaterialComponents.Toolbar"
         />
 
+    </com.google.android.material.appbar.AppBarLayout>
+
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:orientation="vertical"
-            android:layout_below="@+id/drv_signup_toolbar"
             android:id="@+id/drv_signup_linear1"
             android:layout_marginStart="16dp"
             android:layout_marginEnd="16dp"
@@ -50,7 +58,10 @@
                     <com.google.android.material.textfield.TextInputEditText
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:id="@+id/drv_signup_fname_et1"   
                         android:inputType="textPersonName"
+                        android:imeOptions="actionNext"
+                        android:nextFocusForward="@+id/drv_signup_lname_et1"
                         android:fontFamily="sans-serif-light"
                     />
                 </com.google.android.material.textfield.TextInputLayout>
@@ -66,6 +77,7 @@
                     <com.google.android.material.textfield.TextInputEditText
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:id="@+id/drv_signup_lname_et1"
                         android:inputType="textPersonName"
                         android:fontFamily="sans-serif-light"
                     />
@@ -88,21 +100,49 @@
                 />
             </com.google.android.material.textfield.TextInputLayout>
 
-            <com.google.android.material.textfield.TextInputLayout
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:id="@+id/drv_signup_phone_et"
-                android:layout_marginBottom="8dp"
-                android:hint="Phone number"
-                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+                android:orientation="horizontal"
+                android:layout_marginBottom="8dp">
 
-                <com.google.android.material.textfield.TextInputEditText
-                    android:layout_width="match_parent"
+                <com.google.android.material.textfield.TextInputLayout
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:inputType="phone"
-                    android:fontFamily="sans-serif-light"
-                />
-            </com.google.android.material.textfield.TextInputLayout>
+                    android:hint="+233"
+                    android:layout_weight="0.3"
+                    android:layout_marginEnd="4dp"
+                    android:id="@+id/drv_signup_dialcode_et"
+                   
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:inputType="phone"
+                        android:fontFamily="sans-serif-light"
+                    />
+
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="0.7"
+                    android:id="@+id/drv_signup_phone_et"
+                    android:layout_marginStart="4dp"
+                    android:hint="Phone number"
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:inputType="phone"
+                        android:fontFamily="sans-serif-light"
+                    />
+                </com.google.android.material.textfield.TextInputLayout>
+            </LinearLayout>
+                
 
             <com.google.android.material.textfield.TextInputLayout
                 android:layout_width="match_parent"
@@ -126,15 +166,21 @@
                 android:layout_height="wrap_content"
                 android:id="@+id/drv_signup_city_et"
                 android:layout_marginBottom="8dp"
-                android:hint="City"
-                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense">
 
-                <com.google.android.material.textfield.TextInputEditText
+                <Cab360Driver.CustomAutoCompleteTextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:inputType="text"
+                    android:id="@+id/autocity_et"
+                    android:nextFocusForward="@+id/drv_signup_code_et1"
+                    android:singleLine="true"
                     android:fontFamily="sans-serif-light"
-                    
+                    android:inputType="textAutoComplete"
+                    android:imeOptions="actionNext"
+                    android:lines="1"
+                    android:paddingStart="12dp"
+                    android:paddingEnd="8dp"
+                    android:hint="City"
                 />
             </com.google.android.material.textfield.TextInputLayout>
 
@@ -143,34 +189,43 @@
                 android:layout_height="wrap_content"
                 android:id="@+id/drv_signup_code_et"
                 android:layout_marginBottom="8dp"
+                app:helperText="Optional"
+                app:helperTextTextAppearance="?android:attr/textAppearanceSmall"
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:id="@+id/drv_signup_code_et1"
                     android:hint="Invite code"
                     android:inputType="number"
+                    android:imeOptions="actionDone"
                     android:fontFamily="sans-serif-light"
                 />
             </com.google.android.material.textfield.TextInputLayout>
-
-
-            <Button
+ 
+            <com.google.android.material.button.MaterialButton
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:id="@+id/drv_signup_sbmtbtn"
-                android:background="@drawable/primary_btn_bg"
                 android:text="Continue"
-                android:textColor="@android:color/white"
-                android:textSize="16sp"
+                android:textColor="@drawable/btn_txt_clr_tggl"
                 android:textStyle="bold"
                 android:layout_marginTop="8dp"
                 android:layout_marginBottom="8dp"
+                android:layout_marginStart="2dp"
+                android:layout_marginEnd="2dp"
                 android:enabled="false"
                 android:fontFamily="sans-serif-light"
+                android:textAllCaps="true"
+                style="@android:style/Widget.Material.Button.Colored"
+                android:textAppearance="?android:attr/textAppearanceMedium"
             />
+
         </LinearLayout>
 
-    </RelativeLayout>
+    </androidx.core.widget.NestedScrollView>
+
+    
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

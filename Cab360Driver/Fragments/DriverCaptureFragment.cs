@@ -3,9 +3,7 @@ using Android.App;
 using Android.Content.Res;
 using Android.Gms.Tasks;
 using Android.Graphics;
-using Android.Graphics.Drawables;
 using Android.OS;
-using Android.Runtime;
 using Android.Views;
 using Android.Widget;
 using AndroidX.CardView.Widget;
@@ -16,11 +14,10 @@ using Firebase.ML.Vision.Face;
 using Firebase.Storage;
 using Plugin.Media;
 using System;
-using static Firebase.Storage.UploadTask;
 
 namespace Cab360Driver.Fragments
 {
-    public class DriverCaptureFragment : Android.Support.V4.App.Fragment, IOnSuccessListener, IOnFailureListener
+    public class DriverCaptureFragment : AndroidX.Fragment.App.Fragment, IOnSuccessListener, IOnFailureListener
     {
         private CardView Card1, Card2, Card3;
         private ImageView NxtImg1, NxtImg2, NxtImg3;
@@ -31,6 +28,7 @@ namespace Cab360Driver.Fragments
         private int whichIsCaptured = 0;
 
         private bool IsAllCaptured = false;
+        bool _isCamLoaded = false;
 
         public const int RequestCode = 100;
         public const int RequestPermission = 200;
@@ -44,7 +42,7 @@ namespace Cab360Driver.Fragments
 
         public class StageThreeEventArgs : EventArgs
         {
-            public bool _isAllCaptured { get; set; }
+            public bool isAllCaptured { get; set; }
  
         }
 
@@ -63,24 +61,27 @@ namespace Cab360Driver.Fragments
 
                 
             }
+            FireStorage = FirebaseStorage.Instance;
+            StoreRef = FireStorage.GetReferenceFromUrl("gs://taxiproject-185a4.appspot.com");
         }
         public override void OnCreate(Bundle savedInstanceState)
         {
             base.OnCreate(savedInstanceState);
             // Create your fragment here
-            FireStorage = FirebaseStorage.Instance;
-            StoreRef = FireStorage.GetReferenceFromUrl("gs://taxiproject-185a4.appspot.com");
+            
         }
 
         public override View OnCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
         {
-            return inflater.Inflate(Resource.Layout.driver_capture_layout, container, false);
+            var view = inflater.Inflate(Resource.Layout.driver_capture_layout, container, false);
+            GetControls(view);
+            return view;
         }
 
         public override void OnViewCreated(View view, Bundle savedInstanceState)
         {
             base.OnViewCreated(view, savedInstanceState);
-            GetControls(view);
+            
         }
 
         private void GetControls(View view)
@@ -127,15 +128,15 @@ namespace Cab360Driver.Fragments
         private void Card1_Click(object sender, EventArgs e)
         {
             whichIsCaptured = 1;
-            BeginProfileCapture();
+            //BeginProfileCapture();
 
         }
 
         private void BeginLicenseCapture()
         {
-            progressBar.Visibility = ViewStates.Visible;
-            LicenseIntroDialog.Show(FragmentManager, "showLicenceCapture");
-            LicenseIntroDialog.StartLicenseCamera += LicenseIntroDialog_StartLicenseCamera;
+            //progressBar.Visibility = ViewStates.Visible;
+            //LicenseIntroDialog.Show(FragmentManager, "showLicenceCapture");
+            //LicenseIntroDialog.StartLicenseCamera += LicenseIntroDialog_StartLicenseCamera;
         }
 
         private void LicenseIntroDialog_StartLicenseCamera(object sender, EventArgs e)
@@ -176,6 +177,10 @@ namespace Cab360Driver.Fragments
 
         private async void TakePhoto()
         {
+            if (_isCamLoaded == true)
+                return;
+
+            _isCamLoaded = true;
             await CrossMedia.Current.Initialize();
             var file = await CrossMedia.Current.TakePhotoAsync(new Plugin.Media.Abstractions.StoreCameraMediaOptions
             {
@@ -215,7 +220,7 @@ namespace Cab360Driver.Fragments
                 uploadTask.AddOnSuccessListener(this);
                 uploadTask.AddOnFailureListener(this);
 
-                RunDetector(bitmapProfile);
+                //RunDetector(bitmapProfile);
                 
             }
             else
@@ -240,13 +245,13 @@ namespace Cab360Driver.Fragments
 
         public void OnSuccess(Java.Lang.Object result)
         {
-            var face = result.JavaCast<TaskSnapshot>();
+            UpdateUiOnCpture(1);
 
         }
 
         public void OnFailure(Java.Lang.Exception e)
         {
-            
+            UpdateUiOnError(1);
         }
 
         private void PicDisplayFragment_RetakePic(object sender, EventArgs e)

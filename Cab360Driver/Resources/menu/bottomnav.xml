@@ -3,25 +3,26 @@
 
   <item android:id="@+id/action_home"
         android:title="Home"
-        android:icon="@drawable/ic_xhome"
+        android:icon="@drawable/ic_home"
         />
 
   <item android:id="@+id/action_earning"
         android:title="Earnings"
-        android:icon ="@drawable/ic_xpay"
+        android:icon ="@drawable/ic_money"
         />
 
   <item android:id="@+id/action_empty"
         android:title=""
+        android:enabled="false"
         />
 
   <item android:id="@+id/action_rating"
         android:title="Rating"
-        android:icon="@drawable/ic_xstar"
+        android:icon="@drawable/ic_star"
         />
   <item android:id="@+id/action_account"
         android:title="Account"
-        android:icon="@drawable/ic_xuser"
+        android:icon="@drawable/ic_person"
         />
   
   

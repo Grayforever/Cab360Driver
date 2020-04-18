@@ -1,0 +1,189 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+	xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:layout_gravity="center"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:background="@drawable/circularbordersolid">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="New Ride Request"
+            android:layout_gravity="center"
+            android:fontFamily="sans-serif-light"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+        />
+    </FrameLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="174dp"
+        android:orientation="vertical"
+        android:background="@drawable/bg_bottomsheet_dg"
+        android:layout_gravity="bottom"
+        android:id="@+id/ride_req_ovly"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="26dp"
+        android:paddingTop="8dp"
+        android:visibility="visible">
+
+        <ImageView
+            android:layout_width="16dp"
+            android:layout_height="16dp"
+            android:src="@drawable/redball"
+            android:id="@+id/redball"
+            android:layout_marginStart="24dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginTop="4dp"
+        />
+
+        <View
+            android:layout_width="1dp"
+            android:layout_height="24dp"
+            android:background="@android:color/darker_gray"
+            android:layout_below="@+id/redball"
+            android:layout_marginStart="32dp"
+            android:id="@+id/separator"
+            android:layout_marginTop="2dp"
+            android:layout_marginBottom="2dp"
+        />
+
+        <ImageView
+            android:layout_width="16dp"
+            android:layout_height="16dp"
+            android:src="@drawable/greenball"
+            android:id="@+id/greenball"
+            android:layout_marginStart="24dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginTop="2dp"
+            android:layout_below="@+id/separator"
+        />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/from_txt"
+            android:layout_toEndOf="@+id/redball"
+            android:text="Koforidua"
+            android:textSize="16sp"
+            android:layout_marginEnd="16dp"
+            android:fontFamily="sans-serif-light"
+            android:ellipsize="end"
+            android:maxLines="1"
+        />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/to_txt"
+            android:layout_toEndOf="@+id/greenball"
+            android:layout_below="@+id/separator"
+            android:text="Accra"
+            android:textSize="16sp"
+            android:layout_marginEnd="16dp"
+            android:fontFamily="sans-serif-light"
+            android:ellipsize="end"
+            android:maxLines="1"
+        />
+        
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@android:color/darker_gray"
+            android:id="@+id/separator2"
+            android:layout_marginTop="4dp"
+            android:layout_marginBottom="2dp"
+            android:layout_below="@+id/greenball"
+        />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/separator2"
+            android:id="@+id/distance_txt"
+            android:text="5 km"
+            android:textStyle="bold"
+            android:layout_marginStart="22dp"
+            android:drawableLeft="@drawable/ic_distance"
+            android:drawablePadding="4dp"
+            android:layout_alignParentStart="true"
+            android:fontFamily="sans-serif-light"
+            android:gravity="center"
+            android:layout_marginTop="4dp"
+        />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/duration_txt"
+            android:text="24 mins"
+            android:layout_marginEnd="16dp"
+            android:textStyle="bold"
+            android:drawableLeft="@drawable/ic_duration"
+            android:layout_alignParentEnd="true"
+            android:layout_below="@+id/separator2"
+            android:gravity="center"
+            android:drawablePadding="4dp"
+            android:layout_marginTop="4dp"
+        />
+       
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@android:color/darker_gray"
+            android:id="@+id/separator3"
+            android:layout_marginTop="4dp"
+            android:layout_above="@+id/nre_linear"
+        />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:id="@+id/nre_linear"
+            android:layout_alignParentBottom="true"
+            android:background="@color/colorDisabled">
+
+            <com.google.android.material.floatingactionbutton.FloatingActionButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/decline_ride_fab"
+                style="@style/Widget.MaterialComponents.FloatingActionButton"
+                app:fabSize="mini"
+                app:backgroundTint="@android:color/holo_red_light"
+                android:layout_marginStart="16dp"
+                android:layout_marginEnd="8dp"
+                android:layout_gravity="center"
+                android:src="@drawable/abc_ic_clear_material"
+                android:tint="@color/colorPrimary"
+            />
+
+            <com.google.android.material.button.MaterialButton
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/accept_ride_btn"
+                style="@android:style/Widget.Material.Button"
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:textColor="@color/colorPrimary"
+                android:text="Accept"
+                android:textStyle="bold"
+                android:fontFamily="sans-serif-light"
+                android:textAllCaps="true"
+                app:rippleColor="@color/colorAccent"
+                app:icon="@drawable/ic_mtrl_chip_checked_black"
+                android:layout_marginEnd="16dp"
+            />
+            
+        </LinearLayout>
+
+    </RelativeLayout>
+
+</FrameLayout>

@@ -1,21 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
-using Android.App;
+﻿using Android.App;
 using Android.Content;
-using Android.OS;
-using Android.Runtime;
-using Android.Views;
-using Android.Widget;
 using Firebase;
 using Firebase.Auth;
 using Firebase.Database;
 
 namespace Cab360Driver.Helpers
 {
-   public class AppDataHelper
+    public class AppDataHelper
     {
         static ISharedPreferences pref = Application.Context.GetSharedPreferences("userinfo", FileCreationMode.Private);
         static ISharedPreferences prefs = Application.Context.GetSharedPreferences("appSession", FileCreationMode.Private);

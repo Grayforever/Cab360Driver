@@ -5,19 +5,20 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:id="@+id/driver_onboarding_root"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:background="@android:color/white">
     
     <FrameLayout            
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="4"
+        android:layout_weight="3"
         android:background="@color/colorAccent">
     </FrameLayout>
 
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="1"
+        android:layout_weight="2"
         android:background="@android:color/white"
         android:padding="8dp">
 
@@ -35,38 +36,44 @@
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="56dp"
+            android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
             android:orientation="horizontal"
             android:id="@+id/onbd_linear1"
             android:layout_alignParentBottom="true">
 
-            <Button
+            <com.google.android.material.button.MaterialButton
                 android:layout_width="0dp"
-                android:layout_height="match_parent"
+                android:layout_height="wrap_content"
                 android:id="@+id/onbd_signin_btn"
                 android:text="sign in"
                 android:layout_weight="1"
-                android:background="@drawable/outline_btn_bg"
-                android:textSize="16sp"
+                android:textAllCaps="true"
                 android:textColor="@color/colorAccent"
                 android:textStyle="bold"
                 android:layout_margin="8dp"
                 android:fontFamily="sans-serif-light"
+                app:strokeWidth="2dp"
+                app:rippleColor="@color/colorAccent"
+                android:padding="10dp"
+                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                android:textAppearance="?android:attr/textAppearanceMedium"
             />
 
-            <Button
+            <com.google.android.material.button.MaterialButton
                 android:layout_width="0dp"
-                android:layout_height="match_parent"
+                android:layout_height="wrap_content"
                 android:id="@+id/onbd_signup_btn"
                 android:text="Sign up"
                 android:layout_weight="1"
-                android:background="@drawable/primary_btn_bg"
-                android:textSize="16sp"
-                android:textColor="@android:color/white"
+                android:textAllCaps="true"
+                android:textColor="@drawable/btn_txt_clr_tggl"
                 android:textStyle="bold"
                 android:layout_margin="8dp"
                 android:fontFamily="sans-serif-light"
+                app:rippleColor="@color/colorPrimary"
+                style="@android:style/Widget.Material.Button.Colored"
+                android:textAppearance="?android:attr/textAppearanceMedium"
                 
             />
 
