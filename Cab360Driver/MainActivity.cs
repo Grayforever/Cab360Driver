@@ -11,8 +11,8 @@ using Android.Widget;
 using AndroidX.AppCompat.App;
 using AndroidX.Core.Content;
 using AndroidX.ViewPager.Widget;
+using Cab360Driver.Activities;
 using Cab360Driver.Adapters;
-using Cab360Driver.BroadcastReceivers;
 using Cab360Driver.DataModels;
 using Cab360Driver.EventListeners;
 using Cab360Driver.Fragments;
@@ -20,12 +20,14 @@ using Cab360Driver.Helpers;
 using CN.Pedant.SweetAlert;
 using Google.Android.Material.BottomNavigation;
 using Google.Android.Material.FloatingActionButton;
+using Java.Lang;
+using Java.Net;
 using System;
 
 namespace Cab360Driver
 {
     [Activity(Label = "@string/app_name", Theme = "@style/AppTheme", MainLauncher = false, ConfigurationChanges = Android.Content.PM.ConfigChanges.ScreenSize, ScreenOrientation = Android.Content.PM.ScreenOrientation.Portrait, WindowSoftInputMode = SoftInput.AdjustResize)]
-    public class MainActivity : AppCompatActivity, ConnectivityReceiver.IConnectivityReceiverListener
+    public class MainActivity : AppCompatActivity
     {
         //Buttons
         private FloatingActionButton fabToggleOnline;
@@ -56,6 +58,7 @@ namespace Cab360Driver
         NewTripEventListener newTripEventListener;
         WarningEvent1 warningEvent = new WarningEvent1();
         WarningEvent2 startTripEvent = new WarningEvent2();
+        private NetStateReceiver netState = new NetStateReceiver();
 
         //dialogs
         SweetAlertDialog loadingDialog;
@@ -94,15 +97,9 @@ namespace Cab360Driver
 
             ConnectViews();
             CheckSpecialPermission();
-            CheckNetworkConnection();
+
             profileEvent.Create();
             
-        }
-
-        public void CheckNetworkConnection()
-        {
-            bool IsConnected = ConnectivityReceiver.IsConnected(this);
-            ShowOfflineDialog(IsConnected);
         }
 
         private void ShowOfflineDialog(bool IsConnected)
@@ -334,8 +331,7 @@ namespace Cab360Driver
         void HomeFragment_CallRider(object sender, EventArgs e)
         {
             if (newRideDetails == null)
-                CreateNewRequestDialogue();
-                //return;
+                return;
 
             var uri = Android.Net.Uri.Parse("tel:" + newRideDetails.RiderPhone);
             Intent intent = new Intent(Intent.ActionDial, uri);
@@ -606,10 +602,35 @@ namespace Cab360Driver
             return permissionGranted;
         }
 
+        public static bool IsOnline1()
+        {
+            try
+            {
+                Runtime runtime = Runtime.GetRuntime();
+                Java.Lang.Process IpProcess = runtime.Exec("/system/bin/ping -c 1 8.8.8.8");
+                int exitValue = IpProcess.WaitFor();
+                return (exitValue == 0);
+            }
+            catch (InvalidOperationException ioe)
+            {
+
+                throw;
+            }
+            catch(InterruptedException ie)
+            {
+                
+            }
+            return false;
+        }
+
+        
+
         protected override void OnPause()
         {
-            isBackground = true;
+            
             base.OnPause();
+            isBackground = true;
+            UnregisterReceiver(netState);
         }
 
         protected override void OnResume()
@@ -622,20 +643,11 @@ namespace Cab360Driver
             }
 
             IntentFilter intentFilter = new IntentFilter();
-            intentFilter.AddAction(ConnectivityManager.ExtraCaptivePortal);
-            ConnectivityReceiver connectivityReceiver = new ConnectivityReceiver();
-            RegisterReceiver(connectivityReceiver, intentFilter);
+            intentFilter.AddAction("android.net.conn.CONNECIVITY_CHANGE");
+            RegisterReceiver(netState, intentFilter);
             base.OnResume();
         }
 
-        public void IOnNetworkConnectionChanged(bool isConnected)
-        {
-            if (!isConnected)
-            {
-                ShowOfflineDialog(isConnected);
-            }
-
-
-        }
+        
     }
 }

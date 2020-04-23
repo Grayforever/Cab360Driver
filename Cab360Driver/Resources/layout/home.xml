@@ -74,7 +74,7 @@
             android:layout_marginBottom="26dp"
             android:elevation="2dp"
             android:paddingTop="4dp"
-            android:visibility="visible">
+            android:visibility="gone">
 
             <Refractored.Controls.CircleImageView
                 android:layout_width="56dp"
@@ -152,7 +152,8 @@
         app:layout_anchor="@+id/linear_home1"
         app:layout_anchorGravity="top"
         android:layout_marginEnd="16dp"
-        android:layout_marginStart="16dp">
+        android:layout_marginStart="16dp"
+        android:visibility="gone">
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/cancelTripButton"

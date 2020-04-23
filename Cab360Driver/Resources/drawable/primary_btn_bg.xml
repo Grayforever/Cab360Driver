@@ -3,7 +3,7 @@
   <item android:state_enabled="false">
     <shape android:shape="rectangle">
       <corners android:radius="10dp"/>
-      <solid android:color="@color/mtrl_btn_bg_color_disabled"/>
+      <solid android:color="@color/colorCardTint"/>
     </shape>
   </item>
 

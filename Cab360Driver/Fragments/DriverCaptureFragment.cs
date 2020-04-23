@@ -1,23 +1,22 @@
 ﻿using Android;
 using Android.App;
 using Android.Content.Res;
-using Android.Gms.Tasks;
 using Android.Graphics;
 using Android.OS;
 using Android.Views;
 using Android.Widget;
 using AndroidX.CardView.Widget;
 using Cab360Driver.Helpers;
-using Firebase.ML.Vision;
-using Firebase.ML.Vision.Common;
-using Firebase.ML.Vision.Face;
 using Firebase.Storage;
 using Plugin.Media;
+using Plugin.Media.Abstractions;
 using System;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace Cab360Driver.Fragments
 {
-    public class DriverCaptureFragment : AndroidX.Fragment.App.Fragment, IOnSuccessListener, IOnFailureListener
+    public class DriverCaptureFragment : AndroidX.Fragment.App.Fragment, Android.Gms.Tasks.IOnSuccessListener, Android.Gms.Tasks.IOnFailureListener
     {
         private CardView Card1, Card2, Card3;
         private ImageView NxtImg1, NxtImg2, NxtImg3;
@@ -25,10 +24,10 @@ namespace Cab360Driver.Fragments
         private TextView HeaderTxt1, HeaderTxt2, HeaderTxt3, MessageTxt1, MessageTxt2, MessageTxt3;
         private ProgressBar progressBar;
 
-        private int whichIsCaptured = 0;
-
-        private bool IsAllCaptured = false;
+        private int whichIsCaptured;
         bool _isCamLoaded = false;
+
+        public event EventHandler OnProfileCaptured;
 
         public const int RequestCode = 100;
         public const int RequestPermission = 200;
@@ -39,14 +38,6 @@ namespace Cab360Driver.Fragments
         private StorageReference StoreRef;
         private FirebaseStorage FireStorage;
         private byte[] imageArray;
-
-        public class StageThreeEventArgs : EventArgs
-        {
-            public bool isAllCaptured { get; set; }
- 
-        }
-
-        public event EventHandler<StageThreeEventArgs> StageThreePassEvent;
 
         public override void OnActivityCreated(Bundle savedInstanceState)
         {
@@ -115,20 +106,20 @@ namespace Cab360Driver.Fragments
         private void Card3_Click(object sender, EventArgs e)
         {
             whichIsCaptured = 3;
-            BeginLicenseCapture();
+            //BeginLicenseCapture();
         }
 
         private void Card2_Click(object sender, EventArgs e)
         {
             
             whichIsCaptured = 2;
-            BeginLicenseCapture();
+            //BeginLicenseCapture();
         }
 
         private void Card1_Click(object sender, EventArgs e)
         {
             whichIsCaptured = 1;
-            //BeginProfileCapture();
+            BeginProfileCapture();
 
         }
 
@@ -156,50 +147,53 @@ namespace Cab360Driver.Fragments
             CheckAndStartCamera();
         }
 
-        private void CheckAndStartCamera()
+        private async void CheckAndStartCamera()
         {
-            try
+            if (Android.Support.V4.Content.ContextCompat.CheckSelfPermission(Application.Context, Manifest.Permission.Camera) == Android.Content.PM.Permission.Granted)
             {
-                if (Android.Support.V4.Content.ContextCompat.CheckSelfPermission(Application.Context, Manifest.Permission.Camera) == Android.Content.PM.Permission.Granted)
+                CancellationTokenSource cts = new CancellationTokenSource();
+                try
                 {
-                    TakePhoto();
+                    int bytecount = await TakePhotoAsync(cts.Token);
+                    if (bytecount != 0)
+                        cts.Cancel();
                 }
-                else
+                catch (System.OperationCanceledException oce)
                 {
 
                 }
+                catch(Exception e)
+                {
+
+                }
+                cts = null;
             }
-            catch (InvalidOperationException)
+            else
             {
 
             }
         }
 
-        private async void TakePhoto()
+        private async Task<int> TakePhotoAsync(CancellationToken ct)
         {
-            if (_isCamLoaded == true)
-                return;
-
-            _isCamLoaded = true;
             await CrossMedia.Current.Initialize();
-            var file = await CrossMedia.Current.TakePhotoAsync(new Plugin.Media.Abstractions.StoreCameraMediaOptions
+            var file = await CrossMedia.Current.TakePhotoAsync(new StoreCameraMediaOptions
             {
-                PhotoSize = Plugin.Media.Abstractions.PhotoSize.Medium,
+                PhotoSize = PhotoSize.Medium,
                 CompressionQuality = 60,
                 Name = "myimage.jpg",
                 Directory = "sample",
-            });
+            }, ct);
 
             if (file == null)
             {
                 progressBar.Visibility = ViewStates.Invisible;
-                return;
+                return 0;
             }
                 
-            imageArray = System.IO.File.ReadAllBytes(file.Path);
+            imageArray = await System.IO.File.ReadAllBytesAsync(file.Path, ct);
 
-            bitmapProfile = BitmapFactory.DecodeByteArray(imageArray, 0, imageArray.Length);
-
+            bitmapProfile = await BitmapFactory.DecodeByteArrayAsync(imageArray, 0, imageArray.Length);
 
             picDisplayFragment = new PicDisplayFragment(bitmapProfile);
             picDisplayFragment.Cancelable = false;
@@ -207,8 +201,8 @@ namespace Cab360Driver.Fragments
             picDisplayFragment.Show(trans, "Pic_display_fragment");
             picDisplayFragment.SavePic += PicDisplayFragment_SavePic;
             picDisplayFragment.RetakePic += PicDisplayFragment_RetakePic;
-            
-            
+
+            return bitmapProfile.ByteCount;
         }
 
         private void PicDisplayFragment_SavePic(object sender, PicDisplayFragment.HasImageEventArgs e)
@@ -219,8 +213,6 @@ namespace Cab360Driver.Fragments
                 UploadTask uploadTask = image.PutBytes(imageArray);
                 uploadTask.AddOnSuccessListener(this);
                 uploadTask.AddOnFailureListener(this);
-
-                //RunDetector(bitmapProfile);
                 
             }
             else
@@ -229,24 +221,11 @@ namespace Cab360Driver.Fragments
             }
         }
 
-        private void RunDetector(Bitmap bitmap)
-        {
-            var image = FirebaseVisionImage.FromBitmap(bitmap);
-
-            var options = new FirebaseVisionFaceDetectorOptions.Builder()
-                .Build();
-
-            var detector = FirebaseVision.Instance.GetVisionFaceDetector(options);
-
-            detector.DetectInImage(image)
-                .AddOnSuccessListener(this)
-                .AddOnFailureListener(this);
-        }
-
         public void OnSuccess(Java.Lang.Object result)
         {
             UpdateUiOnCpture(1);
 
+            OnProfileCaptured.Invoke(this, new EventArgs());
         }
 
         public void OnFailure(Java.Lang.Exception e)

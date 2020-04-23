@@ -59,7 +59,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:id="@+id/drv_signup_fname_et1"   
-                        android:inputType="textPersonName"
+                        android:inputType="textCapWords"
                         android:imeOptions="actionNext"
                         android:nextFocusForward="@+id/drv_signup_lname_et1"
                         android:fontFamily="sans-serif-light"
@@ -78,7 +78,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:id="@+id/drv_signup_lname_et1"
-                        android:inputType="textPersonName"
+                        android:inputType="textCapWords"
                         android:fontFamily="sans-serif-light"
                     />
                 </com.google.android.material.textfield.TextInputLayout>

@@ -11,7 +11,7 @@ namespace Cab360Driver.EventListeners
     public class ProfileEventListener : Java.Lang.Object, IValueEventListener
     {
 
-        private ISharedPreferences preferences = Application.Context.GetSharedPreferences("userinfo", FileCreationMode.Private);
+        private readonly ISharedPreferences preferences = Application.Context.GetSharedPreferences("userinfo", FileCreationMode.MultiProcess);
         private ISharedPreferencesEditor editor;
         private Driver DriverPersonal;
         public event EventHandler UserNotFoundEvent;

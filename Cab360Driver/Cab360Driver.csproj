@@ -34,7 +34,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <AndroidUseSharedRuntime>True</AndroidUseSharedRuntime>
+    <AndroidUseSharedRuntime>true</AndroidUseSharedRuntime>
     <AndroidLinkMode>None</AndroidLinkMode>
     <EmbedAssembliesIntoApk>false</EmbedAssembliesIntoApk>
     <AotAssemblies>false</AotAssemblies>
@@ -45,6 +45,7 @@
     <AndroidSupportedAbis />
     <AndroidDexTool>d8</AndroidDexTool>
     <AndroidEnableSGenConcurrent>true</AndroidEnableSGenConcurrent>
+    <AndroidKeyStore>false</AndroidKeyStore>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugSymbols>True</DebugSymbols>
@@ -58,6 +59,10 @@
     <AndroidUseSharedRuntime>False</AndroidUseSharedRuntime>
     <AndroidLinkMode>SdkOnly</AndroidLinkMode>
     <EmbedAssembliesIntoApk>True</EmbedAssembliesIntoApk>
+    <AotAssemblies>false</AotAssemblies>
+    <EnableLLVM>false</EnableLLVM>
+    <AndroidEnableProfiledAot>false</AndroidEnableProfiledAot>
+    <BundleAssemblies>false</BundleAssemblies>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -67,14 +72,14 @@
     <Reference Include="System.Numerics" />
     <Reference Include="System.Numerics.Vectors" />
     <Reference Include="Xam.SweetAlert.Droid">
-      <HintPath>..\..\..\..\Desktop\Xam.SweetAlert.Droid.dll</HintPath>
+      <HintPath>D:\Gray Labs\Unsorted\Xam.SweetAlert.Droid.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Activities\NetStateReceiver.cs" />
     <Compile Include="Activities\OnboardingActivity.cs" />
     <Compile Include="Activities\SplashActivity.cs" />
     <Compile Include="Adapters\ViewPagerAdapter.cs" />
-    <Compile Include="BroadcastReceivers\ConnectivityReceiver.cs" />
     <Compile Include="CustomAutoCompleteTextView.cs" />
     <Compile Include="DataModels\Driver.cs" />
     <Compile Include="DataModels\Ratings.cs" />
@@ -148,9 +153,6 @@
     <AndroidResource Include="Resources\values\dimens.xml" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Karamunting.Android.MukeshSolanki.CountryPickerAndroid">
-      <Version>2.0.1</Version>
-    </PackageReference>
     <PackageReference Include="Karamunting.Android.Ramotion.PaperOnboarding">
       <Version>1.1.3</Version>
     </PackageReference>
@@ -158,7 +160,7 @@
       <Version>12.0.3</Version>
     </PackageReference>
     <PackageReference Include="Refractored.Controls.CircleImageView">
-      <Version>1.0.1</Version>
+      <Version>1.2.0-beta</Version>
     </PackageReference>
     <PackageReference Include="System.Net.Http">
       <Version>4.3.4</Version>
@@ -244,9 +246,6 @@
     <PackageReference Include="Xamarin.Firebase.Database">
       <Version>71.1601.0</Version>
     </PackageReference>
-    <PackageReference Include="Xamarin.Firebase.ML.Vision">
-      <Version>71.1700.0</Version>
-    </PackageReference>
     <PackageReference Include="Xamarin.Firebase.Storage">
       <Version>71.1602.0</Version>
     </PackageReference>
@@ -264,9 +263,6 @@
     </PackageReference>
     <PackageReference Include="Xamarin.GooglePlayServices.Maps">
       <Version>71.1610.0</Version>
-    </PackageReference>
-    <PackageReference Include="Xamarin.GooglePlayServices.Vision">
-      <Version>71.1702.1</Version>
     </PackageReference>
   </ItemGroup>
   <ItemGroup>
@@ -574,6 +570,21 @@
   </ItemGroup>
   <ItemGroup>
     <AndroidResource Include="Resources\drawable-v24\ic_cancel.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\values\attrs.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="BroadcastReceivers\" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable-v24\partner_radio_border.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable-v24\partner_radio_start.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable-v24\partner_radio_end.xml" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\Android\Xamarin.Android.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it.

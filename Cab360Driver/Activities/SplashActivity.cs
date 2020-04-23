@@ -68,19 +68,18 @@ namespace Cab360Driver.Activities
         protected override void OnResume()
         {
             base.OnResume();
-            //if (firebaseUser == null)
-            //{
-            //    var intent2 = new Intent(this, typeof(OnboardingActivity));
-            //    intent2.AddFlags(ActivityFlags.ClearTask | ActivityFlags.ClearTop | ActivityFlags.NewTask);
-            //    StartActivity(intent2);
-            //}
-            //else
-            //{
-            //    var uid = firebaseUser.Uid;
-            //    CheckStatus(uid);
-            //}
-            StartActivity(typeof(MainActivity));
-            
+            if (firebaseUser == null)
+            {
+                var intent2 = new Intent(this, typeof(OnboardingActivity));
+                intent2.AddFlags(ActivityFlags.ClearTask | ActivityFlags.ClearTop | ActivityFlags.NewTask);
+                StartActivity(intent2);
+            }
+            else
+            {
+                var uid = firebaseUser.Uid;
+                CheckStatus(uid);
+            }
+           
         }
 
         private void CheckStatus(string uid)

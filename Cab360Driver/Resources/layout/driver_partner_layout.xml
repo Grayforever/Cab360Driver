@@ -7,149 +7,112 @@
     android:id="@+id/driver_partner_root"
     android:background="@android:color/white">
 
-    <androidx.appcompat.widget.Toolbar
+
+    <com.google.android.material.appbar.AppBarLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/driver_partner_toolbar"
-        android:background="@android:color/white"
-        style="@style/Widget.MaterialComponents.Toolbar"
-        app:navigationIcon="@drawable/quantum_ic_arrow_back_grey600_24"
-    />
+        app:liftOnScroll="true"
+        android:id="@+id/partner_appbar">
+        <androidx.appcompat.widget.Toolbar
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/driver_partner_toolbar"
+            android:background="@android:color/white"
+            style="@style/Widget.MaterialComponents.Toolbar"
+            app:navigationIcon="@drawable/quantum_ic_arrow_back_grey600_24"
+        />
+   </com.google.android.material.appbar.AppBarLayout>
 
-    <RelativeLayout
+    <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginTop="56dp">
+        app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/drv_part_intro_txt"
-            android:text="Please how would you like to partner with  us"
-            android:textSize="24sp"
-            android:textColor="@android:color/black"
-            android:layout_marginTop="16dp"
-            android:layout_marginStart="16dp"
-            android:layout_marginEnd="16dp"
-            android:fontFamily="sans-serif-light"
-        />
-
-        <androidx.cardview.widget.CardView
+        <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="120dp"
-            android:id="@+id/drv_part_c1"
-            android:layout_below="@+id/drv_part_intro_txt"
-            app:cardBackgroundColor="@drawable/cardview_focus_bg_tggl"
-            android:stateListAnimator="@animator/lift_on_touch"
-            android:layout_marginStart="16dp"
-            android:layout_marginEnd="16dp"
-            android:layout_marginTop="16dp"
-            app:cardCornerRadius="8dp"
-            android:clickable="true"
-            android:focusable="true"
-            android:focusableInTouchMode="true">
+            android:layout_height="match_parent">
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_margin="8dp"
-                android:orientation="vertical">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Vehicle owner"
-                    android:textColor="@android:color/black"
-                    android:textSize="16sp"
-                    android:id="@+id/drv_vehi_txt"
-                    android:textStyle="bold"
-                    android:layout_marginBottom="16dp"
-                    android:fontFamily="sans-serif-light"
-                />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="You own or are planning to prurchase a vehicle(s) and will drive yourself but might also employ others to drive vehicle(s)."
-                    android:textColor="@android:color/black"
-                    android:id="@+id/drv_vehidetails_txt"
-                    android:fontFamily="sans-serif-light"
-                />
-
-            </LinearLayout>
-        </androidx.cardview.widget.CardView>
-
-        <androidx.cardview.widget.CardView
-            android:layout_width="match_parent"
-            android:layout_height="120dp"
-            android:id="@+id/drv_part_c2"
-            android:layout_below="@+id/drv_part_c1"
-            app:cardBackgroundColor="@drawable/cardview_focus_bg_tggl"
-            android:stateListAnimator="@animator/lift_on_touch"
-            android:layout_marginStart="16dp"
-            android:layout_marginEnd="16dp"
-            android:layout_marginTop="16dp"
-            app:cardCornerRadius="8dp"
-            android:clickable="true"
-            android:focusable="true"
-            android:focusableInTouchMode="true">
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_margin="8dp"
-                android:orientation="vertical">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Driving"
-                    android:textColor="@android:color/black"
-                    android:textSize="16sp"
-                    android:textStyle="bold"
-                    android:layout_marginBottom="16dp"
-                    android:fontFamily="sans-serif-light"
-                    android:id="@+id/drv_drv_txt"
-                />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="You don't currently have a car, then go buy one cos you need a car to drive with us."
-                    android:textColor="@android:color/black"
-                    android:id="@+id/drv_drvdetails_txt"
-                    android:fontFamily="sans-serif-light"
-                />
-
-            </LinearLayout>
-        </androidx.cardview.widget.CardView>
-
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:layout_alignParentBottom="true"
-            android:background="@drawable/bg_bottomsheet_dg"
-            android:elevation="6dp">
-
-            <com.google.android.material.button.MaterialButton
-                android:layout_width="match_parent"
+            <TextView
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_margin="16dp"
-                android:textColor="@android:color/white"
-                android:text="continue"
-                android:textStyle="bold"
-                android:id="@+id/drv_part_cnt_btn"
-                android:textAllCaps="true"
+                android:id="@+id/drv_part_intro_txt"
+                android:text="@string/drv_partner_header"
+                style="@style/Base.TextAppearance.AppCompat.Title"
+                android:layout_marginTop="16dp"
+                android:layout_marginStart="16dp"
+                android:layout_marginEnd="16dp"
                 android:fontFamily="sans-serif-light"
-                app:rippleColor="@color/colorPrimary"
-                style="@android:style/Widget.Material.Button.Colored"
-                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:layout_alignParentTop="true"
             />
 
-        </LinearLayout>
+            <RadioGroup
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginTop="16dp"
+                android:layout_marginStart="16dp"
+                android:layout_marginEnd="16dp"
+                android:id="@+id/partner_radioGroup"
+                android:layout_below="@+id/drv_part_intro_txt"
+                android:background="@drawable/partner_radio_border">
+                <RadioButton
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="@string/partner_head_txt"
+                    android:singleLine="true"
+                    android:gravity="center"
+                    android:padding="8dp"
+                    android:textSize="16sp" 
+                    android:checked="true"
+                    android:textColor="@drawable/radio_txt_selector"
+                    android:button="@android:color/transparent"
+                    android:textAllCaps="true"
+                    android:background="@drawable/partner_radio_start"
+                    />
+                <RadioButton
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="@string/driver_head_txt"
+                    android:singleLine="true"
+                    android:gravity="center"
+                    android:padding="4dp"
+                    android:textSize="16sp" 
+                    android:textColor="@drawable/radio_txt_selector"
+                    android:button="@android:color/transparent"
+                    android:textAllCaps="true"
+                    android:background="@drawable/partner_radio_end"
+                    />
+            </RadioGroup>>
 
-    </RelativeLayout>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_alignParentBottom="true"
+                android:background="@drawable/bg_bottomsheet_dg"
+                android:elevation="6dp"
+                android:layout_below="@+id/partner_radioGroup"
+                >
+
+                <com.google.android.material.button.MaterialButton
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="16dp"
+                    android:textColor="@android:color/white"
+                    android:text="@string/continue_txt"
+                    android:textStyle="bold"
+                    android:id="@+id/drv_part_cnt_btn"
+                    android:textAllCaps="true"
+                    android:fontFamily="sans-serif-light"
+                    app:rippleColor="@color/colorPrimary"
+                    style="@style/AppTheme.PrimaryButtonColored"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                />
+
+            </LinearLayout>
+        </RelativeLayout>>
+    </androidx.core.widget.NestedScrollView>
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

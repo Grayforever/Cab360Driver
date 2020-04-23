@@ -46,7 +46,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textAppearance="?android:attr/textAppearanceButton"
-                android:text="Cash out"
+                android:text="Withdraw"
                 android:textColor="@color/colorAccent"
                 android:padding="8dp"
                 app:backgroundTint="@android:color/white"

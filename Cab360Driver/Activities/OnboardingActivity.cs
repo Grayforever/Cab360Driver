@@ -24,10 +24,8 @@ namespace Cab360Driver.Activities
     {
         private MaterialButton SignInBtn;
         private MaterialButton RegisterBtn;
-        private DriverRegisterFragment RegisterFragment = new DriverRegisterFragment();
-        private DriverSignInFragment SignInFragment = new DriverSignInFragment();
-        private DriverPartnerFragment PartnerFragment = new DriverPartnerFragment();
-        private DriverCaptureFragment DriverCaptureFragment = new DriverCaptureFragment();
+
+        
         private TaskCompletionListeners TaskCompletionListener = new TaskCompletionListeners();
         private LinearLayout driverOnboardingRoot;
 
@@ -61,8 +59,6 @@ namespace Cab360Driver.Activities
             RequestPermissions(permissionGroup, 0);
 
             GetStage(stage);
-
-            
         }
 
         private void GetStage(string stage)
@@ -71,6 +67,7 @@ namespace Cab360Driver.Activities
             {
                 if(stage == "1")
                 {
+                    DriverPartnerFragment PartnerFragment = new DriverPartnerFragment();
                     shouldCauseExit = true;
                     ShowFragment(PartnerFragment);
                     PartnerFragment.StageTwoPassEvent += PartnerFragment_StageTwoPassEvent;
@@ -78,8 +75,9 @@ namespace Cab360Driver.Activities
                 else if(stage == "2")
                 {
                     shouldCauseExit = true;
+                    DriverCaptureFragment DriverCaptureFragment = new DriverCaptureFragment();
                     ShowFragment(DriverCaptureFragment);
-                    DriverCaptureFragment.StageThreePassEvent += DriverCaptureFragment_StageThreePassEvent;
+                    DriverCaptureFragment.OnProfileCaptured += DriverCaptureFragment_OnProfileCaptured;
                 }
             }
             else
@@ -87,7 +85,6 @@ namespace Cab360Driver.Activities
                 return;
             }
         }
- 
 
         private void GetControls()
         {
@@ -100,25 +97,23 @@ namespace Cab360Driver.Activities
 
         private void SignInBtn_Click(object sender, EventArgs e)
         {
-            
+            DriverSignInFragment SignInFragment = new DriverSignInFragment();
             ShowFragment(SignInFragment);
         }
 
         private void ShowFragment(AndroidX.Fragment.App.Fragment fragment)
         {
-            RunOnUiThread(() =>
-            {
-                SupportFragmentManager
+            //var id = fragment.Id;
+            SupportFragmentManager
                 .BeginTransaction()
-                .SetCustomAnimations(Resource.Animation.enter, Resource.Animation.exit, Resource.Animation.pop_enter, Resource.Animation.pop_exit)
                 .Replace(Resource.Id.content_frame, fragment)
                 .AddToBackStack(null)
                 .Commit();
-            });
         }
 
         private void RegisterBtn_Click(object sender, EventArgs e)
         {
+            DriverRegisterFragment RegisterFragment = new DriverRegisterFragment();
             ShowFragment(RegisterFragment);
             RegisterFragment.StageOnePassEvent += RegisterFragment_StageOnePassEvent;
         }
@@ -166,6 +161,9 @@ namespace Cab360Driver.Activities
 
         public void OnSuccess(Java.Lang.Object result)
         {
+            if (driverRef == null)
+                driverRef = FireDatabase.GetReference("Cab360Drivers/" + FireAuth.CurrentUser.Uid);
+
             driverRef.Child("stage_of_registration").SetValue("1")
                     .AddOnSuccessListener(TaskCompletionListener)
                     .AddOnFailureListener(TaskCompletionListener);
@@ -181,6 +179,7 @@ namespace Cab360Driver.Activities
 
         private void TaskCompletionListener_Successful3(object sender, TaskCompletionListeners.ResultArgs e)
         {
+            DriverPartnerFragment PartnerFragment = new DriverPartnerFragment();
             ShowFragment(PartnerFragment);
             PartnerFragment.StageTwoPassEvent += PartnerFragment_StageTwoPassEvent;
         }
@@ -195,7 +194,7 @@ namespace Cab360Driver.Activities
             else if (val == 1)
             {
                 if (driverRef == null)
-                    return;
+                    driverRef = FireDatabase.GetReference("Cab360Drivers/" + FireAuth.CurrentUser.Uid);
 
                 driverRef.Child("isPartner").SetValue(val.ToString())
                     .AddOnSuccessListener(TaskCompletionListener)
@@ -207,7 +206,7 @@ namespace Cab360Driver.Activities
             else if (val == 2)
             {
                 if (driverRef == null)
-                    return;
+                    driverRef = FireDatabase.GetReference("Cab360Drivers/" + FireAuth.CurrentUser.Uid);
 
                 driverRef.Child("isPartner").SetValue(val.ToString())
                     .AddOnSuccessListener(TaskCompletionListener)
@@ -227,6 +226,9 @@ namespace Cab360Driver.Activities
 
         private void TaskCompletionListener_Successful(object sender, TaskCompletionListeners.ResultArgs e)
         {
+            if (driverRef == null)
+                driverRef = FireDatabase.GetReference("Cab360Drivers/" + FireAuth.CurrentUser.Uid);
+
             driverRef.Child("stage_of_registration").SetValue("2")
                     .AddOnSuccessListener(TaskCompletionListener)
                     .AddOnFailureListener(TaskCompletionListener);
@@ -242,22 +244,23 @@ namespace Cab360Driver.Activities
 
         private void TaskCompletionListener_Successful1(object sender, TaskCompletionListeners.ResultArgs e)
         {
+            //DriverCaptureFragment = null;
+            DriverCaptureFragment DriverCaptureFragment = new DriverCaptureFragment();
             ShowFragment(DriverCaptureFragment);
-            DriverCaptureFragment.StageThreePassEvent += DriverCaptureFragment_StageThreePassEvent;
-            
+            DriverCaptureFragment.OnProfileCaptured += DriverCaptureFragment_OnProfileCaptured;
+
         }
 
-        private void DriverCaptureFragment_StageThreePassEvent(object sender, DriverCaptureFragment.StageThreeEventArgs e)
+        private void DriverCaptureFragment_OnProfileCaptured(object sender, EventArgs e)
         {
-            bool isAllCaptured = e.isAllCaptured;
-            if(isAllCaptured == true)
-            {
-                driverRef.Child("stage_of_registration").SetValue("3")
+            if (driverRef == null)
+                driverRef = FireDatabase.GetReference("Cab360Drivers/" + FireAuth.CurrentUser.Uid); 
+
+            driverRef.Child("stage_of_registration").SetValue("3")
                     .AddOnSuccessListener(TaskCompletionListener)
                     .AddOnFailureListener(TaskCompletionListener);
-                TaskCompletionListener.Successful += TaskCompletionListener_Successful2;
-                TaskCompletionListener.Failure += TaskCompletionListener_Failure2;
-            }
+            TaskCompletionListener.Successful += TaskCompletionListener_Successful2;
+            TaskCompletionListener.Failure += TaskCompletionListener_Failure2;
         }
 
         private void TaskCompletionListener_Failure2(object sender, EventArgs e)
