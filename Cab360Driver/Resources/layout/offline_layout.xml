@@ -11,6 +11,7 @@
         android:orientation="vertical"
         android:id="@+id/cont_lin1"
         android:layout_margin="16dp">
+
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -27,14 +28,12 @@
 
        
 
-        <Button
+        <com.google.android.material.button.MaterialButton
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
             android:background="@drawable/primary_btn_bg"
             android:text="Enable"
-            android:textAllCaps="false"
-            android:textSize="16sp"
             android:textColor="@android:color/white"
             android:fontFamily="sans-serif-light"
             android:layout_marginBottom="8dp"

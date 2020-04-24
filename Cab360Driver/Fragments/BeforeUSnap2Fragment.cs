@@ -11,22 +11,20 @@ namespace Cab360Driver.Fragments
         public override void OnCreate(Bundle savedInstanceState)
         {
             base.OnCreate(savedInstanceState);
-            SetStyle(StyleNormal, Resource.Style.Theme_AppCompat_Light_DialogWhenLarge);
+            SetStyle(StyleNormal, Resource.Style.AppTheme_DialogWhenLarge);
             // Create your fragment here
         }
 
         public override View OnCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
         {
-            // Use this to return your custom view for this Fragment
-            // return inflater.Inflate(Resource.Layout.YourFragment, container, false);
-
-            return inflater.Inflate(Resource.Layout.licence_intro_layout, container, false);
+            var view = inflater.Inflate(Resource.Layout.licence_intro_layout, container, false);
+            GetControls(view);
+            return view;
         }
 
         public override void OnViewCreated(View view, Bundle savedInstanceState)
         {
             base.OnViewCreated(view, savedInstanceState);
-            GetControls(view);
         }
 
         private void GetControls(View view)

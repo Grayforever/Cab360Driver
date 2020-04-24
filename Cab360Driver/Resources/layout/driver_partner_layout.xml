@@ -13,19 +13,20 @@
         android:layout_height="wrap_content"
         app:liftOnScroll="true"
         android:id="@+id/partner_appbar">
+
         <androidx.appcompat.widget.Toolbar
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/driver_partner_toolbar"
             android:background="@android:color/white"
             style="@style/Widget.MaterialComponents.Toolbar"
-            app:navigationIcon="@drawable/quantum_ic_arrow_back_grey600_24"
         />
    </com.google.android.material.appbar.AppBarLayout>
 
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:fillViewport="true"
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
         <RelativeLayout
@@ -45,74 +46,86 @@
                 android:layout_alignParentTop="true"
             />
 
-            <RadioGroup
-                android:layout_width="match_parent"
+            <com.google.android.material.button.MaterialButtonToggleGroup
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:layout_marginTop="16dp"
-                android:layout_marginStart="16dp"
-                android:layout_marginEnd="16dp"
-                android:id="@+id/partner_radioGroup"
+                app:singleSelection="true"
+                app:checkedButton="@+id/drv_tggl_partner_btn"
+                android:id="@+id/drv_part_tggl_grp"
                 android:layout_below="@+id/drv_part_intro_txt"
-                android:background="@drawable/partner_radio_border">
-                <RadioButton
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="@string/partner_head_txt"
-                    android:singleLine="true"
-                    android:gravity="center"
-                    android:padding="8dp"
-                    android:textSize="16sp" 
-                    android:checked="true"
-                    android:textColor="@drawable/radio_txt_selector"
-                    android:button="@android:color/transparent"
-                    android:textAllCaps="true"
-                    android:background="@drawable/partner_radio_start"
-                    />
-                <RadioButton
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="@string/driver_head_txt"
-                    android:singleLine="true"
-                    android:gravity="center"
-                    android:padding="4dp"
-                    android:textSize="16sp" 
-                    android:textColor="@drawable/radio_txt_selector"
-                    android:button="@android:color/transparent"
-                    android:textAllCaps="true"
-                    android:background="@drawable/partner_radio_end"
-                    />
-            </RadioGroup>>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:layout_alignParentBottom="true"
-                android:background="@drawable/bg_bottomsheet_dg"
-                android:elevation="6dp"
-                android:layout_below="@+id/partner_radioGroup"
-                >
+                android:layout_centerHorizontal="true">
 
                 <com.google.android.material.button.MaterialButton
-                    android:layout_width="match_parent"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_margin="16dp"
-                    android:textColor="@android:color/white"
-                    android:text="@string/continue_txt"
-                    android:textStyle="bold"
-                    android:id="@+id/drv_part_cnt_btn"
-                    android:textAllCaps="true"
-                    android:fontFamily="sans-serif-light"
-                    app:rippleColor="@color/colorPrimary"
-                    style="@style/AppTheme.PrimaryButtonColored"
-                    android:textAppearance="?android:attr/textAppearanceMedium"
-                />
+                    android:id="@+id/drv_tggl_partner_btn"
+                    style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                    android:text="@string/partner_head_txt"
+                    />
 
-            </LinearLayout>
-        </RelativeLayout>>
+                <com.google.android.material.button.MaterialButton
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/drv_tggl_driver_btn"
+                    style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                    android:text="@string/driver_head_txt"
+                    />
+
+            </com.google.android.material.button.MaterialButtonToggleGroup>>
+
+            <androidx.cardview.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:id="@+id/drv_part_cv1"
+                android:layout_below="@+id/drv_part_tggl_grp"
+                android:layout_above="@+id/drv_part_cnt_btn"
+                android:layout_marginStart="16dp"
+                android:layout_marginEnd="16dp"
+                android:layout_marginTop="16dp"
+                app:cardPreventCornerOverlap="true"
+                android:stateListAnimator="@animator/lift_on_touch">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_margin="4dp"
+                    android:padding="4dp"
+                    android:orientation="vertical"
+                    android:weightSum="3">
+
+                    <TextSwitcher
+                        android:layout_width="wrap_content"
+                        android:layout_height="0dp"
+                        android:layout_weight="0.5"
+                        android:id="@+id/drv_part_txt_swtchr1"
+                        android:textAlignment="center"
+                        android:layout_gravity="top| center_horizontal"
+                        android:layout_marginBottom="8dp"
+                        />
+
+                    <ImageSwitcher
+                        android:layout_width="match_parent"
+                        android:layout_height="0dp"
+                        android:layout_weight="2.5"
+                        android:id="@+id/drv_part_img_swtchr1"
+                        android:layout_marginTop="8dp"
+                        android:layout_gravity="bottom| center_horizontal"/>
+                </LinearLayout>
+
+            </androidx.cardview.widget.CardView>
+
+            <com.google.android.material.button.MaterialButton
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="16dp"
+                android:text="@string/continue_txt"
+                android:textStyle="bold"
+                android:id="@+id/drv_part_cnt_btn"
+                android:fontFamily="sans-serif-light"
+                android:layout_alignParentBottom="true"
+            />
+            
+        </RelativeLayout>
     </androidx.core.widget.NestedScrollView>
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

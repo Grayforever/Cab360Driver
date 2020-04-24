@@ -79,6 +79,13 @@ namespace Cab360Driver.Activities
                     ShowFragment(DriverCaptureFragment);
                     DriverCaptureFragment.OnProfileCaptured += DriverCaptureFragment_OnProfileCaptured;
                 }
+                else if (stage == "3")
+                {
+                    shouldCauseExit = true;
+                    CarRegFragment carRegFragment = new CarRegFragment();
+                    ShowFragment(carRegFragment);
+                    carRegFragment.OnCardetailsSaved += CarRegFragment_OnCardetailsSaved;
+                }
             }
             else
             {
@@ -103,7 +110,9 @@ namespace Cab360Driver.Activities
 
         private void ShowFragment(AndroidX.Fragment.App.Fragment fragment)
         {
-            //var id = fragment.Id;
+            if (fragment == null)
+                return;
+
             SupportFragmentManager
                 .BeginTransaction()
                 .Replace(Resource.Id.content_frame, fragment)
@@ -270,9 +279,66 @@ namespace Cab360Driver.Activities
 
         private void TaskCompletionListener_Successful2(object sender, TaskCompletionListeners.ResultArgs e)
         {
-            var intent = new Intent(this, typeof(MainActivity));
-            intent.AddFlags(ActivityFlags.ClearTask | ActivityFlags.ClearTop | ActivityFlags.NewTask);
-            StartActivity(intent);
+            CarRegFragment carRegFragment = new CarRegFragment();
+            ShowFragment(carRegFragment);
+            carRegFragment.OnCardetailsSaved += CarRegFragment_OnCardetailsSaved;
+        }
+
+        private void CarRegFragment_OnCardetailsSaved(object sender, CarRegFragment.CarModelArgs e)
+        {
+            HashMap carMap = new HashMap();
+            carMap.Put("car_model", e.CarDetails.Model);
+            carMap.Put("car_brand", e.CarDetails.Brand);
+            carMap.Put("car_year", e.CarDetails.Year);
+            carMap.Put("car_color", e.CarDetails.Color);
+            carMap.Put("car_condition", e.CarDetails.Condition);
+            carMap.Put("curr_user", e.CarDetails.CurrUser);
+            carMap.Put("reg_no", e.CarDetails.RegNo);
+
+            SaveCarDetailsToDb(carMap);
+        }
+
+        private void SaveCarDetailsToDb(HashMap carMap)
+        {
+            driverRef = FireDatabase.GetReference("RegUnVerifiedCars/" + FireAuth.CurrentUser.Uid);
+            driverRef.SetValue(carMap)
+                .AddOnSuccessListener(TaskCompletionListener)
+                .AddOnFailureListener(TaskCompletionListener);
+            TaskCompletionListener.Successful += TaskCompletionListener_Successful4;
+            TaskCompletionListener.Failure += TaskCompletionListener_Failure4;
+        }
+
+        private void TaskCompletionListener_Failure4(object sender, EventArgs e)
+        {
+            SayToast("We couldnt save your cars");
+        }
+
+        private void SayToast(string message)
+        {
+            Toast.MakeText(this, message, ToastLength.Short).Show();
+        }
+
+        private void TaskCompletionListener_Successful4(object sender, TaskCompletionListeners.ResultArgs e)
+        {
+            if (driverRef == null)
+                driverRef = FireDatabase.GetReference("Cab360Drivers/" + FireAuth.CurrentUser.Uid);
+
+            driverRef.Child("stage_of_registration").SetValue("4")
+                    .AddOnSuccessListener(TaskCompletionListener)
+                    .AddOnFailureListener(TaskCompletionListener);
+            TaskCompletionListener.Successful += TaskCompletionListener_Successful5;
+            TaskCompletionListener.Failure += TaskCompletionListener_Failure5;
+        }
+
+        private void TaskCompletionListener_Failure5(object sender, EventArgs e)
+        {
+            SayToast("We couldnt change the stage from 3 to 4");
+        }
+
+        private void TaskCompletionListener_Successful5(object sender, TaskCompletionListeners.ResultArgs e)
+        {
+            CarPicsFragment carPicsFragment = new CarPicsFragment();
+            ShowFragment(carPicsFragment);
         }
 
         public override void OnBackPressed()

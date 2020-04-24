@@ -8,10 +8,8 @@
     <androidx.appcompat.widget.Toolbar
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        style="@style/Widget.MaterialComponents.Toolbar"
         android:background="@android:color/white"
         app:title="Take your profile photo"
-        app:titleTextAppearance="?android:attr/textAppearanceMedium"
     />
 
     <RelativeLayout
@@ -83,30 +81,17 @@
             android:layout_centerInParent="true"
         />
 
-        <LinearLayout
+        <com.google.android.material.button.MaterialButton
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
+            android:layout_margin="16dp"
+            android:text="take photo"
+            android:textStyle="bold"
+            android:textColor="@drawable/btn_txt_clr_tggl"
+            android:id="@+id/intro_takephoto_btn"
+            android:fontFamily="sans-serif-light"
             android:layout_alignParentBottom="true"
-            android:background="@drawable/bg_bottomsheet_dg"
-            android:elevation="4dp">
-
-            <com.google.android.material.button.MaterialButton
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_margin="16dp"
-                android:text="take photo"
-                android:textStyle="bold"
-                android:textAllCaps="true"
-                app:backgroundTint="@color/colorAccent"
-                android:textColor="@drawable/btn_txt_clr_tggl"
-                android:id="@+id/intro_takephoto_btn"
-                android:fontFamily="sans-serif-light"
-                style="@android:style/Widget.Material.Button.Colored"
-                android:textAppearance="?android:attr/textAppearanceMedium"
-            />
-
-        </LinearLayout>
+        />
 
     </RelativeLayout>
 

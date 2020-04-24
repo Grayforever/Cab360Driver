@@ -60,14 +60,9 @@ namespace Cab360Driver.Fragments
 
         public override View OnCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
         {
-            return inflater.Inflate(Resource.Layout.driver_signup_layout, container, false);
-        }
-
-        public override void OnViewCreated(View view, Bundle savedInstanceState)
-        {
-            base.OnViewCreated(view, savedInstanceState);
+            var view =  inflater.Inflate(Resource.Layout.driver_signup_layout, container, false);
             GetControls(view);
-            
+            return view;
         }
 
         private void GetControls(View view)
@@ -126,8 +121,6 @@ namespace Cab360Driver.Fragments
 
         private void SubmitBtn_Click(object sender, EventArgs e)
         {
-            //Snackbar.Make(driverSignupRoot, "Hello world", Snackbar.LengthShort).Show(); 
-
             DriverPersonal = new Driver
             {
                 Fname = FnameText.EditText.Text,
@@ -151,28 +144,10 @@ namespace Cab360Driver.Fragments
 
             TaskCompletionListener.Failure += (s2, e2) =>
             {
-                Android.Widget.Toast.MakeText(Application.Context, "Error", Android.Widget.ToastLength.Long).Show();
+                Android.Widget.Toast.MakeText(Activity, "Error", Android.Widget.ToastLength.Long).Show();
             };
 
 
-        }
-
-        private void StartAutoComplete()
-        {
-            //List<Place.Field> fields = new List<Place.Field>
-            //{
-            //    Place.Field.Id,
-            //    Place.Field.Name,
-            //    Place.Field.LatLng,
-            //    Place.Field.Address
-            //};
-
-            //var intent = new Autocomplete.IntentBuilder(AutocompleteActivityMode.Fullscreen, fields)
-            //    .SetCountry("GH")
-            //    .SetTypeFilter(TypeFilter.Cities)
-            //    .Build(Activity);
-
-            //StartActivityForResult(intent, 56);
         }
 
         public bool OnKey(View v, [GeneratedEnum] Keycode keyCode, KeyEvent e)

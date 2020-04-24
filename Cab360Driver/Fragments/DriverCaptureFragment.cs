@@ -7,12 +7,14 @@ using Android.Views;
 using Android.Widget;
 using AndroidX.CardView.Widget;
 using Cab360Driver.Helpers;
+using Cab360Driver.Utils;
 using Firebase.Storage;
 using Plugin.Media;
 using Plugin.Media.Abstractions;
 using System;
 using System.Threading;
 using System.Threading.Tasks;
+using static Cab360Driver.Utils.OnDoubleClickListener;
 
 namespace Cab360Driver.Fragments
 {
@@ -83,7 +85,6 @@ namespace Cab360Driver.Fragments
             Card2 = view.FindViewById<CardView>(Resource.Id.req_c2);
             Card2.Click += Card2_Click;
             Card3 = view.FindViewById<CardView>(Resource.Id.req_c3);
-            Card3.Click += Card3_Click;
 
             NxtImg1 = view.FindViewById<ImageView>(Resource.Id.nxt_img1);
             NxtImg2 = view.FindViewById<ImageView>(Resource.Id.nxt_img2);
@@ -101,12 +102,6 @@ namespace Cab360Driver.Fragments
             MessageTxt3 = view.FindViewById<TextView>(Resource.Id.drv_photo_txt);
 
             progressBar = view.FindViewById<ProgressBar>(Resource.Id.prog1);
-        }
-
-        private void Card3_Click(object sender, EventArgs e)
-        {
-            whichIsCaptured = 3;
-            //BeginLicenseCapture();
         }
 
         private void Card2_Click(object sender, EventArgs e)

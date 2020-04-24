@@ -23,12 +23,6 @@ namespace Cab360Driver.Fragments
         {
             // Use this to return your custom view for this Fragment
             var view = inflater.Inflate(Resource.Layout.account, container, false);
-            return view;
-        }
-
-        public override void OnViewCreated(View view, Bundle savedInstanceState)
-        {
-            base.OnViewCreated(view, savedInstanceState);
 
             var DriverNameTv = view.FindViewById<TextView>(Resource.Id.username_tv);
             var DriverPhoneTv = view.FindViewById<TextView>(Resource.Id.userphone_tv);
@@ -47,6 +41,8 @@ namespace Cab360Driver.Fragments
             tab1.Visibility = ViewStates.Visible;
             tab2.Visibility = ViewStates.Gone;
             tab3.Visibility = ViewStates.Gone;
+
+            return view;
         }
 
         private void SetValues(TextView driverNameTv, TextView driverPhoneTv, TextView driverCityTv, TextView driverEmailTv)

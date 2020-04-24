@@ -18,9 +18,7 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="2"
-        android:background="@android:color/white"
-        android:padding="8dp">
+        android:layout_weight="2">
 
         <TextView
             android:layout_width="match_parent"
@@ -32,12 +30,13 @@
             android:text="Welcome to the driver app"
             android:textSize="32sp"
             android:fontFamily="sans-serif-light"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="16dp"
         />
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
             android:orientation="horizontal"
             android:id="@+id/onbd_linear1"
             android:layout_alignParentBottom="true">
@@ -48,16 +47,13 @@
                 android:id="@+id/onbd_signin_btn"
                 android:text="sign in"
                 android:layout_weight="1"
-                android:textAllCaps="true"
-                android:textColor="@color/colorAccent"
                 android:textStyle="bold"
-                android:layout_margin="8dp"
+                android:layout_marginStart="16dp"
+                android:layout_marginEnd="8dp"
+                android:layout_marginBottom="16dp"
                 android:fontFamily="sans-serif-light"
                 app:strokeWidth="2dp"
-                app:rippleColor="@color/colorAccent"
-                android:padding="10dp"
                 style="@style/Widget.MaterialComponents.Button.OutlinedButton"
-                android:textAppearance="?android:attr/textAppearanceMedium"
             />
 
             <com.google.android.material.button.MaterialButton
@@ -66,15 +62,11 @@
                 android:id="@+id/onbd_signup_btn"
                 android:text="Sign up"
                 android:layout_weight="1"
-                android:textAllCaps="true"
-                android:textColor="@drawable/btn_txt_clr_tggl"
                 android:textStyle="bold"
-                android:layout_margin="8dp"
-                android:fontFamily="sans-serif-light"
-                app:rippleColor="@color/colorPrimary"
-                style="@android:style/Widget.Material.Button.Colored"
-                android:textAppearance="?android:attr/textAppearanceMedium"
-                
+                android:layout_marginStart="8dp"
+                android:layout_marginEnd="16dp"
+                android:layout_marginBottom="16dp"
+                android:fontFamily="sans-serif-light"             
             />
 
         </LinearLayout>

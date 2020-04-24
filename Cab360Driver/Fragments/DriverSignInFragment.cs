@@ -36,13 +36,9 @@ namespace Cab360Driver.Fragments
         public override View OnCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
         {
 
-            return inflater.Inflate(Resource.Layout.driver_signin_layout, container, false);
-        }
-
-        public override void OnViewCreated(View view, Bundle savedInstanceState)
-        {
-            base.OnViewCreated(view, savedInstanceState);
+            var view = inflater.Inflate(Resource.Layout.driver_signin_layout, container, false);
             GetControls(view);
+            return view;
         }
 
         private void GetControls(View view)

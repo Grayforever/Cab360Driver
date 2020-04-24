@@ -4,8 +4,8 @@
   <string name="mapKey">AIzaSyDHXqe3Yh9Nl3wsxFItOoz1IwKiBRP7fxk</string>
   <string name="drv_partner_header">Please how would you like to partner with us</string>
   <string name="continue_txt">Continue</string>
-  <string name="driving_desc_txt">You don\'t currently have a car, then go buy one cos you need a car to drive with us.</string>
-  <string name="partner_desc_txt">You own or are planning to prurchase a vehicle(s) and will drive yourself but might also employ others to drive vehicle(s).</string>
-  <string name="partner_head_txt">Partner</string>
-  <string name="driver_head_txt">Driver</string>
+  <string name="driving_desc_txt">You don\'t currently have access to a vehicle. You want to be emplyed by one of our partners and drive for them on this platform.</string>
+  <string name="partner_desc_txt">You own or are planning to purchase a vehicle(s) and will drive yourself but might also employ others to drive vehicle(s).</string>
+  <string name="partner_head_txt">Vehicle owner</string>
+  <string name="driver_head_txt">Driving</string>
 </resources>

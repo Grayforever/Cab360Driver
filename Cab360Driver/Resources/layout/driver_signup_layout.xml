@@ -18,7 +18,6 @@
             android:layout_height="wrap_content"
             android:id="@+id/drv_signup_toolbar"
             android:background="@android:color/white"
-            app:navigationIcon="@drawable/quantum_ic_arrow_back_grey600_24"
             style="@style/Widget.MaterialComponents.Toolbar"
         />
 
@@ -27,17 +26,14 @@
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:fillViewport="true"
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="vertical"
-            android:id="@+id/drv_signup_linear1"
-            android:layout_marginStart="16dp"
-            android:layout_marginEnd="16dp"
-            android:layout_marginTop="16dp"
-            android:padding="8dp">
+            android:id="@+id/drv_signup_linear1">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -45,7 +41,10 @@
                 android:id="@+id/drv_signup_linear2"
                 android:weightSum="2"
                 android:orientation="horizontal"
-                android:layout_marginBottom="8dp">
+                android:layout_marginBottom="8dp"
+                android:layout_marginStart="16dp"
+                android:layout_marginEnd="16dp"
+                android:layout_marginTop="16dp">
             
                 <com.google.android.material.textfield.TextInputLayout
                     android:layout_width="0dp"
@@ -90,6 +89,8 @@
                 android:layout_height="wrap_content"
                 android:id="@+id/drv_signup_email_et"
                 android:layout_marginBottom="8dp"
+                android:layout_marginStart="16dp"
+                android:layout_marginEnd="16dp"
                 android:hint="Email"
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
                 <com.google.android.material.textfield.TextInputEditText
@@ -104,7 +105,9 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
-                android:layout_marginBottom="8dp">
+                android:layout_marginBottom="8dp"
+                android:layout_marginStart="16dp"
+                android:layout_marginEnd="16dp">
 
                 <com.google.android.material.textfield.TextInputLayout
                     android:layout_width="0dp"
@@ -113,7 +116,6 @@
                     android:layout_weight="0.3"
                     android:layout_marginEnd="4dp"
                     android:id="@+id/drv_signup_dialcode_et"
-                   
                     style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
 
                     <com.google.android.material.textfield.TextInputEditText
@@ -149,8 +151,10 @@
                 android:layout_height="wrap_content"
                 android:id="@+id/drv_signup_pass_et"
                 android:layout_marginBottom="8dp"
+                android:layout_marginStart="16dp"
+                android:layout_marginEnd="16dp"
                 android:hint="Password"
-                app:passwordToggleEnabled="true"
+                app:endIconMode="password_toggle"
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
 
                 <com.google.android.material.textfield.TextInputEditText
@@ -166,20 +170,19 @@
                 android:layout_height="wrap_content"
                 android:id="@+id/drv_signup_city_et"
                 android:layout_marginBottom="8dp"
-                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense">
+                android:layout_marginStart="16dp"
+                android:layout_marginEnd="16dp"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu">
 
-                <Cab360Driver.CustomAutoCompleteTextView
+                <androidx.appcompat.widget.AppCompatAutoCompleteTextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:id="@+id/autocity_et"
                     android:nextFocusForward="@+id/drv_signup_code_et1"
                     android:singleLine="true"
                     android:fontFamily="sans-serif-light"
-                    android:inputType="textAutoComplete"
+                    android:inputType="none"
                     android:imeOptions="actionNext"
-                    android:lines="1"
-                    android:paddingStart="12dp"
-                    android:paddingEnd="8dp"
                     android:hint="City"
                 />
             </com.google.android.material.textfield.TextInputLayout>
@@ -188,7 +191,9 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:id="@+id/drv_signup_code_et"
-                android:layout_marginBottom="8dp"
+                android:layout_marginBottom="16dp"
+                android:layout_marginStart="16dp"
+                android:layout_marginEnd="16dp"
                 app:helperText="Optional"
                 app:helperTextTextAppearance="?android:attr/textAppearanceSmall"
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
@@ -211,15 +216,11 @@
                 android:text="Continue"
                 android:textColor="@drawable/btn_txt_clr_tggl"
                 android:textStyle="bold"
-                android:layout_marginTop="8dp"
-                android:layout_marginBottom="8dp"
-                android:layout_marginStart="2dp"
-                android:layout_marginEnd="2dp"
+                android:layout_marginStart="16dp"
+                android:layout_marginEnd="16dp"
                 android:enabled="false"
                 android:fontFamily="sans-serif-light"
-                android:textAllCaps="true"
-                style="@android:style/Widget.Material.Button.Colored"
-                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:layout_gravity="bottom"
             />
 
         </LinearLayout>

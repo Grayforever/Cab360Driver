@@ -1,14 +1,19 @@
-﻿using AndroidX.Fragment.App;
+﻿using Android.Views;
+using AndroidX.Fragment.App;
+using AndroidX.Lifecycle;
+using AndroidX.RecyclerView.Widget;
+using AndroidX.ViewPager2.Adapter;
 using System.Collections.Generic;
 
 namespace Cab360Driver.Adapters
 {
-    public class ViewPagerAdapter : FragmentPagerAdapter
+    public class ViewPagerAdapter : FragmentStateAdapter
     {
-       public List<Fragment> Fragments { get; set; }
-       public List<string> FragmentNames { get; set; }
-        
-        public ViewPagerAdapter(FragmentManager fragmentManager) : base(fragmentManager, BehaviorResumeOnlyCurrentFragment)
+        public List<Fragment> Fragments { get; set; }
+        public List<string> FragmentNames { get; set; }
+
+
+        public ViewPagerAdapter(FragmentManager fragmentManager, Lifecycle lifecycle) : base(fragmentManager, lifecycle)
         {
             Fragments = new List<Fragment>();
             FragmentNames = new List<string>();
@@ -19,7 +24,8 @@ namespace Cab360Driver.Adapters
             Fragments.Add(fragment);
             FragmentNames.Add(name);
         }
-        public override int Count
+
+        public override int ItemCount
         {
             get
             {
@@ -27,9 +33,10 @@ namespace Cab360Driver.Adapters
             }
         }
 
-        public override Fragment GetItem(int position)
+        public override Fragment CreateFragment(int p0)
         {
-            return Fragments[position];
+            return Fragments[p0];
         }
+
     }
 }

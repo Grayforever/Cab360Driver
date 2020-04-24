@@ -14,7 +14,7 @@ namespace Cab360Driver.Activities
     public class SplashActivity : AppCompatActivity, IValueEventListener
     {
         private FirebaseUser firebaseUser = AppDataHelper.GetCurrentUser();
-        private ISharedPreferences preferences = Application.Context.GetSharedPreferences("appSession", FileCreationMode.Private);
+        private ISharedPreferences preferences = Application.Context.GetSharedPreferences("appSession", FileCreationMode.MultiProcess);
         private ISharedPreferencesEditor editor;
 
         public void OnCancelled(DatabaseError error)
@@ -41,7 +41,7 @@ namespace Cab360Driver.Activities
         private void StartWhichActivity(string stage)
         {
             Toast.MakeText(this, stage, ToastLength.Long).Show();
-            if(stage == "1" || stage == "2")
+            if(stage == "1" || stage == "2" || stage == "3")
             {
                 var intent1 = new Intent(this, typeof(OnboardingActivity));
                 intent1.AddFlags(ActivityFlags.ClearTask | ActivityFlags.ClearTop | ActivityFlags.NewTask);

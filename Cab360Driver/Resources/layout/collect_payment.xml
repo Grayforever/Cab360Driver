@@ -49,14 +49,11 @@
          />
         
         
-         <Button
+         <com.google.android.material.button.MaterialButton
             android:text="Collect Payment"
             android:layout_width="match_parent"
-            android:textAllCaps="false"
             android:layout_marginTop="10dp"
             android:layout_height="wrap_content"
-            android:textColor="@color/colorAccent"
-            android:textSize="16sp"
             android:background="@drawable/outline_btn_bg"
             android:id="@+id/collectPayButton"
             android:layout_marginStart="16dp"

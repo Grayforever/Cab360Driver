@@ -31,7 +31,7 @@ namespace Cab360Driver.Fragments
         public override void OnCreate(Bundle savedInstanceState)
         {
             base.OnCreate(savedInstanceState);
-
+            SetStyle(StyleNormal, Resource.Style.AppTheme_DialogWhenLarge);
             // Create your fragment here
         }
 

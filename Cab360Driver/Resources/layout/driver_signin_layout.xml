@@ -16,9 +16,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/drv_signup_toolbar"
-            android:background="@android:color/white"
-            app:navigationIcon="@drawable/quantum_ic_arrow_back_grey600_24"
-            style="@style/Widget.MaterialComponents.Toolbar">
+            android:background="@android:color/white">
 
         </androidx.appcompat.widget.Toolbar>
 
@@ -53,7 +51,7 @@
             android:layout_below="@+id/drv_signin_email_et"
             android:layout_marginStart="16dp"
             android:layout_marginEnd="16dp"
-            app:passwordToggleEnabled="true">
+            app:endIconMode="password_toggle">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:layout_width="match_parent"
@@ -65,7 +63,7 @@
 
 
         <TextView
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="56dp"
             android:text="I forgot my password"
             android:layout_alignParentBottom="true"
@@ -90,11 +88,12 @@
         app:useCompatPadding="true"
         android:src="@drawable/abc_ic_go_search_api_material"
         app:maxImageSize="32dp"
-        android:tint="@android:color/white"
         app:layout_anchor="@+id/drv_signin_rel1"
         app:elevation="8dp"
         app:layout_anchorGravity="end| bottom"
-            
+        android:clickable="true"
+        app:tint="@android:color/white"
+  
     />
 
     

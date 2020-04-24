@@ -3,8 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@android:color/white">
+    android:layout_height="match_parent">
     
     <com.google.android.material.appbar.AppBarLayout
         android:layout_width="match_parent"
@@ -17,7 +16,6 @@
             android:layout_height="wrap_content"
             android:id="@+id/account_toolbar"
             android:background="@android:color/white"
-            style="@style/Widget.MaterialComponents.Toolbar"
         />
 
     </com.google.android.material.appbar.AppBarLayout>
@@ -188,7 +186,6 @@
                     android:singleLine="true"
                     android:gravity="center"
                     android:padding="4dp"
-                    android:textSize="16sp" 
                     android:checked="true"
                     android:textColor="@drawable/radio_txt_selector"
                     android:button="@android:color/transparent"
@@ -207,7 +204,6 @@
                     android:singleLine="true"
                     android:gravity="center"
                     android:padding="4dp"
-                    android:textSize="16sp"
                     android:button="@android:color/transparent"
                     android:textColor="@drawable/radio_txt_selector"
                     android:textAllCaps="true"
@@ -225,7 +221,6 @@
                     android:singleLine="true"
                     android:gravity="center"
                     android:padding="4dp"
-                    android:textSize="16sp"
                     android:textAllCaps="true"
                     android:textColor="@drawable/radio_txt_selector"
                     android:background="@drawable/radio_selector_end"

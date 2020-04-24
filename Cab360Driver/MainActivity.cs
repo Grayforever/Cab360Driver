@@ -11,6 +11,7 @@ using Android.Widget;
 using AndroidX.AppCompat.App;
 using AndroidX.Core.Content;
 using AndroidX.ViewPager.Widget;
+using AndroidX.ViewPager2.Widget;
 using Cab360Driver.Activities;
 using Cab360Driver.Adapters;
 using Cab360Driver.DataModels;
@@ -18,6 +19,7 @@ using Cab360Driver.EventListeners;
 using Cab360Driver.Fragments;
 using Cab360Driver.Helpers;
 using CN.Pedant.SweetAlert;
+using Google.Android.Material.Badge;
 using Google.Android.Material.BottomNavigation;
 using Google.Android.Material.FloatingActionButton;
 using Java.Lang;
@@ -33,7 +35,7 @@ namespace Cab360Driver
         private FloatingActionButton fabToggleOnline;
 
         //Views
-        ViewPager viewpager;
+        ViewPager2 viewpager;
         BottomNavigationView bnve;
 
         //Fragments
@@ -166,12 +168,16 @@ namespace Cab360Driver
             fabToggleOnline.Click += FabToggleOnline_Click;
 
             bnve = (BottomNavigationView)FindViewById(Resource.Id.bnve);
+            BadgeDrawable badge = bnve.GetOrCreateBadge(Resource.Menu.bottomnav);
+            badge.SetVisible(true);
+
 
             bnve.NavigationItemSelected += Bnve_NavigationItemSelected1;
 
-            viewpager = (ViewPager)FindViewById(Resource.Id.viewpager);
+            viewpager = (ViewPager2)FindViewById(Resource.Id.viewpager);
+            viewpager.Orientation = ViewPager2.OrientationHorizontal;
             viewpager.OffscreenPageLimit = 3;
-            viewpager.BeginFakeDrag();
+            viewpager.UserInputEnabled = false;
 
             SetupViewPager();
 
@@ -275,7 +281,6 @@ namespace Cab360Driver
 
         }
 
-
         public void HomeFragment_TripActionStartTrip(object sender, EventArgs e)
         {
             
@@ -338,7 +343,6 @@ namespace Cab360Driver
             StartActivity(intent);
         }
 
-
         async void HomeFragment_TripActionArrived(object sender, EventArgs e)
         {
             //Notifies Rider that Driver has arrived
@@ -356,7 +360,6 @@ namespace Cab360Driver
             homeFragment.mainMap.Clear();
             mapHelper.DrawTripToDestination(directionJson);
         }
-
 
         void HomeFragment_CurrentLocation(object sender, LocationCallbackHelper.OnLocationCaptionEventArgs e)
         {
@@ -576,13 +579,14 @@ namespace Cab360Driver
 
         private void SetupViewPager()
         {
-            ViewPagerAdapter adapter = new ViewPagerAdapter(SupportFragmentManager);
+            ViewPagerAdapter adapter = new ViewPagerAdapter(SupportFragmentManager, Lifecycle);
 
 
             adapter.AddFragment(homeFragment, "Home");
             adapter.AddFragment(earningsFragment, "Earnings");
             adapter.AddFragment(ratingsFragment, "Rating");
             adapter.AddFragment(accountFragment, "Account");
+            
             viewpager.Adapter = adapter;
         }
 
@@ -623,31 +627,21 @@ namespace Cab360Driver
             return false;
         }
 
-        
-
         protected override void OnPause()
         {
-            
             base.OnPause();
             isBackground = true;
-            UnregisterReceiver(netState);
         }
 
         protected override void OnResume()
         {
+            base.OnResume();
             isBackground = false;
             if (newRideAssigned)
             {
                 CreateNewRequestDialogue();
                 newRideAssigned = false;
             }
-
-            IntentFilter intentFilter = new IntentFilter();
-            intentFilter.AddAction("android.net.conn.CONNECIVITY_CHANGE");
-            RegisterReceiver(netState, intentFilter);
-            base.OnResume();
         }
-
-        
     }
 }
