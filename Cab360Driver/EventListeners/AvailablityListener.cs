@@ -2,58 +2,44 @@
 using Firebase.Database;
 using Java.Util;
 using Cab360Driver.Helpers;
+using AndroidX.AppCompat.App;
+using Android.Content;
 
 namespace Cab360Driver.EventListeners
 {
     public class AvailablityListener : Java.Lang.Object, IValueEventListener
     {
-        FirebaseDatabase database;
+        Context _context;
         DatabaseReference availablityRef;
 
+        public AvailablityListener(Context context)
+        {
+            _context = context;
+        }
+        //assigneed
         public class RideAssignedIDEventArgs : EventArgs
         {
             public string RideId { get; set; }
         }
-
         public event EventHandler<RideAssignedIDEventArgs> RideAssigned;
-        public event EventHandler RideCancelled;
-        public event EventHandler RideTimedOut;
 
-
-        public void OnCancelled(DatabaseError error)
+        //cancelled
+        public class RideCancelledArgs : EventArgs
         {
+            public AlertDialog ShowWhy { get; set; }
         }
+        public event EventHandler<RideCancelledArgs> RideCancelled;
 
-        public void OnDataChange(DataSnapshot snapshot)
+        //timeout
+        public class TimeoutMessageArgs : EventArgs
         {
-            if(snapshot.Value != null)
-            {
-                string ride_id = snapshot.Child("ride_id").Value.ToString();
-                if(ride_id != "waiting" && ride_id != "timeout" && ride_id != "cancelled")
-                {
-                    //Ride Assigned
-                    RideAssigned?.Invoke(this, new RideAssignedIDEventArgs { RideId = ride_id });
-                }
-                else if (ride_id == "timeout")
-                {
-                    // Ride Timeout
-                    RideTimedOut?.Invoke(this, new EventArgs());
-                }
-                else if (ride_id == "cancelled")
-                {
-                    //ride cancelled
-                    RideCancelled?.Invoke(this, new EventArgs());
-                }
-            }
-
+            public string Message { get; set; }
         }
-
+        public event EventHandler<TimeoutMessageArgs> RideTimedOut;
+        
         public void Create (Android.Locations.Location myLocation)
         {
-            database = AppDataHelper.GetDatabase();
-            string driverID = AppDataHelper.GetCurrentUser().Uid;
-
-            availablityRef = database.GetReference("driversAvailable/" + driverID);
+            availablityRef = AppDataHelper.GetAvailDrivRef().Child(AppDataHelper.GetCurrentUser().Uid);
 
             HashMap location = new HashMap();
             location.Put("latitude", myLocation.Latitude);
@@ -77,11 +63,9 @@ namespace Cab360Driver.EventListeners
 
         public void UpdateLocation(Android.Locations.Location mylocation)
         {
-            string DriverId = AppDataHelper.GetCurrentUser().Uid;
-
             if(availablityRef != null)
             {
-                DatabaseReference locationref = database.GetReference("driversAvailable/" + DriverId + "/location");
+                var locationref = availablityRef.Child("location");
                 HashMap locationMap = new HashMap();
                 locationMap.Put("latitude", mylocation.Latitude);
                 locationMap.Put("longitude", mylocation.Longitude);
@@ -92,6 +76,36 @@ namespace Cab360Driver.EventListeners
         public void ReActivate()
         {
             availablityRef.Child("ride_id").SetValue("waiting");
+        }
+
+        public void OnCancelled(DatabaseError error)
+        {
+
+        }
+
+        public void OnDataChange(DataSnapshot snapshot)
+        {
+            if (!snapshot.Exists())
+                return;
+
+            string ride_id = snapshot.Child("ride_id").Value.ToString();
+            if (ride_id != "waiting" && ride_id != "timeout" && ride_id != "cancelled")
+            {
+                //Ride Assigned
+                RideAssigned?.Invoke(this, new RideAssignedIDEventArgs { RideId = ride_id });
+            }
+            else if (ride_id == "timeout")
+            {
+                // Ride Timeout
+                RideTimedOut?.Invoke(this, new TimeoutMessageArgs { Message = "Ride timeout" });
+            }
+            else if (ride_id == "cancelled")
+            {
+                //ride cancelled
+
+                RideCancelled?.Invoke(this, new RideCancelledArgs { ShowWhy = null });
+            }
+
         }
     }
 }

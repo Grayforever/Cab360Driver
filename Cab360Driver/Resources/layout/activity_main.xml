@@ -3,46 +3,41 @@
 	xmlns:app="http://schemas.android.com/apk/res-auto"
 	xmlns:tools="http://schemas.android.com/tools"
 	android:layout_width="match_parent"
-	android:layout_height="match_parent">
+	android:layout_height="match_parent"
+	android:fitsSystemWindows="true">
 
-	<RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
+	<androidx.viewpager2.widget.ViewPager2 xmlns:android="http://schemas.android.com/apk/res/android"                            
+		android:id="@+id/viewpager"
+		android:layout_height="match_parent"
+		android:layout_width="match_parent"
+		app:layout_behavior="@string/appbar_scrolling_view_behavior"
+		
+	/>
 
-		<androidx.viewpager2.widget.ViewPager2 xmlns:android="http://schemas.android.com/apk/res/android"                            
-			android:id="@+id/viewpager"
-			android:layout_height="match_parent"
-			android:layout_width="match_parent"
-			app:layout_behavior="@string/appbar_scrolling_view_behavior"
-			android:layout_above="@+id/bnve"
+	<com.google.android.material.bottomnavigation.BottomNavigationView                          
+		android:id="@+id/bnve"
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		app:menu="@menu/bottomnav"
+		app:elevation="6dp"
+		android:layout_gravity="bottom"
+		android:layout_alignParentBottom="true"
+		app:layout_behavior="@string/hide_bottom_view_on_scroll_behavior"
+		app:layout_dodgeInsetEdges="bottom"
 		/>
-
-		<com.google.android.material.bottomnavigation.BottomNavigationView                          
-			android:id="@+id/bnve"
-			android:layout_width="match_parent"
-			android:layout_height="wrap_content"
-			app:menu="@menu/bottomnav"
-			app:elevation="6dp"
-			android:layout_gravity="bottom"
-			android:layout_alignParentBottom="true"
-			app:layout_behavior="@string/hide_bottom_view_on_scroll_behavior"
-			/>
-
-		<com.google.android.material.floatingactionbutton.FloatingActionButton
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"
-			android:id="@+id/fab_toggle_online"
-			android:layout_alignParentBottom="true"
-			android:layout_centerHorizontal="true"
-			app:useCompatPadding="true"
-			android:clickable="true"
-			app:maxImageSize="32dp"
-			app:elevation="8dp"
-		/>
-
-	</RelativeLayout>
 	
-	
+	<com.google.android.material.floatingactionbutton.FloatingActionButton
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:id="@+id/fab_toggle_online"
+		app:useCompatPadding="true"
+		android:clickable="true"
+		app:maxImageSize="32dp"
+		app:elevation="12dp"
+		app:layout_anchor="@+id/bnve"
+		app:layout_anchorGravity="center_horizontal"
+		android:src="@drawable/ic_car_offline"
+	/>
 	
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

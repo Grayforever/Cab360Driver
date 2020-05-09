@@ -17,7 +17,7 @@ namespace Cab360Driver.Helpers
 
         public override void OnLocationAvailability(LocationAvailability locationAvailability)
         {
-            Log.Debug("Uber Clone", "IsLocationAvailable: {0}", locationAvailability.IsLocationAvailable);
+            Log.Debug("cAB 360", "IsLocationAvailable: {0}", locationAvailability.IsLocationAvailable);
         }
 
 

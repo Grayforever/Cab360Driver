@@ -4,7 +4,8 @@
 	xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@android:color/white">
+    android:background="@android:color/white"
+    tools:ignore="HardcodedText">
 
     <com.google.android.material.appbar.AppBarLayout
         android:layout_width="match_parent"
@@ -26,213 +27,178 @@
         app:layout_behavior="@string/appbar_scrolling_view_behavior"
         android:fillViewport="true">
 
-        <RelativeLayout
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="match_parent"
+            android:padding="16dp">
 
             <TextView
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:id="@+id/part_vehi_intro_txt"
                 android:text="Tell us more about your car"
                 style="@style/Base.TextAppearance.AppCompat.Title"
-                android:layout_marginTop="16dp"
-                android:layout_marginStart="16dp"
-                android:layout_marginEnd="16dp"
                 android:fontFamily="sans-serif-light"
-                android:layout_alignParentTop="true"
+                app:layout_constraintVertical_chainStyle="spread_inside"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
             />
 
-            <LinearLayout
-                android:layout_width="match_parent"
+            <com.google.android.material.textfield.TextInputLayout
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:id="@+id/part_vehi_l1"
-                android:orientation="horizontal"
-                android:layout_marginStart="16dp"
-                android:layout_marginEnd="16dp"
-                android:layout_below="@+id/part_vehi_intro_txt"
-                android:layout_marginTop="8dp"
-                android:layout_marginBottom="8dp">
+                android:id="@+id/brand_lay"
+                android:layout_marginEnd="4dp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toStartOf="@+id/model_lay"
+                app:layout_constraintTop_toBottomOf="@+id/part_vehi_intro_txt"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu">
 
-                <com.google.android.material.textfield.TextInputLayout
-                    android:layout_width="0dp"
+                <androidx.appcompat.widget.AppCompatAutoCompleteTextView
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginBottom="8dp"
-                    android:layout_weight="1"
-                    android:layout_marginEnd="8dp"
-                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu">
-
-                    <androidx.appcompat.widget.AppCompatAutoCompleteTextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:id="@+id/brand_ac_tv"
-                        android:singleLine="true"
-                        android:fontFamily="sans-serif-light"
-                        android:inputType="none"
-                        android:imeOptions="actionNext"
-                        android:lines="1"
-                        android:paddingStart="12dp"
-                        android:paddingEnd="8dp"
-                        android:hint="Car brand"
+                    android:id="@+id/brand_ac_tv"
+                    android:singleLine="true"
+                    android:fontFamily="sans-serif-light"
+                    android:inputType="textCapWords"
+                    android:imeOptions="actionNext"
+                    android:lines="1"
+                    android:hint="Car brand"
                         
-                        />
+                    />
 
-                </com.google.android.material.textfield.TextInputLayout>
-
-                <com.google.android.material.textfield.TextInputLayout
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="8dp"
-                    android:layout_weight="1"
-                    android:layout_marginStart="8dp"
-                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu">
-
-                    <androidx.appcompat.widget.AppCompatAutoCompleteTextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:id="@+id/model_ac_tv"
-                        android:singleLine="true"
-                        android:fontFamily="sans-serif-light"
-                        android:inputType="none"
-                        android:imeOptions="actionNext"
-                        android:lines="1"
-                        android:paddingStart="12dp"
-                        android:paddingEnd="8dp"
-                        android:hint="Model"
-                        
-                        />
-
-                </com.google.android.material.textfield.TextInputLayout>
-
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:id="@+id/part_vehi_l2"
-                android:orientation="horizontal"
-                android:layout_marginStart="16dp"
-                android:layout_marginEnd="16dp"
-                android:layout_below="@+id/part_vehi_l1"
-                android:layout_marginBottom="8dp">
-
-                <com.google.android.material.textfield.TextInputLayout
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="8dp"
-                    android:layout_weight="0.5"
-                    android:layout_marginEnd="8dp"
-                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu">
-
-                    <androidx.appcompat.widget.AppCompatAutoCompleteTextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:id="@+id/year_ac_tv"
-                        android:singleLine="true"
-                        android:fontFamily="sans-serif-light"
-                        android:inputType="none"
-                        android:imeOptions="actionNext"
-                        android:lines="1"
-                        android:paddingStart="12dp"
-                        android:paddingEnd="8dp"
-                        android:hint="Year"
-                        
-                        />
-
-                </com.google.android.material.textfield.TextInputLayout>
-
-                <com.google.android.material.textfield.TextInputLayout
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="8dp"
-                    android:layout_weight="1"
-                    android:layout_marginStart="8dp"
-                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu">
-
-                    <androidx.appcompat.widget.AppCompatAutoCompleteTextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:id="@+id/state_ac_tv"
-                        android:singleLine="true"
-                        android:fontFamily="sans-serif-light"
-                        android:inputType="none"
-                        android:imeOptions="actionNext"
-                        android:lines="1"
-                        android:paddingStart="12dp"
-                        android:paddingEnd="8dp"
-                        android:hint="Condition"
-                        
-                        />
-
-                </com.google.android.material.textfield.TextInputLayout>
-
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:id="@+id/part_vehi_l3"
-                android:orientation="horizontal"
-                android:layout_marginStart="16dp"
-                android:layout_marginEnd="16dp"
-                android:layout_below="@+id/part_vehi_l2"
-                android:layout_marginBottom="8dp">
-
-                <com.google.android.material.textfield.TextInputLayout
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="8dp"
-                    android:layout_weight="0.5"
-                    android:layout_marginEnd="8dp"
-                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu">
-
-                    <androidx.appcompat.widget.AppCompatAutoCompleteTextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:id="@+id/color_ac_tv"
-                        android:singleLine="true"
-                        android:fontFamily="sans-serif-light"
-                        android:inputType="none"
-                        android:imeOptions="actionNext"
-                        android:lines="1"
-                        android:paddingStart="12dp"
-                        android:paddingEnd="8dp"
-                        android:hint="Color"
-                        
-                        />
-
-                </com.google.android.material.textfield.TextInputLayout>
-
-                <com.google.android.material.textfield.TextInputLayout
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="8dp"
-                    android:layout_weight="1"
-                    android:layout_marginStart="8dp"
-                    android:id="@+id/reg_no_til"
-                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
-
-                    <com.google.android.material.textfield.TextInputEditText
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:hint="Registration number"
-                        android:fontFamily="sans-serif-light"
-                        android:inputType="textCapWords"
-                        android:imeOptions="actionNext"
-                        />
-
-                </com.google.android.material.textfield.TextInputLayout>
-
-            </LinearLayout>
+            </com.google.android.material.textfield.TextInputLayout>
 
             <com.google.android.material.textfield.TextInputLayout
-                android:layout_width="match_parent"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="8dp"
-                android:layout_marginStart="16dp"
-                android:layout_marginEnd="16dp"
+                android:id="@+id/model_lay"
+                android:layout_marginEnd="4dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/brand_lay"
+                app:layout_constraintTop_toBottomOf="@+id/part_vehi_intro_txt"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu">
+
+                <androidx.appcompat.widget.AppCompatAutoCompleteTextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/model_ac_tv"
+                    android:singleLine="true"
+                    android:fontFamily="sans-serif-light"
+                    android:inputType="textCapWords"
+                    android:imeOptions="actionNext"
+                    android:lines="1"
+                    android:hint="Model"  
+                    />
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:id="@+id/year_lay"
+                android:layout_marginEnd="4dp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toStartOf="@+id/state_lay"
+                app:layout_constraintTop_toBottomOf="@+id/brand_lay"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu">
+
+                <androidx.appcompat.widget.AppCompatAutoCompleteTextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/year_ac_tv"
+                    android:singleLine="true"
+                    android:fontFamily="sans-serif-light"
+                    android:inputType="number"
+                    android:imeOptions="actionNext"
+                    android:maxLines="1"
+                    android:hint="Year"
+                    android:maxLength="4"    
+                    />
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:id="@+id/state_lay"
+                android:layout_marginStart="4dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/year_lay"
+                app:layout_constraintTop_toBottomOf="@id/brand_lay"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu">
+                
+                <androidx.appcompat.widget.AppCompatAutoCompleteTextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/state_ac_tv"
+                    android:singleLine="true"
+                    android:fontFamily="sans-serif-light"
+                    android:inputType="none"
+                    android:imeOptions="actionNext"
+                    android:maxLines="1"
+                    android:ellipsize="end"
+                    android:hint="Condition"
+                        
+                />
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:id="@+id/color_lay"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toStartOf="@+id/reg_no_til"
+                app:layout_constraintTop_toBottomOf="@id/year_lay"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu">
+
+                <androidx.appcompat.widget.AppCompatAutoCompleteTextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/color_ac_tv"
+                    android:singleLine="true"
+                    android:fontFamily="sans-serif-light"
+                    android:inputType="textCapWords"
+                    android:imeOptions="actionNext"
+                    android:maxLines="1"
+                    android:ellipsize="end"
+                    android:paddingStart="12dp"
+                    android:paddingEnd="8dp"
+                    android:hint="Color"
+                        
+                    />
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:id="@+id/reg_no_til"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/color_lay"
+                app:layout_constraintTop_toBottomOf="@id/year_lay"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Registration number"
+                    android:fontFamily="sans-serif-light"
+                    android:inputType="textCapCharacters"
+                    android:imeOptions="actionNext"
+                    />
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/color_lay"
                 android:id="@+id/curr_user_til"
-                android:layout_below="@+id/part_vehi_l3"
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
 
                 <com.google.android.material.textfield.TextInputEditText
@@ -241,7 +207,7 @@
                     android:hint="Current owner"
                     android:fontFamily="sans-serif-light"
                     android:inputType="textCapWords"
-                    android:imeOptions="actionNext"
+                    android:imeOptions="actionDone"
                     />
 
             </com.google.android.material.textfield.TextInputLayout>
@@ -254,18 +220,16 @@
                 android:textAppearance="?android:attr/textAppearanceMedium"
                 android:text="Please tick the appropriate box"
                 android:fontFamily="sans-serif-light"
-                android:layout_marginStart="16dp"
-                android:layout_marginEnd="16dp"
-                android:layout_marginBottom="8dp"
+                app:layout_constraintBottom_toTopOf="@+id/part_grid1"
+                app:layout_constraintTop_toBottomOf="@+id/curr_user_til"
                 />
 
             <GridLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:id="@+id/part_grid1"
-                android:layout_below="@+id/pls_tick_tv"
-                android:layout_marginStart="16dp"
-                android:layout_marginEnd="16dp"
+                app:layout_constraintBottom_toTopOf="@+id/part_cont_btn"
+                app:layout_constraintTop_toBottomOf="@+id/pls_tick_tv"
                 android:columnCount="2">
                 <com.google.android.material.checkbox.MaterialCheckBox
                     android:layout_width="0dp"
@@ -312,17 +276,15 @@
             <com.google.android.material.button.MaterialButton
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_margin="16dp"
                 android:id="@+id/part_cont_btn"
-                android:layout_alignParentBottom="true"
                 android:text="Continue"
-                android:textColor="@drawable/btn_txt_clr_tggl"
                 android:fontFamily="sans-serif-light"
                 android:textStyle="bold"
                 android:enabled="false"
+                app:layout_constraintTop_toBottomOf="@+id/part_grid1"
                 />
 
-        </RelativeLayout>
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
 
     </androidx.core.widget.NestedScrollView>

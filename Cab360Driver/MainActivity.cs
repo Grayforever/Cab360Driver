@@ -2,19 +2,17 @@
 using Android.App;
 using Android.Content;
 using Android.Gms.Maps.Model;
-using Android.Graphics;
 using Android.Media;
-using Android.Net;
 using Android.OS;
+using Android.Util;
 using Android.Views;
 using Android.Widget;
-using AndroidX.AppCompat.App;
 using AndroidX.Core.Content;
-using AndroidX.ViewPager.Widget;
+using AndroidX.Fragment.App;
 using AndroidX.ViewPager2.Widget;
-using Cab360Driver.Activities;
 using Cab360Driver.Adapters;
 using Cab360Driver.DataModels;
+using Cab360Driver.EnumsConstants;
 using Cab360Driver.EventListeners;
 using Cab360Driver.Fragments;
 using Cab360Driver.Helpers;
@@ -23,13 +21,12 @@ using Google.Android.Material.Badge;
 using Google.Android.Material.BottomNavigation;
 using Google.Android.Material.FloatingActionButton;
 using Java.Lang;
-using Java.Net;
 using System;
 
 namespace Cab360Driver
 {
-    [Activity(Label = "@string/app_name", Theme = "@style/AppTheme", MainLauncher = false, ConfigurationChanges = Android.Content.PM.ConfigChanges.ScreenSize, ScreenOrientation = Android.Content.PM.ScreenOrientation.Portrait, WindowSoftInputMode = SoftInput.AdjustResize)]
-    public class MainActivity : AppCompatActivity
+    [Activity(Label = "@string/app_name", Theme = "@style/AppTheme", ConfigurationChanges = Android.Content.PM.ConfigChanges.ScreenSize, ScreenOrientation = Android.Content.PM.ScreenOrientation.Portrait, WindowSoftInputMode = SoftInput.AdjustResize)]
+    public class MainActivity : FragmentActivity, IRunnable
     {
         //Buttons
         private FloatingActionButton fabToggleOnline;
@@ -46,25 +43,15 @@ namespace Cab360Driver
         NewRequestFragment requestFoundDialogue;
 
         //PermissionRequest
-        const int RequestID = 0;
-        readonly string[] permissionsGroup =
-        {
-            Manifest.Permission.AccessCoarseLocation,
-            Manifest.Permission.AccessFineLocation,
-        };
-
-
+        private const int RequestID = 0;
+        
         //EventListeners
         AvailablityListener availablityListener;
         RideDetailsListener rideDetailsListener;
         NewTripEventListener newTripEventListener;
         WarningEvent1 warningEvent = new WarningEvent1();
         WarningEvent2 startTripEvent = new WarningEvent2();
-        private NetStateReceiver netState = new NetStateReceiver();
 
-        //dialogs
-        SweetAlertDialog loadingDialog;
-        SweetAlertDialog startTripAlert;
         //Map Stuffs
         Android.Locations.Location mLastLocation;
         LatLng mLastLatLng;
@@ -74,52 +61,32 @@ namespace Cab360Driver
         bool availablityStatus;
         bool isBackground;
         bool newRideAssigned;
-        string status = "NORMAL"; //REQUESTFOUND, ACCEPTED, ONTRIP
+        private RideStatusEnum statusEnum;
+        private int rotation = 180;
+        private int onlinedrawableId = Resource.Drawable.ic_car_online;
+        /*string status = "NORMAL";*/ //REQUESTFOUND, ACCEPTED, ONTRIP
 
         //Datamodels
-        RideDetails newRideDetails;
+        private RideDetails newRideDetails;
 
         //MediaPlayer
-        MediaPlayer player;
+        private MediaPlayer player;
 
         //Helpers
-        MapFunctionHelper mapHelper;
+        private MapFunctionHelper mapHelper;
 
 
-        ProfileEventListener profileEvent = new ProfileEventListener();
+        private ProfileEventListener profileEvent = new ProfileEventListener();
 
         protected override void OnCreate(Bundle savedInstanceState)
         {
             base.OnCreate(savedInstanceState);
-            // Set our view from the "main" layout resource
             SetContentView(Resource.Layout.activity_main);
-
-            loadingDialog = new SweetAlertDialog(this, SweetAlertDialog.ProgressType);
-            startTripAlert = new SweetAlertDialog(this, SweetAlertDialog.WarningType);
 
             ConnectViews();
             CheckSpecialPermission();
-
             profileEvent.Create();
-            
-        }
-
-        private void ShowOfflineDialog(bool IsConnected)
-        {
-            if (!IsConnected)
-            {
-                new SweetAlertDialog(this, SweetAlertDialog.ErrorType)
-                    .SetTitleText("Network errror")
-                    .SetContentText("You are not connected to the internet")
-                    .SetConfirmText("OK")
-                    .SetConfirmClickListener(null)
-                    .Show();
-            }
-            else
-            {
-                return;
-            }
-            
+            statusEnum = RideStatusEnum.Normal;
         }
 
         protected override void OnStart()
@@ -141,44 +108,23 @@ namespace Cab360Driver
 
         private void ProfileEvent_UserFoundEvent(object sender, EventArgs e)
         {
-            Toast.MakeText(this, $"Welcome, {AppDataHelper.GetFirstName()}", ToastLength.Long).Show();
+            Log.Debug("username: ", AppDataHelper.GetFirstName());
         }
 
-        void ShowProgressDialogue()
+        private void ConnectViews()
         {
-            loadingDialog.ProgressHelper.BarColor = Resource.Color.colorAccent;
-            loadingDialog.SetTitleText("Loading");
-            loadingDialog.SetCancelable(false);
-            loadingDialog.Show();
-        }
-
-        void CloseProgressDialogue()
-        {
-            if (loadingDialog.IsShowing)
-            {
-                loadingDialog.DismissWithAnimation();
-            }
-        }
-
-
-        void ConnectViews()
-        {
-            
             fabToggleOnline = FindViewById<FloatingActionButton>(Resource.Id.fab_toggle_online);
             fabToggleOnline.Click += FabToggleOnline_Click;
 
             bnve = (BottomNavigationView)FindViewById(Resource.Id.bnve);
             BadgeDrawable badge = bnve.GetOrCreateBadge(Resource.Menu.bottomnav);
             badge.SetVisible(true);
-
-
             bnve.NavigationItemSelected += Bnve_NavigationItemSelected1;
 
             viewpager = (ViewPager2)FindViewById(Resource.Id.viewpager);
             viewpager.Orientation = ViewPager2.OrientationHorizontal;
             viewpager.OffscreenPageLimit = 3;
             viewpager.UserInputEnabled = false;
-
             SetupViewPager();
 
             homeFragment.CurrentLocation += HomeFragment_CurrentLocation;
@@ -187,8 +133,6 @@ namespace Cab360Driver
             homeFragment.Navigate += HomeFragment_Navigate;
             homeFragment.TripActionStartTrip += HomeFragment_TripActionStartTrip;
             homeFragment.TripActionEndTrip += HomeFragment_TripActionEndTrip;
-
-            
         }
 
         private void Bnve_NavigationItemSelected1(object sender, BottomNavigationView.NavigationItemSelectedEventArgs e)
@@ -197,24 +141,23 @@ namespace Cab360Driver
             switch (itemID)
             {
                 case Resource.Id.action_earning:
-                    viewpager.SetCurrentItem(1, true);
+                    viewpager.SetCurrentItem(1, false);
                     break;
 
                 case Resource.Id.action_home:
-                    viewpager.SetCurrentItem(0, true);
+                    viewpager.SetCurrentItem(0, false);
                     break;
 
                 case Resource.Id.action_rating:
-                    viewpager.SetCurrentItem(2, true);
+                    viewpager.SetCurrentItem(2, false);
                     break;
 
                 case Resource.Id.action_account:
-                    viewpager.SetCurrentItem(3, true);
+                    viewpager.SetCurrentItem(3, false);
                     break;
 
                 default:
                     return;
-
             }
         }
 
@@ -240,34 +183,51 @@ namespace Cab360Driver
             {
                 availablityStatus = true;
                 homeFragment.GoOnline();
-                fabToggleOnline.SetBackgroundColor(Color.LightGreen);
             }
+
+            fabToggleOnline.Animate()
+                .RotationBy(rotation)
+                .SetDuration(100)
+                .ScaleX(1.1f)
+                .ScaleY(1.1f)
+                .WithEndAction(this)
+                .Start();
         }
 
         private void WarningEvent_OnConfirmClick(object sender, EventArgs e)
         {
             homeFragment.GoOffline();
-            fabToggleOnline.SetBackgroundColor(Color.OrangeRed);
             availablityStatus = false;
             TakeDriverOffline();
+            
+        }
+
+        public void Run()
+        {
+            fabToggleOnline.SetImageDrawable(GetDrawable(Resource.Drawable.ic_car_online));
+            fabToggleOnline.Animate()
+                .RotationBy(rotation)
+                .SetDuration(100)
+                .ScaleX(1)
+                .ScaleY(1)
+                .Start();
         }
 
         public async void HomeFragment_TripActionEndTrip(object sender, EventArgs e)
         {
-            //Reset app
-            status = "NORMAL";
             homeFragment.ResetAfterTrip();
-
-
-            ShowProgressDialogue();
+            statusEnum = RideStatusEnum.Normal;
 
             LatLng pickupLatLng = new LatLng(newRideDetails.PickupLat, newRideDetails.PickupLng);
             double fares = await mapHelper.CalculateFares(pickupLatLng, mLastLatLng);
-            CloseProgressDialogue();
-
             newTripEventListener.EndTrip(fares);
             newTripEventListener = null;
+            ShowFareDialog(fares);
+            availablityListener.ReActivate();
+        }
 
+        private void ShowFareDialog(double fares)
+        {
             CollectPaymentFragment collectPaymentFragment = new CollectPaymentFragment(fares);
             collectPaymentFragment.Cancelable = false;
             var trans = SupportFragmentManager.BeginTransaction();
@@ -276,92 +236,89 @@ namespace Cab360Driver
             {
                 collectPaymentFragment.Dismiss();
             };
-
-            availablityListener.ReActivate();
-
         }
 
         public void HomeFragment_TripActionStartTrip(object sender, EventArgs e)
         {
             
-            startTripAlert.SetTitleText("Start Trip");
-            startTripAlert.SetContentText("Sure to start trip?");
-            startTripAlert.SetCancelText("No");
-            startTripAlert.SetConfirmText("Yes");
-            startTripAlert.SetConfirmClickListener(startTripEvent);
-            startTripAlert.Show();
+            //startTripAlert.SetTitleText("Start Trip");
+            //startTripAlert.SetContentText("Sure to start trip?");
+            //startTripAlert.SetCancelText("No");
+            //startTripAlert.SetConfirmText("Yes");
+            //startTripAlert.SetConfirmClickListener(startTripEvent);
+            //startTripAlert.Show();
 
-            startTripEvent.OnConfirmClick += StartTripEvent_OnConfirmClick;
+            //startTripEvent.OnConfirmClick += StartTripEvent_OnConfirmClick;
         }
 
         private void StartTripEvent_OnConfirmClick(object sender, EventArgs e)
         {
-            status = "ONTRIP";
-
-            // Update Rider that Driver has started the trip
-            newTripEventListener.UpdateStatus("ontrip");
+            statusEnum = RideStatusEnum.Ontrip;
+            newTripEventListener.UpdateStatus(statusEnum);
         }
 
         private void HomeFragment_Navigate(object sender, EventArgs e)
         {
-            if (newRideDetails == null)
-                return;
-
-            string uriString = "";
-
-            if (status == "ACCEPTED")
-            {
-                uriString = "google.navigation:q=" + newRideDetails.PickupLat.ToString() + "," + newRideDetails.PickupLng.ToString();
-            }
-            else
-            {
-                uriString = "google.navigation:q=" + newRideDetails.DestinationLat.ToString() + "," + newRideDetails.DestinationLng.ToString();
-            }
-
-            Android.Net.Uri googleMapIntentUri = Android.Net.Uri.Parse(uriString);
-            Intent mapIntent = new Intent(Intent.ActionView, googleMapIntentUri);
-            mapIntent.SetPackage("com.google.android.apps.maps");
-
             try
             {
-                StartActivity(mapIntent);
+                if (newRideDetails != null)
+                {
+                    string uriString = statusEnum == RideStatusEnum.Accepted
+                        ? NavUriString(newRideDetails.PickupLat, newRideDetails.PickupLng)
+                        : NavUriString(newRideDetails.DestinationLat, newRideDetails.DestinationLng);
+                    OpenGoogleMap(uriString);
+                }
+                else
+                {
+                    return;
+                }
             }
-            catch
+            catch (System.Exception exception)
             {
-                Toast.MakeText(this, "Google Map is not Installed on this device", ToastLength.Short).Show();
+                Toast.MakeText(this, exception.Message, ToastLength.Short).Show();
             }
         }
 
+        private void OpenGoogleMap(string uriString)
+        {
+            Android.Net.Uri googleMapIntentUri = Android.Net.Uri.Parse(uriString);
+            Intent mapIntent = new Intent(Intent.ActionView, googleMapIntentUri);
+            mapIntent.SetPackage("com.google.android.apps.maps");
+            StartActivity(mapIntent);
+        }
 
-        void HomeFragment_CallRider(object sender, EventArgs e)
+        private string NavUriString(double lat, double lng)
+        {
+            return $"{StringConstants.GetNavigateBaseGateway()}{lat},{lng}";
+        }
+
+        private void HomeFragment_CallRider(object sender, EventArgs e)
         {
             if (newRideDetails == null)
                 return;
 
-            var uri = Android.Net.Uri.Parse("tel:" + newRideDetails.RiderPhone);
+            var uri = Android.Net.Uri.Parse($"tel:{newRideDetails.RiderPhone}");
             Intent intent = new Intent(Intent.ActionDial, uri);
             StartActivity(intent);
         }
 
-        async void HomeFragment_TripActionArrived(object sender, EventArgs e)
+        private async void HomeFragment_TripActionArrived(object sender, EventArgs e)
         {
             //Notifies Rider that Driver has arrived
-            newTripEventListener.UpdateStatus("arrived");
-            status = "ARRIVED";
+            statusEnum = RideStatusEnum.Arrived;
+            newTripEventListener.UpdateStatus(statusEnum);
 
             LatLng pickupLatLng = new LatLng(newRideDetails.PickupLat, newRideDetails.PickupLng);
             LatLng destinationLatLng = new LatLng(newRideDetails.DestinationLat, newRideDetails.DestinationLng);
 
-            ShowProgressDialogue();
             string directionJson = await mapHelper.GetDirectionJsonAsync(pickupLatLng, destinationLatLng);
-            CloseProgressDialogue();
 
             //Clear Map
             homeFragment.mainMap.Clear();
             mapHelper.DrawTripToDestination(directionJson);
         }
 
-        void HomeFragment_CurrentLocation(object sender, LocationCallbackHelper.OnLocationCaptionEventArgs e)
+        private void HomeFragment_CurrentLocation(object sender, LocationCallbackHelper.OnLocationCaptionEventArgs e)
         {
             mLastLocation = e.Location;
             mLastLatLng = new LatLng(mLastLocation.Latitude, mLastLocation.Longitude);
@@ -376,38 +333,41 @@ namespace Cab360Driver
                 TakeDriverOnline();
             }
 
-            if (status == "ACCEPTED")
+            switch (statusEnum)
             {
-                //Update and Animate driver movement to pick up lOcation
-                LatLng pickupLatLng = new LatLng(newRideDetails.PickupLat, newRideDetails.PickupLng);
-                mapHelper.UpdateMovement(mLastLatLng, pickupLatLng, "Rider");
+                case RideStatusEnum.Accepted:
+                    {
+                        //Update and Animate driver movement to pick up lOcation
+                        LatLng pickupLatLng = new LatLng(newRideDetails.PickupLat, newRideDetails.PickupLng);
+                        mapHelper.UpdateMovement(mLastLatLng, pickupLatLng, "Rider");
 
-                //Updates Location in rideRequest Table, so that Rider can receive Updates
-                newTripEventListener.UpdateLocation(mLastLocation);
+                        //Updates Location in rideRequest Table, so that Rider can receive Updates
+                        newTripEventListener.UpdateLocation(mLastLocation);
+                        break;
+                    }
+
+                case RideStatusEnum.Arrived:
+                    newTripEventListener.UpdateLocation(mLastLocation);
+                    break;
+                case RideStatusEnum.Ontrip:
+                    {
+                        //Update and animate driver movement to Destination
+                        LatLng destinationLatLng = new LatLng(newRideDetails.DestinationLat, newRideDetails.DestinationLng);
+                        mapHelper.UpdateMovement(mLastLatLng, destinationLatLng, "Destination");
+
+                        //Update Location on firebase
+                        newTripEventListener.UpdateLocation(mLastLocation);
+                        break;
+                    }
 
             }
-            else if (status == "ARRIVED")
-            {
-                newTripEventListener.UpdateLocation(mLastLocation);
-            }
-            else if (status == "ONTRIP")
-            {
-                //Update and animate driver movement to Destination
-                LatLng destinationLatLng = new LatLng(newRideDetails.DestinationLat, newRideDetails.DestinationLng);
-                mapHelper.UpdateMovement(mLastLatLng, destinationLatLng, "Destination");
-
-                //Update Location on firebase
-                newTripEventListener.UpdateLocation(mLastLocation);
-            }
-
-
         }
 
         private void TakeDriverOnline()
         {
             if(mLastLocation != null)
             {
-                availablityListener = new AvailablityListener();
+                availablityListener = new AvailablityListener(this);
                 availablityListener.Create(mLastLocation);
                 availablityListener.RideAssigned += AvailablityListener_RideAssigned;
                 availablityListener.RideTimedOut += AvailablityListener_RideTimedOut;
@@ -419,7 +379,9 @@ namespace Cab360Driver
             }
         }
 
-        void TakeDriverOffline()
+        
+
+        private void TakeDriverOffline()
         {
             if(availablityListener != null)
             {
@@ -433,7 +395,21 @@ namespace Cab360Driver
 
         }
 
-        void AvailablityListener_RideAssigned(object sender, AvailablityListener.RideAssignedIDEventArgs e)
+        private void AvailablityListener_RideTimedOut(object sender, AvailablityListener.TimeoutMessageArgs e)
+        {
+            if (requestFoundDialogue != null)
+            {
+                requestFoundDialogue.Dismiss();
+                requestFoundDialogue = null;
+                player.Stop();
+                player = null;
+            }
+
+            Toast.MakeText(this, e.Message, ToastLength.Short).Show();
+            availablityListener.ReActivate();
+        }
+
+        private void AvailablityListener_RideAssigned(object sender, AvailablityListener.RideAssignedIDEventArgs e)
         {
             var rideID = e.RideId;
             if(!string.IsNullOrEmpty(rideID) && !string.IsNullOrWhiteSpace(rideID))
@@ -452,12 +428,12 @@ namespace Cab360Driver
 
         }
 
-        void RideDetailsListener_RideDetailsNotFound(object sender, EventArgs e)
+        private void RideDetailsListener_RideDetailsNotFound(object sender, EventArgs e)
         {
 
         }
 
-        void CreateNewRequestDialogue()
+        private void CreateNewRequestDialogue()
         {
             requestFoundDialogue = new NewRequestFragment(newRideDetails.PickupAddress, newRideDetails.DestinationAddress);
             requestFoundDialogue.Cancelable = false;
@@ -472,12 +448,12 @@ namespace Cab360Driver
             requestFoundDialogue.RideAccepted += RequestFoundDialogue_RideAccepted;
         }
 
-        async void RequestFoundDialogue_RideAccepted(object sender, EventArgs e)
+        private async void RequestFoundDialogue_RideAccepted(object sender, EventArgs e)
         {
             newTripEventListener = new NewTripEventListener(newRideDetails.RideId, mLastLocation);
             newTripEventListener.Create();
 
-            status = "ACCEPTED";
+            statusEnum = RideStatusEnum.Accepted;
 
             //Stop Alert
             if (player != null)
@@ -494,18 +470,14 @@ namespace Cab360Driver
             }
 
             homeFragment.CreateTrip(newRideDetails.RiderName);
-            mapHelper = new MapFunctionHelper(Resources.GetString(Resource.String.mapKey), homeFragment.mainMap);
+            mapHelper = new MapFunctionHelper(homeFragment.mainMap);
             LatLng pickupLatLng = new LatLng(newRideDetails.PickupLat, newRideDetails.PickupLng);
-
-            ShowProgressDialogue();
             string directionJson = await mapHelper.GetDirectionJsonAsync(mLastLatLng, pickupLatLng);
-            
 
             mapHelper.DrawTripOnMap(directionJson);
-            CloseProgressDialogue();
         }
 
-        void RequestFoundDialogue_RideRejected(object sender, EventArgs e)
+        private void RequestFoundDialogue_RideRejected(object sender, EventArgs e)
         {
             //Stop Alert
             if (player != null)
@@ -526,9 +498,9 @@ namespace Cab360Driver
             //Do other stuff
         }
 
-        void RideDetailsListener_RideDetailsFound(object sender, RideDetailsListener.RideDetailsEventArgs e)
+        private void RideDetailsListener_RideDetailsFound(object sender, RideDetailsListener.RideDetailsEventArgs e)
         {
-            if (status != "NORMAL")
+            if (statusEnum != RideStatusEnum.Normal)
             {
                 return;
             }
@@ -549,21 +521,7 @@ namespace Cab360Driver
             }
         }
 
-        void AvailablityListener_RideTimedOut(object sender, EventArgs e)
-        {
-            if (requestFoundDialogue != null)
-            {
-                requestFoundDialogue.Dismiss();
-                requestFoundDialogue = null;
-                player.Stop();
-                player = null;
-            }
-
-            Toast.MakeText(this, "New trip Timeout", ToastLength.Short).Show();
-            availablityListener.ReActivate();
-        }
-
-        void AvailablityListener_RideCancelled(object sender, EventArgs e)
+        private void AvailablityListener_RideCancelled(object sender, EventArgs e)
         {
             if (requestFoundDialogue != null)
             {
@@ -590,13 +548,13 @@ namespace Cab360Driver
             viewpager.Adapter = adapter;
         }
 
-        bool CheckSpecialPermission()
+        private bool CheckSpecialPermission()
         {
             bool permissionGranted = false;
             if (ContextCompat.CheckSelfPermission(this, Manifest.Permission.AccessFineLocation) != Android.Content.PM.Permission.Granted &&
                 ContextCompat.CheckSelfPermission(this, Manifest.Permission.AccessCoarseLocation) != Android.Content.PM.Permission.Granted)
             {
-                RequestPermissions(permissionsGroup, RequestID);
+                RequestPermissions(StringConstants.GetLocationPermissiongroup(), RequestID);
             }
             else
             {
@@ -604,27 +562,6 @@ namespace Cab360Driver
             }
 
             return permissionGranted;
-        }
-
-        public static bool IsOnline1()
-        {
-            try
-            {
-                Runtime runtime = Runtime.GetRuntime();
-                Java.Lang.Process IpProcess = runtime.Exec("/system/bin/ping -c 1 8.8.8.8");
-                int exitValue = IpProcess.WaitFor();
-                return (exitValue == 0);
-            }
-            catch (InvalidOperationException ioe)
-            {
-
-                throw;
-            }
-            catch(InterruptedException ie)
-            {
-                
-            }
-            return false;
         }
 
         protected override void OnPause()
@@ -643,5 +580,7 @@ namespace Cab360Driver
                 newRideAssigned = false;
             }
         }
+
+        
     }
 }

@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace graylabs.Helpers
+namespace Cab360Driver.DataModels
 {
     public class GeocodedWaypoint
     {
@@ -69,39 +69,39 @@ namespace graylabs.Helpers
     }
 
     public class Leg
-{
-    public Distance distance { get; set; }
-    public Duration duration { get; set; }
-    public string end_address { get; set; }
-    public EndLocation end_location { get; set; }
-    public string start_address { get; set; }
-    public StartLocation start_location { get; set; }
-    public IList<Step> steps { get; set; }
-    public IList<object> traffic_speed_entry { get; set; }
-    public IList<object> via_waypoint { get; set; }
-}
+    {
+        public Distance distance { get; set; }
+        public Duration duration { get; set; }
+        public string end_address { get; set; }
+        public EndLocation end_location { get; set; }
+        public string start_address { get; set; }
+        public StartLocation start_location { get; set; }
+        public IList<Step> steps { get; set; }
+        public IList<object> traffic_speed_entry { get; set; }
+        public IList<object> via_waypoint { get; set; }
+    }
 
-public class OverviewPolyline
-{
-    public string points { get; set; }
-}
+    public class OverviewPolyline
+    {
+        public string points { get; set; }
+    }
 
-public class Route
-{
-    public Bounds bounds { get; set; }
-    public string copyrights { get; set; }
-    public IList<Leg> legs { get; set; }
-    public OverviewPolyline overview_polyline { get; set; }
-    public string summary { get; set; }
-    public IList<object> warnings { get; set; }
-    public IList<object> waypoint_order { get; set; }
-}
+    public class Route
+    {
+        public Bounds bounds { get; set; }
+        public string copyrights { get; set; }
+        public IList<Leg> legs { get; set; }
+        public OverviewPolyline overview_polyline { get; set; }
+        public string summary { get; set; }
+        public IList<object> warnings { get; set; }
+        public IList<object> waypoint_order { get; set; }
+    }
 
-public class DirectionParser
-{
-    public IList<GeocodedWaypoint> geocoded_waypoints { get; set; }
-    public IList<Route> routes { get; set; }
-    public string status { get; set; }
-}
+    public class DirectionParser
+    {
+        public IList<GeocodedWaypoint> geocoded_waypoints { get; set; }
+        public IList<Route> routes { get; set; }
+        public string status { get; set; }
+    }
 
 }

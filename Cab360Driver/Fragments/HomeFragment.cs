@@ -5,6 +5,7 @@ using Android.OS;
 using Android.Runtime;
 using Android.Views;
 using Android.Widget;
+using Cab360Driver.EnumsConstants;
 using Cab360Driver.Helpers;
 using Google.Android.Material.FloatingActionButton;
 using System;
@@ -27,10 +28,6 @@ namespace Cab360Driver.Fragments
         Android.Locations.Location mLastlocation;
         LocationCallbackHelper mLocationCallback = new LocationCallbackHelper();
 
-        static int UPDATE_INTERVAL = 5; //Seconds
-        static int FASTEST_INTERVAL = 5; //Seconds
-        static int DISPLACEMENT = 1; //METRES;
-
         //Layout
         RelativeLayout rideInfoLayout;
 
@@ -44,7 +41,9 @@ namespace Cab360Driver.Fragments
         Button tripButton;
 
         private TextSwitcher StatusSwitcher;
-        private static string[] status = {"OFFLINE", "ONLINE"};
+        private readonly string[] status = {"OFFLINE", "ONLINE"};
+        private readonly string[] TripBtnTxt = { "Start Trip", "End Trip", "Arrived Pickup" };
+
         //Flags
         bool tripCreated = false;
         bool driverArrived = false;
@@ -124,7 +123,7 @@ namespace Cab360Driver.Fragments
             {
                 driverArrived = true;
                 TripActionArrived?.Invoke(this, new EventArgs());
-                tripButton.Text = "Start Trip";
+                tripButton.Text = TripBtnTxt[0];
                 return;
             }
 
@@ -132,7 +131,7 @@ namespace Cab360Driver.Fragments
             {
                 tripStarted = true;
                 TripActionStartTrip.Invoke(this, new EventArgs());
-                tripButton.Text = "End Trip";
+                tripButton.Text = TripBtnTxt[1];
                 return;
             }
 
@@ -167,10 +166,10 @@ namespace Cab360Driver.Fragments
         void CreateLocationRequest()
         {
             mLocationRequest = new LocationRequest();
-            mLocationRequest.SetInterval(UPDATE_INTERVAL);
-            mLocationRequest.SetFastestInterval(FASTEST_INTERVAL);
+            mLocationRequest.SetInterval(IntegerConstants.GetUpdateInterval());
+            mLocationRequest.SetFastestInterval(IntegerConstants.GetFastestInterval());
             mLocationRequest.SetPriority(LocationRequest.PriorityHighAccuracy);
-            mLocationRequest.SetSmallestDisplacement(DISPLACEMENT);
+            mLocationRequest.SetSmallestDisplacement(IntegerConstants.GetDisplacement());
             mLocationCallback.MyLocation += MLocationCallback_MyLocation;
             locationProviderClient = LocationServices.GetFusedLocationProviderClient(Activity);
         }
@@ -224,7 +223,7 @@ namespace Cab360Driver.Fragments
 
         public void ResetAfterTrip()
         {
-            tripButton.Text = "Arrived Pickup";
+            tripButton.Text = TripBtnTxt[3];
             centerMarker.Visibility = ViewStates.Visible;
             riderNameText.Text = "";
             rideInfoLayout.Visibility = ViewStates.Invisible;
@@ -234,9 +233,6 @@ namespace Cab360Driver.Fragments
             mainMap.Clear();
             mainMap.TrafficEnabled = false;
             mainMap.UiSettings.ZoomControlsEnabled = false;
-
-        }
-
-        
+        } 
     }
 }

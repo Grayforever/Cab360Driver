@@ -3,134 +3,109 @@ using Android.Content;
 using Firebase;
 using Firebase.Auth;
 using Firebase.Database;
+using Firebase.Storage;
 
 namespace Cab360Driver.Helpers
 {
-    public class AppDataHelper
+    public static class AppDataHelper
     {
-        static ISharedPreferences pref = Application.Context.GetSharedPreferences("userinfo", FileCreationMode.Private);
-        static ISharedPreferences prefs = Application.Context.GetSharedPreferences("appSession", FileCreationMode.Private);
+        private static ISharedPreferences pref = Application.Context.GetSharedPreferences("userinfo", FileCreationMode.Private);
+        private static ISharedPreferences prefs = Application.Context.GetSharedPreferences("appSession", FileCreationMode.Private);
+        private static FirebaseAuth FireAuth;
+        private static FirebaseDatabase FireDb;
 
-
-        public static FirebaseDatabase GetDatabase()
+        private static FirebaseApp FireApp 
         {
-            var app = FirebaseApp.InitializeApp(Application.Context);
-            FirebaseDatabase database;
-            if (app == null)
+            get
             {
-                var options = new FirebaseOptions.Builder()
-                    .SetApplicationId("taxiproject-185a4")
-                    .SetApiKey("AIzaSyDHXqe3Yh9Nl3wsxFItOoz1IwKiBRP7fxk")
-                    .SetDatabaseUrl("https://taxiproject-185a4.firebaseio.com")
-                    .SetStorageBucket("taxiproject-185a4.appspot.com")
-                    .Build();
-                app = FirebaseApp.InitializeApp(Application.Context, options);
-                database = FirebaseDatabase.GetInstance(app);
+                var app = FirebaseApp.InitializeApp(Application.Context);
+                if (app == null)
+                {
+                    var options = new FirebaseOptions.Builder()
+                        .SetApplicationId("taxiproject-185a4")
+                        .SetApiKey("AIzaSyDHXqe3Yh9Nl3wsxFItOoz1IwKiBRP7fxk")
+                        .SetDatabaseUrl("https://taxiproject-185a4.firebaseio.com")
+                        .SetStorageBucket("taxiproject-185a4.appspot.com")
+                        .Build();
+                    app = FirebaseApp.InitializeApp(Application.Context, options);
+                }
+                return app;
             }
-            else
-            {
-                database = FirebaseDatabase.GetInstance(app);
-            }
-            return database;
         }
 
-        public static FirebaseApp GetFirebaseApp()
+        private static FirebaseApp GetFireApp()
         {
-            var app = FirebaseApp.InitializeApp(Application.Context);
-            if (app == null)
-            {
-                var options = new FirebaseOptions.Builder()
-                    .SetApplicationId("taxiproject-185a4")
-                    .SetApiKey("AIzaSyDHXqe3Yh9Nl3wsxFItOoz1IwKiBRP7fxk")
-                    .SetDatabaseUrl("https://taxiproject-185a4.firebaseio.com")
-                    .SetStorageBucket("taxiproject-185a4.appspot.com")
-                    .Build();
-                app = FirebaseApp.InitializeApp(Application.Context, options);
-            }
+            return FireApp;
+        }
+        
+        public static FirebaseDatabase GetDatabase()
+        {
+            GetFireApp();
+            FireDb = FirebaseDatabase.GetInstance(FireApp);
+            return FireDb;
+        }
 
-            return app;
+        public static DatabaseReference GetParentReference()
+        {
+            GetDatabase();
+            return FireDb.GetReference("Cab360Drivers");
+        }
+
+        public static DatabaseReference GetAvailDrivRef()
+        {
+            GetDatabase();
+            return FireDb.GetReference("driversAvailable");
         }
 
         public static FirebaseAuth GetFirebaseAuth()
         {
-
-            var app = FirebaseApp.InitializeApp(Application.Context);
-            FirebaseAuth mAuth;
-            if (app == null)
-            {
-                var options = new FirebaseOptions.Builder()
-                    .SetApplicationId("taxiproject-185a4")
-                    .SetApiKey("AIzaSyDHXqe3Yh9Nl3wsxFItOoz1IwKiBRP7fxk")
-                    .SetDatabaseUrl("https://taxiproject-185a4.firebaseio.com")
-                    .SetStorageBucket("taxiproject-185a4.appspot.com")
-                    .Build();
-                app = FirebaseApp.InitializeApp(Application.Context, options);
-                mAuth = FirebaseAuth.Instance;
-            }
-            else
-            {
-                mAuth = FirebaseAuth.Instance;
-            }
-
-            return mAuth;
+            GetFireApp();
+            FireAuth = FirebaseAuth.GetInstance(FireApp);
+            return FireAuth;
         }
 
         public static FirebaseUser GetCurrentUser()
         {
-            var app = FirebaseApp.InitializeApp(Application.Context);
-            FirebaseAuth mAuth;
-            FirebaseUser mUser;
-            if (app == null)
-            {
-                var options = new FirebaseOptions.Builder()
-                    .SetApplicationId("taxiproject-185a4")
-                    .SetApiKey("AIzaSyDHXqe3Yh9Nl3wsxFItOoz1IwKiBRP7fxk")
-                    .SetDatabaseUrl("https://taxiproject-185a4.firebaseio.com")
-                    .SetStorageBucket("taxiproject-185a4.appspot.com")
-                    .Build();
-                app = FirebaseApp.InitializeApp(Application.Context, options);
-                mAuth = FirebaseAuth.Instance;
-                mUser = mAuth.CurrentUser;
-            }
-            else
-            {
-                mAuth = FirebaseAuth.Instance;
-                mUser = mAuth.CurrentUser;
-            }
-
+            GetFirebaseAuth();
+            var mUser = FireAuth.CurrentUser;
             return mUser;
         }
 
+        private static string firstname = pref?.GetString("firstname", "");
         public static string GetFirstName()
         {
-            return pref?.GetString("firstname", ""); ;
+            return firstname;
         }
 
+        private static string lastname = pref?.GetString("lastname", "");
         public static string GetLastName()
         {
-            return pref?.GetString("lastname", "");
+            return lastname;
         }
 
+        private static string email = pref?.GetString("email", "");
         public static string GetEmail()
         {
-            string email = pref?.GetString("email", "");
+            
             return email;
         }
 
+        private static string phone = pref?.GetString("phone", "");
         public static string GetPhone()
         {
-            return pref?.GetString("phone", "");
+            return phone;
         }
 
+        private static string city = pref?.GetString("city", "");
         public static string GetCity()
         {
-            return pref?.GetString("city", "");
+            return city;
         }
 
-
+        private static string stage = prefs?.GetString("stage_before_exit", "");
         public static string GetStage()
         {
-            return prefs?.GetString("stage_before_exit", "");
+            return stage;
         }
     }
 }

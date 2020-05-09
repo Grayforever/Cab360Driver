@@ -1,101 +1,87 @@
 
-<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
 	xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:id="@+id/drv_signin_root"
-    android:background="@android:color/white">
+    android:background="@android:color/white"
+    tools:ignore="HardcodedText">
 
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:id="@+id/drv_signin_rel1">
-
-        <androidx.appcompat.widget.Toolbar
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/drv_signup_toolbar"
-            android:background="@android:color/white">
-
-        </androidx.appcompat.widget.Toolbar>
-
-        <com.google.android.material.textfield.TextInputLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/drv_signin_email_et"
-            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-            android:layout_marginTop="32dp"
-            android:hint="Email"
-            android:layout_marginBottom="16dp"
-            android:layout_marginStart="16dp"
-            android:layout_marginEnd="16dp"
-            android:layout_below="@id/drv_signup_toolbar">
-
-            <com.google.android.material.textfield.TextInputEditText
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:inputType="textEmailAddress"
-                
-            />
-
-        </com.google.android.material.textfield.TextInputLayout>
-
-        <com.google.android.material.textfield.TextInputLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/drv_signin_pass_et"
-            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-            android:layout_marginTop="16dp"
-            android:hint="Password"
-            android:layout_below="@+id/drv_signin_email_et"
-            android:layout_marginStart="16dp"
-            android:layout_marginEnd="16dp"
-            app:endIconMode="password_toggle">
-
-            <com.google.android.material.textfield.TextInputEditText
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:inputType="textPassword"
-            />
-
-        </com.google.android.material.textfield.TextInputLayout>
-
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="56dp"
-            android:text="I forgot my password"
-            android:layout_alignParentBottom="true"
-            android:gravity="start| center"
-            android:id="@+id/drv_signin_fpas_tv"
-            android:textSize="16sp"
-            android:textColor="@color/colorAccent"
-            android:layout_marginBottom="16dp"
-            android:fontFamily="sans-serif-light"
-            android:layout_marginStart="16dp"
-            android:paddingStart="8dp"
-            android:clickable="true"
-            android:foreground="?android:attr/selectableItemBackground"
+    <androidx.appcompat.widget.Toolbar
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:id="@+id/drv_signup_toolbar"
+        android:background="@android:color/white"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
         />
-        
-    </RelativeLayout>
+
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/drv_signin_email_et"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+        android:hint="Email"
+        app:layout_constraintTop_toBottomOf="@+id/drv_signup_toolbar"
+        android:layout_marginTop="32dp"
+        android:layout_marginBottom="16dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="textEmailAddress"  
+        />
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/drv_signin_pass_et"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+        app:layout_constraintTop_toBottomOf="@+id/drv_signin_email_et"
+        android:layout_marginTop="16dp"
+        android:hint="Password"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        app:endIconMode="password_toggle">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="textPassword"
+        />
+
+    </com.google.android.material.textfield.TextInputLayout>
+
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/fab1"
         app:useCompatPadding="true"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
         android:src="@drawable/abc_ic_go_search_api_material"
         app:maxImageSize="32dp"
-        app:layout_anchor="@+id/drv_signin_rel1"
         app:elevation="8dp"
-        app:layout_anchorGravity="end| bottom"
         android:clickable="true"
-        app:tint="@android:color/white"
-  
-    />
+        app:tint="@android:color/white"/>
 
-    
+    <com.google.android.material.button.MaterialButton
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/btn_forgot_pass"
+        style="@style/Widget.MaterialComponents.Button.TextButton"
+        android:text="I forgot my password"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:layout_marginBottom="16dp"
+        android:layout_marginStart="16dp"
+        />
 
-</androidx.coordinatorlayout.widget.CoordinatorLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

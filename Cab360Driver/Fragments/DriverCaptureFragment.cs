@@ -6,15 +6,15 @@ using Android.OS;
 using Android.Views;
 using Android.Widget;
 using AndroidX.CardView.Widget;
+using AndroidX.Core.Content;
+using Bumptech.Glide;
 using Cab360Driver.Helpers;
-using Cab360Driver.Utils;
 using Firebase.Storage;
 using Plugin.Media;
 using Plugin.Media.Abstractions;
 using System;
 using System.Threading;
 using System.Threading.Tasks;
-using static Cab360Driver.Utils.OnDoubleClickListener;
 
 namespace Cab360Driver.Fragments
 {
@@ -29,7 +29,9 @@ namespace Cab360Driver.Fragments
         private int whichIsCaptured;
         bool _isCamLoaded = false;
 
-        public event EventHandler OnProfileCaptured;
+        public event EventHandler ProfileCaptured;
+
+        
 
         public const int RequestCode = 100;
         public const int RequestPermission = 200;
@@ -41,29 +43,6 @@ namespace Cab360Driver.Fragments
         private FirebaseStorage FireStorage;
         private byte[] imageArray;
 
-        public override void OnActivityCreated(Bundle savedInstanceState)
-        {
-            base.OnActivityCreated(savedInstanceState);
-            if (Android.Support.V4.Content.ContextCompat.CheckSelfPermission(Application.Context, Manifest.Permission.Camera) != Android.Content.PM.Permission.Granted)
-            {
-                //request permission
-                RequestPermissions(new string[]
-                {
-                    Manifest.Permission.Camera
-                }, RequestPermission);
-
-                
-            }
-            FireStorage = FirebaseStorage.Instance;
-            StoreRef = FireStorage.GetReferenceFromUrl("gs://taxiproject-185a4.appspot.com");
-        }
-        public override void OnCreate(Bundle savedInstanceState)
-        {
-            base.OnCreate(savedInstanceState);
-            // Create your fragment here
-            
-        }
-
         public override View OnCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
         {
             var view = inflater.Inflate(Resource.Layout.driver_capture_layout, container, false);
@@ -74,6 +53,16 @@ namespace Cab360Driver.Fragments
         public override void OnViewCreated(View view, Bundle savedInstanceState)
         {
             base.OnViewCreated(view, savedInstanceState);
+            if (ContextCompat.CheckSelfPermission(Activity, Manifest.Permission.Camera) != Android.Content.PM.Permission.Granted)
+            {
+                RequestPermissions(new string[]
+                {
+                    Manifest.Permission.Camera
+                }, RequestPermission);
+            }
+            FireStorage = FirebaseStorage.Instance;
+            StoreRef = FireStorage.GetReferenceFromUrl("gs://taxiproject-185a4.appspot.com");
+
             
         }
 
@@ -91,7 +80,6 @@ namespace Cab360Driver.Fragments
             NxtImg3 = view.FindViewById<ImageView>(Resource.Id.nxt_img3);
 
             var WelcomeTxt = view.FindViewById<TextView>(Resource.Id.drv_capt_welc_tv);
-            WelcomeTxt.Text = $"Welcome, {AppDataHelper.GetFirebaseAuth().CurrentUser.DisplayName}";
 
             HeaderTxt1 = view.FindViewById<TextView>(Resource.Id.rec_text);
             HeaderTxt2 = view.FindViewById<TextView>(Resource.Id.rec_text2);
@@ -133,7 +121,7 @@ namespace Cab360Driver.Fragments
         private void BeginProfileCapture()
         {
             progressBar.Visibility = ViewStates.Visible;
-            CameraIntroDialog.Show(FragmentManager, "showCameraAction");
+            CameraIntroDialog.Show(Activity.SupportFragmentManager, "showCameraAction");
             CameraIntroDialog.StartCameraAsync += CameraIntroDialog_StartCameraAsync;
         }
 
@@ -192,7 +180,7 @@ namespace Cab360Driver.Fragments
 
             picDisplayFragment = new PicDisplayFragment(bitmapProfile);
             picDisplayFragment.Cancelable = false;
-            var trans = FragmentManager.BeginTransaction();
+            var trans = Activity.SupportFragmentManager.BeginTransaction();
             picDisplayFragment.Show(trans, "Pic_display_fragment");
             picDisplayFragment.SavePic += PicDisplayFragment_SavePic;
             picDisplayFragment.RetakePic += PicDisplayFragment_RetakePic;
@@ -204,11 +192,11 @@ namespace Cab360Driver.Fragments
         {
             if(e.viewHasImage == true)
             {
+
                 var image = StoreRef.Child("driverProfilePics/" + AppDataHelper.GetCurrentUser().Uid);
                 UploadTask uploadTask = image.PutBytes(imageArray);
                 uploadTask.AddOnSuccessListener(this);
                 uploadTask.AddOnFailureListener(this);
-                
             }
             else
             {
@@ -220,7 +208,7 @@ namespace Cab360Driver.Fragments
         {
             UpdateUiOnCpture(1);
 
-            OnProfileCaptured.Invoke(this, new EventArgs());
+            ProfileCaptured.Invoke(this, new EventArgs());
         }
 
         public void OnFailure(Java.Lang.Exception e)

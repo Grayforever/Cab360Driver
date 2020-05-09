@@ -7,22 +7,22 @@ using Android.Graphics;
 using Com.Google.Maps.Android;
 using Java.Util;
 using Newtonsoft.Json;
-using graylabs.Helpers;
+using Cab360Driver.EnumsConstants;
+using System.Diagnostics;
+using Cab360Driver.DataModels;
 
 namespace Cab360Driver.Helpers
 {
     public class MapFunctionHelper
     {
-        string mapkey;
         GoogleMap mainMap;
         public Marker destinationMarker;
         public Marker positionMarker;
 
         bool isRequestingDirection;
 
-        public MapFunctionHelper(string mMapkey, GoogleMap mmap)
+        public MapFunctionHelper(GoogleMap mmap)
         {
-            mapkey = mMapkey;
             mainMap = mmap;
         }
 
@@ -51,10 +51,10 @@ namespace Cab360Driver.Helpers
             //Output format
             string output = "json";
 
-            string key = mapkey;
 
             //Building the final url string
-            string url = "https://maps.googleapis.com/maps/api/directions/" + output + "?" + parameters + key;
+            string url = StringConstants.GetDirectionsBaseGateway() + output + "?" + parameters + StringConstants.GetMapKey();
+
 
             string json = "";
             json = await GetGeoJsonAsync(url);
@@ -100,7 +100,7 @@ namespace Cab360Driver.Helpers
             {
                 routeList.Add(item);
                 locationCount++;
-                Console.WriteLine("Position " + locationCount.ToString() + " = " + item.Latitude.ToString() + " , " + item.Longitude.ToString());
+                Debug.WriteLine("Position " + locationCount.ToString() + " = " + item.Latitude.ToString() + " , " + item.Longitude.ToString());
 
             }
 
@@ -160,7 +160,7 @@ namespace Cab360Driver.Helpers
             {
                 routeList.Add(item);
                 locationCount++;
-                Console.WriteLine("Position " + locationCount.ToString() + " = " + item.Latitude.ToString() + " , " + item.Longitude.ToString());
+                Debug.WriteLine("Position " + locationCount.ToString() + " = " + item.Latitude.ToString() + " , " + item.Longitude.ToString());
 
             }
 

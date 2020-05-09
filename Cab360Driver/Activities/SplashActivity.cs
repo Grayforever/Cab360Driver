@@ -1,74 +1,33 @@
 ﻿using Android.App;
 using Android.Content;
 using Android.OS;
-using Android.Views;
-using Android.Widget;
 using AndroidX.AppCompat.App;
 using Cab360Driver.Helpers;
-using Firebase.Auth;
+using Android.Util;
 using Firebase.Database;
+using Firebase.Auth;
+using System;
 
 namespace Cab360Driver.Activities
 {
-    [Activity(Label = "@string/app_name", MainLauncher = true, Theme = "@style/AppTheme", ConfigurationChanges = Android.Content.PM.ConfigChanges.ScreenSize, ScreenOrientation = Android.Content.PM.ScreenOrientation.Portrait)]
+    [Activity(MainLauncher = true, ScreenOrientation = Android.Content.PM.ScreenOrientation.Portrait)]
     public class SplashActivity : AppCompatActivity, IValueEventListener
     {
-        private FirebaseUser firebaseUser = AppDataHelper.GetCurrentUser();
         private ISharedPreferences preferences = Application.Context.GetSharedPreferences("appSession", FileCreationMode.MultiProcess);
         private ISharedPreferencesEditor editor;
-
-        public void OnCancelled(DatabaseError error)
-        {
-            
-        }
-
-        public void OnDataChange(DataSnapshot snapshot)
-        {
-            if (snapshot.Value != null)
-            {
-                var stage = snapshot.Child("stage_of_registration").Value.ToString();
-                try
-                {
-                    StartWhichActivity(stage);
-                }
-                catch
-                {
-
-                }
-            }
-        }
-
-        private void StartWhichActivity(string stage)
-        {
-            Toast.MakeText(this, stage, ToastLength.Long).Show();
-            if(stage == "1" || stage == "2" || stage == "3")
-            {
-                var intent1 = new Intent(this, typeof(OnboardingActivity));
-                intent1.AddFlags(ActivityFlags.ClearTask | ActivityFlags.ClearTop | ActivityFlags.NewTask);
-                StartActivity(intent1);
-                
-            }
-            else
-            {
-                var intent3 = new Intent(this, typeof(MainActivity));
-                intent3.AddFlags(ActivityFlags.ClearTask | ActivityFlags.ClearTop | ActivityFlags.NewTask);
-                StartActivity(intent3);
-                
-            }
-            editor.PutString("stage_before_exit", stage);
-            editor.Apply();
-        }
 
         protected override void OnCreate(Bundle savedInstanceState)
         {
             base.OnCreate(savedInstanceState);
             editor = preferences.Edit();
+            var currUser = AppDataHelper.GetCurrentUser();
+            RouteToAppropriatePage(currUser);
+            Finish();
         }
 
-        protected override void OnResume()
+        private void RouteToAppropriatePage(FirebaseUser currUser)
         {
-            base.OnResume();
-            if (firebaseUser == null)
+            if (currUser == null)
             {
                 var intent2 = new Intent(this, typeof(OnboardingActivity));
                 intent2.AddFlags(ActivityFlags.ClearTask | ActivityFlags.ClearTop | ActivityFlags.NewTask);
@@ -76,18 +35,56 @@ namespace Cab360Driver.Activities
             }
             else
             {
-                var uid = firebaseUser.Uid;
-                CheckStatus(uid);
+                CheckStatus(currUser.Uid);
             }
-           
         }
 
         private void CheckStatus(string uid)
         {
-            var fireDataRef = AppDataHelper.GetDatabase().GetReference("Cab360Drivers").Child(uid);
+            var fireDataRef = AppDataHelper.GetParentReference().Child(uid);
             fireDataRef.OrderByChild("stage_of_registration")
                 .AddListenerForSingleValueEvent(this);
+        }
 
+        public void OnCancelled(DatabaseError error)
+        {
+
+        }
+
+        public void OnDataChange(DataSnapshot snapshot)
+        {
+            try
+            {
+                if (!snapshot.Exists())
+                    return;
+
+                var stage = snapshot.Child("stage_of_registration").Value.ToString();
+                StartWhichActivity(stage);
+
+            }
+            catch (DatabaseException e)
+            {
+                Log.Debug("database exception: ", e.Message);
+            }
+        }
+
+        private void StartWhichActivity(string stage)
+        {
+            Log.Debug("stage before exit: ", stage);
+            if (!stage.Contains("0"))
+            {
+                var intent3 = new Intent(this, typeof(MainActivity));
+                intent3.AddFlags(ActivityFlags.ClearTask | ActivityFlags.ClearTop | ActivityFlags.NewTask);
+                StartActivity(intent3);
+            }
+            else
+            {
+                var intent1 = new Intent(this, typeof(OnboardingActivity));
+                intent1.AddFlags(ActivityFlags.ClearTask | ActivityFlags.ClearTop | ActivityFlags.NewTask);
+                StartActivity(intent1);
+            }
+            editor.PutString("stage_before_exit", stage);
+            editor.Apply();
         }
     }
 }

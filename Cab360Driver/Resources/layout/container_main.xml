@@ -5,14 +5,13 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <FrameLayout
+    <androidx.viewpager2.widget.ViewPager2
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:id="@+id/content_frame">
+        android:id="@+id/reg_viewpager1"
+        
+        />
 
-        <include
-            layout="@layout/driver_onboarding"/>
-
-    </FrameLayout>
+    
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

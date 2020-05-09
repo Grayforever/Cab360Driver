@@ -28,7 +28,7 @@ namespace Cab360Driver.EventListeners
 
         public void OnDataChange(DataSnapshot snapshot)
         {
-            if(snapshot.Value != null)
+            if(snapshot.Exists())
             {
                 DriverPersonal = new Driver
                 {

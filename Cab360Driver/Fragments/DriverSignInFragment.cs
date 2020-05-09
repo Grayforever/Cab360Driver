@@ -2,8 +2,6 @@
 using Android.Content;
 using Android.Gms.Tasks;
 using Android.OS;
-using Android.Runtime;
-using Android.Text;
 using Android.Util;
 using Android.Views;
 using Android.Widget;
@@ -12,13 +10,11 @@ using Firebase.Auth;
 using Firebase.Database;
 using Google.Android.Material.FloatingActionButton;
 using Google.Android.Material.TextField;
-using Java.Lang;
 using System;
-using static Android.Views.View;
 
 namespace Cab360Driver.Fragments
 {
-    public class DriverSignInFragment : AndroidX.Fragment.App.Fragment, ITextWatcher, IOnKeyListener, IOnSuccessListener, IOnFailureListener, IValueEventListener
+    public class DriverSignInFragment : AndroidX.Fragment.App.Fragment, IOnSuccessListener, IOnFailureListener, IValueEventListener
     {
         private TextInputLayout EmailText, PassText;
         private FloatingActionButton ContinueFab;
@@ -44,14 +40,10 @@ namespace Cab360Driver.Fragments
         private void GetControls(View view)
         {
             EmailText = view.FindViewById<TextInputLayout>(Resource.Id.drv_signin_email_et);
-            EmailText.SetOnKeyListener(this);
-            EmailText.EditText.AddTextChangedListener(this);
 
             PassText = view.FindViewById<TextInputLayout>(Resource.Id.drv_signin_pass_et);
-            PassText.EditText.AddTextChangedListener(this);
-            PassText.SetOnKeyListener(this);
+
             ContinueFab = view.FindViewById<FloatingActionButton>(Resource.Id.fab1);
-            ContinueFab.Enabled = false;
             ContinueFab.Click += ContinueFab_Click;
         }
 
@@ -72,31 +64,6 @@ namespace Cab360Driver.Fragments
                 .AddOnFailureListener(this);
 
 
-        }
-
-        public void AfterTextChanged(IEditable s)
-        {
-            CheckIfEmpty();
-        }
-
-        public void BeforeTextChanged(ICharSequence s, int start, int count, int after)
-        {
-
-        }
-
-        public void OnTextChanged(ICharSequence s, int start, int before, int count)
-        {
-
-        }
-
-        public bool OnKey(View v, [GeneratedEnum] Keycode keyCode, KeyEvent e)
-        {
-            var action = e.Action;
-            if (action == KeyEventActions.Up)
-            {
-                CheckIfEmpty();
-            }
-            return false;
         }
 
         public void OnSuccess(Java.Lang.Object result)

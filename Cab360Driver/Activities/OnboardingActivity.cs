@@ -1,62 +1,82 @@
 ﻿using Android;
 using Android.App;
-using Android.Content;
-using Android.Gms.Tasks;
 using Android.OS;
 using Android.Views;
-using Android.Widget;
-using AndroidX.AppCompat.App;
+using AndroidX.Fragment.App;
+using AndroidX.ViewPager2.Widget;
+using Cab360Driver.Adapters;
 using Cab360Driver.DataModels;
+using Cab360Driver.EnumsConstants;
 using Cab360Driver.EventListeners;
 using Cab360Driver.Fragments;
 using Cab360Driver.Helpers;
 using Firebase.Auth;
 using Firebase.Database;
-using Google.Android.Material.Button;
-using Google.Android.Material.Snackbar;
 using Java.Util;
 using System;
 
+
 namespace Cab360Driver.Activities
 {
-    [Activity(Label = "@string/app_name", MainLauncher = false, Theme ="@style/AppTheme", ConfigurationChanges = Android.Content.PM.ConfigChanges.ScreenSize, ScreenOrientation = Android.Content.PM.ScreenOrientation.Portrait, WindowSoftInputMode = SoftInput.AdjustResize| SoftInput.StateHidden)]
-    public class OnboardingActivity : AppCompatActivity, IOnSuccessListener, IOnFailureListener
+    [Activity(Label = "@string/app_name", MainLauncher = false, Theme ="@style/AppTheme", 
+        ConfigurationChanges = Android.Content.PM.ConfigChanges.ScreenSize, 
+        ScreenOrientation = Android.Content.PM.ScreenOrientation.Portrait, 
+        WindowSoftInputMode = SoftInput.AdjustResize| SoftInput.StateHidden)]
+
+    public class OnboardingActivity : FragmentActivity
     {
-        private MaterialButton SignInBtn;
-        private MaterialButton RegisterBtn;
-
-        
+        //task completion listeners
+        private TaskCompletionListeners SignUpCompletListener = new TaskCompletionListeners();
+        private TaskCompletionListeners PartnerStateSavedSuccess = new TaskCompletionListeners();
+        private TaskCompletionListeners ProfileCapturedSuccess = new TaskCompletionListeners();
+        private TaskCompletionListeners CarCapturedSuccess = new TaskCompletionListeners();
         private TaskCompletionListeners TaskCompletionListener = new TaskCompletionListeners();
-        private LinearLayout driverOnboardingRoot;
 
+        private RegistrationFragmentsAdapter regAdapter;
+        private ViewPager2 RegViewPager;
+
+        //online auth and db
         private FirebaseDatabase FireDatabase;
         private FirebaseAuth FireAuth;
-        
         private DatabaseReference driverRef;
 
+        //fragments init
+        public OnboardingFragment OnboardingFragment = new OnboardingFragment();
+        public DriverSignInFragment SignInFragment = new DriverSignInFragment();
+        public DriverRegisterFragment RegisterFragment = new DriverRegisterFragment();
+        public DriverCaptureFragment CaptureFragment = new DriverCaptureFragment();
+        public DriverPartnerFragment PartnerFragment = new DriverPartnerFragment();
+        public CarRegFragment CarRegFragment = new CarRegFragment();
+        public CarPicsFragment CarPicsFragment = new CarPicsFragment();
         private string stage;
         private bool shouldCauseExit = false;
+        bool SmoothScroll = false;
 
-        private readonly string[] permissionGroup =
+        public override void OnRequestPermissionsResult(int requestCode, string[] permissions, Android.Content.PM.Permission[] grantResults)
         {
-            Manifest.Permission.ReadExternalStorage,
-            Manifest.Permission.WriteExternalStorage,
-            Manifest.Permission.Camera
-        };
+            Xamarin.Essentials.Platform.OnRequestPermissionsResult(requestCode, permissions, grantResults);
+        }
 
         protected override void OnCreate(Bundle savedInstanceState)
         {
             Xamarin.Essentials.Platform.Init(this, savedInstanceState);
             base.OnCreate(savedInstanceState);
             SetContentView(Resource.Layout.container_main);
-            GetControls();
 
+            RegViewPager = FindViewById<ViewPager2>(Resource.Id.reg_viewpager1);
+            RegViewPager.Orientation = ViewPager2.OrientationHorizontal;
+            RegViewPager.OffscreenPageLimit = 3;
+            RegViewPager.UserInputEnabled = false;
+
+            SetViewPagerAdapter();
+
+            
             FireDatabase = AppDataHelper.GetDatabase();
             
             FireAuth = AppDataHelper.GetFirebaseAuth();
             stage = AppDataHelper.GetStage();
 
-            RequestPermissions(permissionGroup, 0);
+            RequestPermissions(StringConstants.GetLocationPermissiongroup(), 0);
 
             GetStage(stage);
         }
@@ -65,84 +85,87 @@ namespace Cab360Driver.Activities
         {
             if (!string.IsNullOrEmpty(stage))
             {
-                if(stage == "1")
+                if (stage == "1")
                 {
-                    DriverPartnerFragment PartnerFragment = new DriverPartnerFragment();
                     shouldCauseExit = true;
-                    ShowFragment(PartnerFragment);
-                    PartnerFragment.StageTwoPassEvent += PartnerFragment_StageTwoPassEvent;
+                    regAdapter.NotifyDataSetChanged();
+                    RegViewPager.SetCurrentItem(3, SmoothScroll);
+                    PartnerFragment.PartnerSelected += PartnerFragment_PartnerSelected;
                 }
-                else if(stage == "2")
+                else if (stage == "2")
                 {
-                    shouldCauseExit = true;
-                    DriverCaptureFragment DriverCaptureFragment = new DriverCaptureFragment();
-                    ShowFragment(DriverCaptureFragment);
-                    DriverCaptureFragment.OnProfileCaptured += DriverCaptureFragment_OnProfileCaptured;
+                    shouldCauseExit = true;                                         
+                    regAdapter.NotifyDataSetChanged();
+                    RegViewPager.SetCurrentItem(4, SmoothScroll);
+                    CaptureFragment.ProfileCaptured += DriverCaptureFragment_ProfileCaptured;
                 }
                 else if (stage == "3")
                 {
                     shouldCauseExit = true;
-                    CarRegFragment carRegFragment = new CarRegFragment();
-                    ShowFragment(carRegFragment);
-                    carRegFragment.OnCardetailsSaved += CarRegFragment_OnCardetailsSaved;
+                    regAdapter.NotifyDataSetChanged();
+                    RegViewPager.SetCurrentItem(5, SmoothScroll);
+                    CarRegFragment.OnCardetailsSaved += CarRegFragment_OnCardetailsSaved;
+                }
+
+                else if (stage == "4")
+                {
+                    shouldCauseExit = true;
+                    regAdapter.NotifyDataSetChanged();
+                    RegViewPager.SetCurrentItem(6, SmoothScroll);
                 }
             }
             else
             {
-                return;
+                SetParentFragment();
             }
         }
 
-        private void GetControls()
+        private void SetViewPagerAdapter()
         {
-            driverOnboardingRoot = (LinearLayout)FindViewById(Resource.Id.driver_onboarding_root);
-            SignInBtn = FindViewById<MaterialButton>(Resource.Id.onbd_signin_btn);
-            SignInBtn.Click += SignInBtn_Click;
-            RegisterBtn = FindViewById<MaterialButton>(Resource.Id.onbd_signup_btn);
-            RegisterBtn.Click += RegisterBtn_Click;
+            regAdapter = new RegistrationFragmentsAdapter(SupportFragmentManager, Lifecycle);
+            
+            regAdapter.AddFragments(OnboardingFragment);
+            regAdapter.AddFragments(SignInFragment);
+            regAdapter.AddFragments(RegisterFragment);
+            regAdapter.AddFragments(PartnerFragment);
+            regAdapter.AddFragments(CaptureFragment);
+            regAdapter.AddFragments(CarRegFragment);
+            regAdapter.AddFragments(CarPicsFragment);
+
+            RegViewPager.Adapter = regAdapter;
+            
         }
 
-        private void SignInBtn_Click(object sender, EventArgs e)
+        private void SetParentFragment()
         {
-            DriverSignInFragment SignInFragment = new DriverSignInFragment();
-            ShowFragment(SignInFragment);
+            regAdapter.NotifyDataSetChanged();
+            RegViewPager.SetCurrentItem(0, true);
+            OnboardingFragment.SignIn += OnboardingFragment_SignIn;
+            OnboardingFragment.SignUp += OnboardingFragment_SignUp;
         }
 
-        private void ShowFragment(AndroidX.Fragment.App.Fragment fragment)
+        private void OnboardingFragment_SignIn(object sender, EventArgs e)
         {
-            if (fragment == null)
-                return;
-
-            SupportFragmentManager
-                .BeginTransaction()
-                .Replace(Resource.Id.content_frame, fragment)
-                .AddToBackStack(null)
-                .Commit();
+            //sign  in fragment
+            regAdapter.NotifyDataSetChanged();
+            RegViewPager.SetCurrentItem(1, SmoothScroll);
         }
 
-        private void RegisterBtn_Click(object sender, EventArgs e)
+        private void OnboardingFragment_SignUp(object sender, EventArgs e)
         {
-            DriverRegisterFragment RegisterFragment = new DriverRegisterFragment();
-            ShowFragment(RegisterFragment);
-            RegisterFragment.StageOnePassEvent += RegisterFragment_StageOnePassEvent;
+            //sign up fragment
+            regAdapter.NotifyDataSetChanged();
+            RegViewPager.SetCurrentItem(2, SmoothScroll);
+            RegisterFragment.SignUpSuccess += RegisterFragment_SignUpSuccess;
         }
 
-        private void RegisterFragment_StageOnePassEvent(object sender, DriverRegisterFragment.StageOnePassEventArgs e)
+        private void RegisterFragment_SignUpSuccess(object sender, DriverRegisterFragment.SignUpSuccessArgs e)
         {
             var driver = e.driver;
-            if(driver != null)
-            {
-                SaveDriverPersonal(driver);
-            }
-            else
-            {
-                Snackbar.Make(driverOnboardingRoot, "Error", Snackbar.LengthShort).Show();
-            }
-        }
+            if (driver == null)
+                return;
 
-        public override void OnRequestPermissionsResult(int requestCode, string[] permissions, Android.Content.PM.Permission[] grantResults)
-        {
-            Xamarin.Essentials.Platform.OnRequestPermissionsResult(requestCode, permissions, grantResults);
+            SaveDriverPersonal(driver);
         }
 
         private void SaveDriverPersonal(Driver driverPersonal)
@@ -156,132 +179,126 @@ namespace Cab360Driver.Activities
             Cab360Drivers.Put("invitecode", driverPersonal.Code);
             Cab360Drivers.Put("created_at", DateTime.UtcNow.ToString());
             Cab360Drivers.Put("isPartner", driverPersonal.IsPartner);
-            Cab360Drivers.Put("stage_of_registration", "0");
+            Cab360Drivers.Put("stage_of_registration", RegistrationStage.Registration.ToString());
             SaveDriverToDb(Cab360Drivers);
         }
 
         private void SaveDriverToDb(HashMap cab360Drivers)
         {
-            driverRef = FireDatabase.GetReference("Cab360Drivers/" + FireAuth.CurrentUser.Uid);
+            driverRef = AppDataHelper.GetParentReference().Child(FireAuth.CurrentUser.Uid);
             driverRef.SetValue(cab360Drivers)
-                .AddOnSuccessListener(this)
-                .AddOnFailureListener(this);
+                .AddOnSuccessListener(SignUpCompletListener)
+                .AddOnFailureListener(SignUpCompletListener);
+            SignUpCompletListener.Successful += SignUpCompletListener_Successful; 
+            SignUpCompletListener.Failure += SignUpCompletListener_Failure;
         }
 
-        public void OnSuccess(Java.Lang.Object result)
+        private void SignUpCompletListener_Failure(object sender, EventArgs e)
         {
-            if (driverRef == null)
-                driverRef = FireDatabase.GetReference("Cab360Drivers/" + FireAuth.CurrentUser.Uid);
-
-            driverRef.Child("stage_of_registration").SetValue("1")
-                    .AddOnSuccessListener(TaskCompletionListener)
-                    .AddOnFailureListener(TaskCompletionListener);
-
-            TaskCompletionListener.Successful += TaskCompletionListener_Successful3;
-            TaskCompletionListener.Failure += TaskCompletionListener_Failure3;
-        }
-
-        private void TaskCompletionListener_Failure3(object sender, EventArgs e)
-        {
-            Snackbar.Make(driverOnboardingRoot, "Error", Snackbar.LengthShort).Show();
-        }
-
-        private void TaskCompletionListener_Successful3(object sender, TaskCompletionListeners.ResultArgs e)
-        {
-            DriverPartnerFragment PartnerFragment = new DriverPartnerFragment();
-            ShowFragment(PartnerFragment);
-            PartnerFragment.StageTwoPassEvent += PartnerFragment_StageTwoPassEvent;
-        }
-
-        private void PartnerFragment_StageTwoPassEvent(object sender, DriverPartnerFragment.StageTwoEventArgs e)
-        {
-            var val = e.IsPartner;
-            if (val == 0)
-            {
-                Snackbar.Make(driverOnboardingRoot, "Error", Snackbar.LengthShort).Show();
-            }
-            else if (val == 1)
-            {
-                if (driverRef == null)
-                    driverRef = FireDatabase.GetReference("Cab360Drivers/" + FireAuth.CurrentUser.Uid);
-
-                driverRef.Child("isPartner").SetValue(val.ToString())
-                    .AddOnSuccessListener(TaskCompletionListener)
-                    .AddOnFailureListener(TaskCompletionListener);
-                TaskCompletionListener.Successful += TaskCompletionListener_Successful;
-                TaskCompletionListener.Failure += TaskCompletionListener_Failure;
-
-            }
-            else if (val == 2)
-            {
-                if (driverRef == null)
-                    driverRef = FireDatabase.GetReference("Cab360Drivers/" + FireAuth.CurrentUser.Uid);
-
-                driverRef.Child("isPartner").SetValue(val.ToString())
-                    .AddOnSuccessListener(TaskCompletionListener)
-                    .AddOnFailureListener(TaskCompletionListener);
-
-                TaskCompletionListener.Successful += TaskCompletionListener_Successful;
-                TaskCompletionListener.Failure += TaskCompletionListener_Failure;
-            }
             
         }
 
-        //stage partnership s2
+        private void SignUpCompletListener_Successful(object sender, TaskCompletionListeners.ResultArgs e)
+        {
+            if (driverRef == null)
+                driverRef = AppDataHelper.GetParentReference().Child(FireAuth.CurrentUser.Uid);
+
+            driverRef.Child("stage_of_registration").SetValue(RegistrationStage.Partnering.ToString())
+                    .AddOnSuccessListener(TaskCompletionListener)
+                    .AddOnFailureListener(TaskCompletionListener);
+
+            TaskCompletionListener.Successful += TaskCompletionListener_Successful;
+            TaskCompletionListener.Failure += TaskCompletionListener_Failure;
+        }
+
         private void TaskCompletionListener_Failure(object sender, EventArgs e)
         {
-            Snackbar.Make(driverOnboardingRoot, "Error", Snackbar.LengthShort).Show();
+            
         }
 
         private void TaskCompletionListener_Successful(object sender, TaskCompletionListeners.ResultArgs e)
         {
-            if (driverRef == null)
-                driverRef = FireDatabase.GetReference("Cab360Drivers/" + FireAuth.CurrentUser.Uid);
+            //partner fragment
+            regAdapter.NotifyDataSetChanged();
+            RegViewPager.SetCurrentItem(3, SmoothScroll);
+            PartnerFragment.PartnerSelected += PartnerFragment_PartnerSelected;
+        }
 
-            driverRef.Child("stage_of_registration").SetValue("2")
+        private void PartnerFragment_PartnerSelected(object sender, DriverPartnerFragment.PartnerEventArgs e)
+        {
+            var isPartner = e.IsPartner;
+            switch (isPartner)
+            {
+                case true:
+                    if (driverRef == null)
+                        driverRef = AppDataHelper.GetParentReference().Child(FireAuth.CurrentUser.Uid);
+
+                    driverRef.Child("isPartner").SetValue(isPartner.ToString())
+                        .AddOnSuccessListener(PartnerStateSavedSuccess)
+                        .AddOnFailureListener(PartnerStateSavedSuccess);
+                    PartnerStateSavedSuccess.Successful += PartnerStateSavedSuccess_Successful;
+                    PartnerStateSavedSuccess.Failure += PartnerStateSavedSuccess_Failure;
+                    break;
+
+                case false:
+                    
+                    break;
+            }
+        }
+
+        private void PartnerStateSavedSuccess_Failure(object sender, EventArgs e)
+        {
+            
+        }
+
+        private void PartnerStateSavedSuccess_Successful(object sender, TaskCompletionListeners.ResultArgs e)
+        {
+            if (driverRef == null)
+                driverRef = AppDataHelper.GetParentReference().Child(FireAuth.CurrentUser.Uid);
+
+            driverRef.Child("stage_of_registration").SetValue(RegistrationStage.Capturing.ToString())
                     .AddOnSuccessListener(TaskCompletionListener)
                     .AddOnFailureListener(TaskCompletionListener);
             TaskCompletionListener.Successful += TaskCompletionListener_Successful1;
             TaskCompletionListener.Failure += TaskCompletionListener_Failure1;
         }
 
-        //pass to s3
         private void TaskCompletionListener_Failure1(object sender, EventArgs e)
         {
-            Snackbar.Make(driverOnboardingRoot, "Error", Snackbar.LengthShort).Show();
+             
         }
 
         private void TaskCompletionListener_Successful1(object sender, TaskCompletionListeners.ResultArgs e)
         {
-            //DriverCaptureFragment = null;
-            DriverCaptureFragment DriverCaptureFragment = new DriverCaptureFragment();
-            ShowFragment(DriverCaptureFragment);
-            DriverCaptureFragment.OnProfileCaptured += DriverCaptureFragment_OnProfileCaptured;
 
+            //driver capture fragment
+            regAdapter.NotifyDataSetChanged();
+            RegViewPager.SetCurrentItem(4, SmoothScroll);
+            CaptureFragment.ProfileCaptured += DriverCaptureFragment_ProfileCaptured;
         }
 
-        private void DriverCaptureFragment_OnProfileCaptured(object sender, EventArgs e)
+        private void DriverCaptureFragment_ProfileCaptured(object sender, EventArgs e)
         {
             if (driverRef == null)
-                driverRef = FireDatabase.GetReference("Cab360Drivers/" + FireAuth.CurrentUser.Uid); 
+                driverRef = AppDataHelper.GetParentReference().Child(FireAuth.CurrentUser.Uid); 
 
-            driverRef.Child("stage_of_registration").SetValue("3")
-                    .AddOnSuccessListener(TaskCompletionListener)
-                    .AddOnFailureListener(TaskCompletionListener);
-            TaskCompletionListener.Successful += TaskCompletionListener_Successful2;
-            TaskCompletionListener.Failure += TaskCompletionListener_Failure2;
+            driverRef.Child("stage_of_registration").SetValue(RegistrationStage.CarRegistering.ToString())
+                    .AddOnSuccessListener(ProfileCapturedSuccess)
+                    .AddOnFailureListener(ProfileCapturedSuccess);
+            ProfileCapturedSuccess.Successful += ProfileCapturedSuccess_Successful;
+            ProfileCapturedSuccess.Failure += ProfileCapturedSuccess_Failure;
         }
 
-        private void TaskCompletionListener_Failure2(object sender, EventArgs e)
+        private void ProfileCapturedSuccess_Failure(object sender, EventArgs e)
         {
-            Snackbar.Make(driverOnboardingRoot, "Error", Snackbar.LengthShort).Show();
+            
         }
 
-        private void TaskCompletionListener_Successful2(object sender, TaskCompletionListeners.ResultArgs e)
+        private void ProfileCapturedSuccess_Successful(object sender, TaskCompletionListeners.ResultArgs e)
         {
-            CarRegFragment carRegFragment = new CarRegFragment();
-            ShowFragment(carRegFragment);
-            carRegFragment.OnCardetailsSaved += CarRegFragment_OnCardetailsSaved;
+            regAdapter.NotifyDataSetChanged();
+            RegViewPager.SetCurrentItem(5, SmoothScroll);
+            CarRegFragment.OnCardetailsSaved += CarRegFragment_OnCardetailsSaved;
         }
 
         private void CarRegFragment_OnCardetailsSaved(object sender, CarRegFragment.CarModelArgs e)
@@ -302,43 +319,38 @@ namespace Cab360Driver.Activities
         {
             driverRef = FireDatabase.GetReference("RegUnVerifiedCars/" + FireAuth.CurrentUser.Uid);
             driverRef.SetValue(carMap)
-                .AddOnSuccessListener(TaskCompletionListener)
-                .AddOnFailureListener(TaskCompletionListener);
-            TaskCompletionListener.Successful += TaskCompletionListener_Successful4;
-            TaskCompletionListener.Failure += TaskCompletionListener_Failure4;
+                .AddOnSuccessListener(CarCapturedSuccess)
+                .AddOnFailureListener(CarCapturedSuccess);
+            CarCapturedSuccess.Successful += CarCapturedSuccess_Successful;
+            CarCapturedSuccess.Failure += CarCapturedSuccess_Failure;
         }
 
-        private void TaskCompletionListener_Failure4(object sender, EventArgs e)
+        private void CarCapturedSuccess_Failure(object sender, EventArgs e)
         {
-            SayToast("We couldnt save your cars");
+            
         }
 
-        private void SayToast(string message)
-        {
-            Toast.MakeText(this, message, ToastLength.Short).Show();
-        }
-
-        private void TaskCompletionListener_Successful4(object sender, TaskCompletionListeners.ResultArgs e)
+        private void CarCapturedSuccess_Successful(object sender, TaskCompletionListeners.ResultArgs e)
         {
             if (driverRef == null)
-                driverRef = FireDatabase.GetReference("Cab360Drivers/" + FireAuth.CurrentUser.Uid);
+                driverRef = AppDataHelper.GetParentReference().Child(FireAuth.CurrentUser.Uid);
 
-            driverRef.Child("stage_of_registration").SetValue("4")
+            driverRef.Child("stage_of_registration").SetValue(RegistrationStage.CarCapturing.ToString())
                     .AddOnSuccessListener(TaskCompletionListener)
                     .AddOnFailureListener(TaskCompletionListener);
-            TaskCompletionListener.Successful += TaskCompletionListener_Successful5;
-            TaskCompletionListener.Failure += TaskCompletionListener_Failure5;
+            TaskCompletionListener.Successful += TaskCompletionListener_Successful2;
+            TaskCompletionListener.Failure += TaskCompletionListener_Failure2;
         }
 
-        private void TaskCompletionListener_Failure5(object sender, EventArgs e)
+        private void TaskCompletionListener_Failure2(object sender, EventArgs e)
         {
-            SayToast("We couldnt change the stage from 3 to 4");
+            
         }
 
-        private void TaskCompletionListener_Successful5(object sender, TaskCompletionListeners.ResultArgs e)
+        private void TaskCompletionListener_Successful2(object sender, TaskCompletionListeners.ResultArgs e)
         {
-            CarPicsFragment carPicsFragment = new CarPicsFragment();
-            ShowFragment(carPicsFragment);
+            regAdapter.NotifyDataSetChanged();
+            RegViewPager.SetCurrentItem(6, SmoothScroll);
         }
 
         public override void OnBackPressed()
@@ -350,13 +362,5 @@ namespace Cab360Driver.Activities
                 Finish();
             }
         }
-
-        public void OnFailure(Java.Lang.Exception e)
-        {
-            
-        }
-
-        
-
     }
 }

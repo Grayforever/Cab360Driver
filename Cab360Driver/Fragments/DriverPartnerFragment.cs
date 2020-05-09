@@ -12,18 +12,16 @@ namespace Cab360Driver.Fragments
 {
     public class DriverPartnerFragment : AndroidX.Fragment.App.Fragment, IOnButtonCheckedListener, IViewFactory
     {
-
-        private PartnershipEnum partnershipEnum;
-
         private MaterialButton ContinueBtn;
         TextSwitcher InfoTSwitcher;
         MaterialButtonToggleGroup AccountTypeTGroup;
         ImageSwitcher InfoImgSwitcher;
         MakeViewClass makeView;
+        bool partner = true;
 
-        public class StageTwoEventArgs : EventArgs
+        public class PartnerEventArgs : EventArgs
         {
-            public int IsPartner { get; set; }
+            public bool IsPartner { get; set; }
         }
 
         public override void OnCreate(Bundle savedInstanceState)
@@ -31,12 +29,11 @@ namespace Cab360Driver.Fragments
             base.OnCreate(savedInstanceState);
         }
 
-        public event EventHandler<StageTwoEventArgs> StageTwoPassEvent;
+        public event EventHandler<PartnerEventArgs> PartnerSelected;
 
         public override View OnCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
         {
             var view =  inflater.Inflate(Resource.Layout.driver_partner_layout, container, false);
-            partnershipEnum = PartnershipEnum.IsPartner;
             GetControls(view);
             return view;
         }
@@ -56,7 +53,7 @@ namespace Cab360Driver.Fragments
 
         private void ContinueBtn_Click(object sender, EventArgs e)
         {
-            StageTwoPassEvent.Invoke(this, new StageTwoEventArgs { IsPartner = (int)partnershipEnum });
+            PartnerSelected.Invoke(this, new PartnerEventArgs { IsPartner =  partner});
         }
 
         private void InitImgSwitcher()
@@ -106,20 +103,16 @@ namespace Cab360Driver.Fragments
             switch (p1)
             {
                 case Resource.Id.drv_tggl_partner_btn:
-                    partnershipEnum = PartnershipEnum.IsPartner;
+                    partner = true;
                     InfoTSwitcher.SetText(GetString(Resource.String.partner_desc_txt));
                     InfoImgSwitcher.SetImageResource(Resource.Drawable.ic_driver1);
                     break;
 
                 case Resource.Id.drv_tggl_driver_btn:
-                    partnershipEnum = PartnershipEnum.IsDriver;
+                    partner = false;
                     InfoTSwitcher.SetText(GetString(Resource.String.driving_desc_txt));
                     InfoImgSwitcher.SetImageResource(Resource.Drawable.ic_driver2);
                     break;
-
-                default:
-                    return;
-                    
             }
         }
     }

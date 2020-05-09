@@ -17,16 +17,15 @@
     <Refractored.Controls.CircleImageView
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:id="@+id/preview_iv"
         android:layout_weight="0.6"
-        android:layout_marginStart="16dp"
-        android:layout_marginEnd="16dp"
-        android:layout_marginTop="16dp"
-        android:layout_marginBottom="24dp"
+        android:layout_margin="16dp"
+        android:id="@+id/preview_iv"
         android:scaleType="centerCrop"
+        android:layout_centerInParent="true"
+        android:src="@drawable/ic_user"
     />
 
-    <LinearLayout
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="0.4"
@@ -34,15 +33,13 @@
 
         <TextView
             android:layout_width="match_parent"
-            android:layout_height="0dp"
+            android:layout_height="wrap_content"
             android:id="@+id/wanna_txt"
-            android:layout_weight="1"
             android:text="Want to use this photo?"
-            android:textSize="24sp"
+            android:textAppearance="?android:attr/textAppearanceLarge"
             android:gravity="center"
             android:textStyle="bold"
             android:fontFamily="sans-serif-light"
-            android:textColor="@android:color/black"
             android:layout_marginStart="16dp"
             android:layout_marginEnd="16dp"
             android:layout_marginBottom="8dp"
@@ -50,29 +47,27 @@
 
         <TextView
             android:layout_width="match_parent"
-            android:layout_height="0dp"
+            android:layout_height="wrap_content"
             android:id="@+id/wanna_txt2"
-            android:layout_weight="2"
+            android:layout_below="@+id/wanna_txt"
+            android:textAppearance="?android:attr/textAppearanceSmall"
             android:layout_centerInParent="true"
             android:text="By tapping SAVE, you agree that Cab360 may collect and process your photos with technology that allows us to verify your identity"
             android:textAlignment="center"
             android:inputType="textMultiLine"
             android:gravity="center"
-            android:textSize="15sp"
             android:fontFamily="sans-serif-light"
-            android:textColor="@android:color/black"
             android:layout_marginStart="16dp"
             android:layout_marginEnd="16dp"
         />
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:orientation="horizontal"
+            android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
             android:layout_marginStart="16dp"
             android:layout_marginEnd="16dp"
-            android:layout_weight="2">
+            android:orientation="horizontal">
 
             <com.google.android.material.button.MaterialButton
                 android:layout_width="0dp"
@@ -104,6 +99,6 @@
                 android:layout_marginEnd="2dp"
             />
         </LinearLayout>
-    </LinearLayout>
+    </RelativeLayout>
 
 </LinearLayout>

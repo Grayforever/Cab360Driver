@@ -1,23 +1,25 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
-using Android.App;
-using Android.Content;
+﻿using Android.Graphics;
 using Android.OS;
 using Android.Runtime;
 using Android.Text;
-using Android.Util;
 using Android.Views;
 using Android.Widget;
-using AndroidX;
+using AndroidX.Annotations;
 using AndroidX.AppCompat.Widget;
+using Cab360Driver.Adapters;
 using Cab360Driver.DataModels;
+using Cab360Driver.EnumsConstants;
+using Cab360Driver.IServices;
 using Google.Android.Material.Button;
 using Google.Android.Material.TextField;
 using Java.Lang;
+using Refit;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Reflection;
 using static Android.Views.View;
+using static Android.Widget.AutoCompleteTextView;
 
 namespace Cab360Driver.Fragments
 {
@@ -39,6 +41,7 @@ namespace Cab360Driver.Fragments
         private string condition;
         private string currUser;
         private string regNo;
+        private ICarsApi CarsApi;
 
         public event EventHandler<CarModelArgs> OnCardetailsSaved;
         public class CarModelArgs : EventArgs
@@ -49,7 +52,7 @@ namespace Cab360Driver.Fragments
         public override void OnCreate(Bundle savedInstanceState)
         {
             base.OnCreate(savedInstanceState);
-
+            
             // Create your fragment here
         }
 
@@ -60,36 +63,101 @@ namespace Cab360Driver.Fragments
             return view;
         }
 
-        private void InitControls(View view)
+        public async override void OnViewCreated(View view, Bundle savedInstanceState)
         {
-            CarBrandEt = view.FindViewById<AppCompatAutoCompleteTextView>(Resource.Id.brand_ac_tv);
-            CarBrandEt.AddTextChangedListener(this);
-            CarBrandEt.SetOnKeyListener(this);
+            base.OnViewCreated(view, savedInstanceState);
 
-            CarModelEt = view.FindViewById<AppCompatAutoCompleteTextView>(Resource.Id.model_ac_tv);
-            CarModelEt.AddTextChangedListener(this);
-            CarModelEt.SetOnKeyListener(this);
+            //getting years from 1992 to current
+            List<int> Years = new List<int>();
 
-            CarYearEt = view.FindViewById<AppCompatAutoCompleteTextView>(Resource.Id.year_ac_tv);
+            for (int i = DateTime.UtcNow.Year; i >= 1992; i--)
+                Years.Add(i);
+
+            var _years = Years.Select(i => i.ToString()).ToArray();
+            var yr_arrayAdapter = ArrayAdapterClass.CreateArrayAdapter(Activity, _years);
+            CarYearEt.Adapter = yr_arrayAdapter;
             CarYearEt.AddTextChangedListener(this);
             CarYearEt.SetOnKeyListener(this);
+            CarYearEt.Validator = new Validator(CarYearEt);
 
-            CarColorEt = view.FindViewById<AppCompatAutoCompleteTextView>(Resource.Id.color_ac_tv);
+            CarsApi = RestService.For<ICarsApi>(StringConstants.GetGateway());
+            try
+            {
+                var MyResult = await CarsApi.GetWelcome();
+
+                var make = new List<string>();
+                foreach (var car in MyResult.Results)
+                {
+                    make.Add(car.Make);
+
+                    var brandAdapter = ArrayAdapterClass.CreateArrayAdapter(Activity, make);
+                    CarBrandEt.Adapter = brandAdapter;
+                }
+
+                var model = new List<string>();
+                foreach(var car in MyResult.Results)
+                {
+                    model.Add(car.Model);
+                    var modelAdapter = ArrayAdapterClass.CreateArrayAdapter(Activity, model);
+                    CarModelEt.Adapter = modelAdapter;
+                }
+                   
+            }
+            catch (System.Exception)
+            {
+
+                throw;
+            }
+
+            CarBrandEt.AddTextChangedListener(this);
+            CarBrandEt.SetOnKeyListener(this);
+            CarBrandEt.Validator = new Validator(CarBrandEt);
+
+            //will be set by volly httprequest 
+            CarModelEt.AddTextChangedListener(this);
+            CarModelEt.SetOnKeyListener(this);
+            CarModelEt.Validator = new Validator(CarModelEt);
+
+            //all known colors
+            var LColors = new List<string>();
+            foreach(PropertyInfo property in typeof(Color).GetProperties())
+            {
+                if (property.PropertyType == typeof(Color))
+                    LColors.Add(property.Name);
+            }
+            var coloradapter = ArrayAdapterClass.CreateArrayAdapter(Activity, LColors);
+            CarColorEt.Adapter = coloradapter;
             CarColorEt.AddTextChangedListener(this);
             CarColorEt.SetOnKeyListener(this);
+            CarColorEt.Validator = new Validator(CarColorEt);
 
-            ConditionEt = view.FindViewById<AppCompatAutoCompleteTextView>(Resource.Id.state_ac_tv);
+            //car condition
+            var conditions = new string[] { "Slightly Used", "Used", "New" };
+            var conditionsAdapter = ArrayAdapterClass.CreateArrayAdapter(Activity, conditions);
+            ConditionEt.Adapter = conditionsAdapter;
             ConditionEt.AddTextChangedListener(this);
             ConditionEt.SetOnKeyListener(this);
+            ConditionEt.Validator = new Validator(ConditionEt);
 
-            RegNoEt = view.FindViewById<TextInputLayout>(Resource.Id.reg_no_til);
+            //write custom regex for car number
             RegNoEt.EditText.AddTextChangedListener(this);
             RegNoEt.EditText.SetOnKeyListener(this);
 
-            CurrOwnEt = view.FindViewById<TextInputLayout>(Resource.Id.curr_user_til);
+            //nameText
             CurrOwnEt.EditText.AddTextChangedListener(this);
             CurrOwnEt.EditText.SetOnKeyListener(this);
+            
+        }
 
+        private void InitControls(View view)
+        {
+            CarBrandEt = view.FindViewById<AppCompatAutoCompleteTextView>(Resource.Id.brand_ac_tv);
+            CarModelEt = view.FindViewById<AppCompatAutoCompleteTextView>(Resource.Id.model_ac_tv);
+            CarYearEt = view.FindViewById<AppCompatAutoCompleteTextView>(Resource.Id.year_ac_tv);
+            CarColorEt = view.FindViewById<AppCompatAutoCompleteTextView>(Resource.Id.color_ac_tv);
+            ConditionEt = view.FindViewById<AppCompatAutoCompleteTextView>(Resource.Id.state_ac_tv);
+            RegNoEt = view.FindViewById<TextInputLayout>(Resource.Id.reg_no_til);
+            CurrOwnEt = view.FindViewById<TextInputLayout>(Resource.Id.curr_user_til);
             ContinueBtn = view.FindViewById<MaterialButton>(Resource.Id.part_cont_btn);
             ContinueBtn.Click += ContinueBtn_Click;
         }
@@ -131,7 +199,8 @@ namespace Cab360Driver.Fragments
             currUser = CurrOwnEt.EditText.Text;
             regNo = RegNoEt.EditText.Text;
 
-            ContinueBtn.Enabled = brand.Length >= 3 && model.Length >= 2 && color.Length >= 2 && year.Length == 4 && condition.Length >= 2 && currUser.Length >= 3 && regNo.Length >= 5;
+            ContinueBtn.Enabled = brand.Length >= 3 && model.Length >= 2 && color.Length >= 3 && 
+                year.Length == 4 && condition.Length >= 3 && currUser.Length >= 3 && regNo.Length >= 5;
 
         }
 
@@ -153,6 +222,35 @@ namespace Cab360Driver.Fragments
                 CheckIfEmpty();
             }
             return false;
+        }
+
+        public class Validator : Java.Lang.Object, IValidator
+        {
+            private AppCompatAutoCompleteTextView _edittext;
+
+            public Validator(AppCompatAutoCompleteTextView edittext)
+            {
+                _edittext = edittext;
+            }
+
+            [Nullable]
+            public ICharSequence FixTextFormatted(ICharSequence invalidText)
+            {
+                return null;
+            }
+
+            public bool IsValid(ICharSequence text)
+            {
+                var listAdapter = _edittext.Adapter;
+                for (int i = 0; i < listAdapter.Count; i++)
+                {
+                    string temp = listAdapter.GetItem(i).ToString();
+                    if (text.ToString().CompareTo(temp) != 0)
+                        continue;
+                    return true;
+                }
+                return false;
+            }
         }
     }
 }
