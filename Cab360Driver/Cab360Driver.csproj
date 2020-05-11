@@ -488,21 +488,6 @@
     <AndroidResource Include="Resources\drawable-v24\ic_bell.png" />
   </ItemGroup>
   <ItemGroup>
-    <AndroidResource Include="Resources\layout\account_tab1.xml">
-      <SubType>Designer</SubType>
-    </AndroidResource>
-  </ItemGroup>
-  <ItemGroup>
-    <AndroidResource Include="Resources\layout\account_tab2.xml">
-      <SubType>Designer</SubType>
-    </AndroidResource>
-  </ItemGroup>
-  <ItemGroup>
-    <AndroidResource Include="Resources\layout\account_tab3.xml">
-      <SubType>Designer</SubType>
-    </AndroidResource>
-  </ItemGroup>
-  <ItemGroup>
     <AndroidResource Include="Resources\drawable-v24\circle_border_outline.xml" />
   </ItemGroup>
   <ItemGroup>

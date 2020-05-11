@@ -63,8 +63,6 @@ namespace Cab360Driver
         bool newRideAssigned;
         private RideStatusEnum statusEnum;
         private int rotation = 180;
-        private int onlinedrawableId = Resource.Drawable.ic_car_online;
-        /*string status = "NORMAL";*/ //REQUESTFOUND, ACCEPTED, ONTRIP
 
         //Datamodels
         private RideDetails newRideDetails;
