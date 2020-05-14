@@ -1,8 +1,11 @@
-﻿using Android.Gms.Tasks;
+﻿using Android.Content;
+using Android.Gms.Tasks;
+using Android.InputMethodServices;
 using Android.OS;
 using Android.Runtime;
 using Android.Text;
 using Android.Views;
+using Android.Views.InputMethods;
 using AndroidX.AppCompat.Widget;
 using AndroidX.CoordinatorLayout.Widget;
 using Cab360Driver.Adapters;
@@ -130,16 +133,6 @@ namespace Cab360Driver.Fragments
             Android.Util.Log.Debug("sign uperror: ", e.Message);
         }
 
-        public bool OnKey(View v, [GeneratedEnum] Keycode keyCode, KeyEvent e)
-        {
-            var action = e.Action;
-            if (action == KeyEventActions.Up)
-            {
-                CheckIfEmpty();
-            }
-            return false;
-        }
-
         public void AfterTextChanged(IEditable s)
         {
             CheckIfEmpty();
@@ -153,6 +146,30 @@ namespace Cab360Driver.Fragments
         public void OnTextChanged(ICharSequence s, int start, int before, int count)
         {
             
+        }
+
+        void HideKeyboard(View view)
+        {
+            try
+            {
+                InputMethodManager ime = (InputMethodManager)Activity.GetSystemService(Context.InputMethodService);
+                ime.HideSoftInputFromWindow(view.WindowToken, HideSoftInputFlags.None);
+            }
+            catch (System.Exception)
+            {
+
+                throw;
+            }
+        }
+
+        public bool OnKey(View v, [GeneratedEnum] Android.Views.Keycode keyCode, KeyEvent e)
+        {
+            var action = e.Action;
+            if (action == KeyEventActions.Up)
+            {
+                CheckIfEmpty();
+            }
+            return false;
         }
     }
 }

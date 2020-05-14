@@ -99,6 +99,7 @@
     <Compile Include="EventListeners\SweetAlertEventListeners.cs" />
     <Compile Include="EventListeners\TaskCompletionListeners.cs" />
     <Compile Include="Fragments\AccountFragment.cs" />
+    <Compile Include="Fragments\BaseFragment.cs" />
     <Compile Include="Fragments\BeforeUSnap2Fragment.cs" />
     <Compile Include="Fragments\BeforeUSnapFragment.cs" />
     <Compile Include="Fragments\CarPicsFragment.cs" />
@@ -123,6 +124,7 @@
     <Compile Include="MainActivity.cs" />
     <Compile Include="Resources\Resource.designer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Utils\CrossfadeTransformer.cs" />
     <Compile Include="Utils\TextfieldEmptyValidator.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -163,8 +165,8 @@
     <AndroidResource Include="Resources\values\dimens.xml" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Karamunting.Android.RahulDange09.Splashy">
-      <Version>1.1.0</Version>
+    <PackageReference Include="Microcharts">
+      <Version>0.7.1</Version>
     </PackageReference>
     <PackageReference Include="Newtonsoft.Json">
       <Version>12.0.3</Version>
@@ -497,11 +499,6 @@
     <AndroidResource Include="Resources\drawable-v24\ic_star_small.png" />
   </ItemGroup>
   <ItemGroup>
-    <AndroidResource Include="Resources\layout\earn_sum_tab1.xml">
-      <SubType>Designer</SubType>
-    </AndroidResource>
-  </ItemGroup>
-  <ItemGroup>
     <AndroidResource Include="Resources\drawable-v24\ic_home.xml" />
   </ItemGroup>
   <ItemGroup>
@@ -663,12 +660,22 @@
     </AndroidResource>
   </ItemGroup>
   <ItemGroup>
+    <AndroidResource Include="Resources\drawable\driver_2.gif" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\layout\appbar_main.xml">
+      <SubType>Designer</SubType>
+    </AndroidResource>
+  </ItemGroup>
+  <ItemGroup>
     <AndroidResource Include="Resources\layout\layout1.xml">
       <SubType>Designer</SubType>
     </AndroidResource>
   </ItemGroup>
   <ItemGroup>
-    <AndroidResource Include="Resources\drawable\driver_2.gif" />
+    <AndroidResource Include="Resources\layout\layout2.xml">
+      <SubType>Designer</SubType>
+    </AndroidResource>
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\Android\Xamarin.Android.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it.

@@ -8,20 +8,11 @@
     android:background="@android:color/white">
 
 
-    <com.google.android.material.appbar.AppBarLayout
+    <include
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:liftOnScroll="true"
-        android:id="@+id/partner_appbar">
-
-        <androidx.appcompat.widget.Toolbar
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/driver_partner_toolbar"
-            android:background="@android:color/white"
-            style="@style/Widget.MaterialComponents.Toolbar"
+        layout="@layout/appbar_main"
         />
-   </com.google.android.material.appbar.AppBarLayout>
 
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"

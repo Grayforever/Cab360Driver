@@ -8,7 +8,8 @@ namespace Cab360Driver.EnumsConstants
         private static readonly string gateway1 = "https://parseapi.back4app.com";
         private static readonly string mapsNavigateBaseGateway = "google.navigation:q=";
         private static readonly string mapsDirectionsBaseGateway = "https://maps.googleapis.com/maps/api/directions/";
-        private static readonly string mapKey = Application.Context.GetString(Resource.String.mapKey);
+        private static readonly string mapKey = Application.Context.GetString(Resource.String.google_api_key);
+        private static readonly string databaseUrl = Application.Context.GetString(Resource.String.databaseUrl);
         private static readonly string[] permissionsGroup =
         {
             Manifest.Permission.AccessCoarseLocation,
@@ -33,7 +34,7 @@ namespace Cab360Driver.EnumsConstants
             return mapsDirectionsBaseGateway;
         }
 
-        public static string GetMapKey()
+        public static string GetGoogleApiKey()
         {
             return mapKey;
         }
@@ -41,6 +42,11 @@ namespace Cab360Driver.EnumsConstants
         public static string[] GetLocationPermissiongroup()
         {
             return permissionsGroup;
+        }
+
+        public static string GetDatabaseUrl()
+        {
+            return databaseUrl;
         }
     }
 }

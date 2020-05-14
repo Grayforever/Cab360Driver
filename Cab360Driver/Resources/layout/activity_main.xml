@@ -36,7 +36,7 @@
 		android:id="@+id/fab_toggle_online"
 		android:clickable="true"
 		app:maxImageSize="32dp"
-		app:elevation="12dp"
+		app:elevation="8dp"
 		app:layout_anchor="@+id/bnve"
 		app:layout_anchorGravity="center_horizontal"
 		android:src="@drawable/ic_car_offline"
@@ -45,7 +45,7 @@
 		app:layout_constraintEnd_toEndOf="parent"
 		app:backgroundTint="@android:color/white"
 		app:tint="@null"
-		android:layout_marginBottom="8dp"
+		android:layout_marginBottom="12dp"
 	/>
 	
 

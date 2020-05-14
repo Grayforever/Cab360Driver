@@ -16,6 +16,7 @@ using Cab360Driver.EnumsConstants;
 using Cab360Driver.EventListeners;
 using Cab360Driver.Fragments;
 using Cab360Driver.Helpers;
+using Cab360Driver.Utils;
 using CN.Pedant.SweetAlert;
 using Google.Android.Material.Badge;
 using Google.Android.Material.BottomNavigation;
@@ -120,9 +121,9 @@ namespace Cab360Driver
             bnve.NavigationItemSelected += Bnve_NavigationItemSelected1;
 
             viewpager = (ViewPager2)FindViewById(Resource.Id.viewpager);
-            viewpager.Orientation = ViewPager2.OrientationHorizontal;
             viewpager.OffscreenPageLimit = 3;
             viewpager.UserInputEnabled = false;
+            //viewpager.SetPageTransformer(new CrossfadeTransformer());
             SetupViewPager();
 
             homeFragment.CurrentLocation += HomeFragment_CurrentLocation;

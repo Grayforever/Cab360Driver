@@ -7,6 +7,7 @@ using Android.Util;
 using Firebase.Database;
 using Firebase.Auth;
 using System;
+using Cab360Driver.EnumsConstants;
 
 namespace Cab360Driver.Activities
 {
@@ -20,9 +21,14 @@ namespace Cab360Driver.Activities
         {
             base.OnCreate(savedInstanceState);
             editor = preferences.Edit();
+
+        }
+
+        protected override void OnResume()
+        {
+            base.OnResume();
             var currUser = AppDataHelper.GetCurrentUser();
             RouteToAppropriatePage(currUser);
-            Finish();
         }
 
         private void RouteToAppropriatePage(FirebaseUser currUser)
@@ -71,7 +77,7 @@ namespace Cab360Driver.Activities
         private void StartWhichActivity(string stage)
         {
             Log.Debug("stage before exit: ", stage);
-            if (!stage.Contains("0"))
+            if (!stage.Contains(RegistrationStage.Registration.ToString()))
             {
                 var intent3 = new Intent(this, typeof(MainActivity));
                 intent3.AddFlags(ActivityFlags.ClearTask | ActivityFlags.ClearTop | ActivityFlags.NewTask);

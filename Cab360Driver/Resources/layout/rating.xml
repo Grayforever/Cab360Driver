@@ -1,24 +1,23 @@
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/ratings_root"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">  
+    android:layout_height="match_parent"
+    tools:ignore="HardcodedText">  
     
-    <androidx.appcompat.widget.Toolbar
+    <include
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@android:color/white"
-        android:id="@+id/ratings_toolbar"
-        android:elevation="4dp"
-    />
+        layout="@layout/appbar_main"
+        />
 
-    <ScrollView 
+    <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:scrollbars="none"
-        android:layout_below="@+id/ratings_toolbar">
-
+        android:fillViewport="true"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -38,8 +37,8 @@
                     android:layout_height="wrap_content"
                     android:id="@+id/ratings_tv"
                     android:layout_centerHorizontal="true"
-                    android:textSize="24sp"
                     android:gravity="center"
+                    android:textAppearance="?android:attr/textAppearanceLarge"
                     android:text="You haven't been rated yet"
                     android:maxLines="2"
                     android:textAlignment="gravity"
@@ -54,7 +53,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:id="@+id/ratings_desc_tv"
-                    android:textSize="16sp"
+                    android:textAppearance="?android:attr/textAppearanceSmall"
                     android:layout_below="@+id/ratings_tv"
                     android:layout_centerHorizontal="true"
                     android:text="No ratings"
@@ -231,18 +230,16 @@
             
                 </TableLayout>
 
-                <TextView
+                <com.google.android.material.button.MaterialButton
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:id="@+id/view_ratings_details_tv1"
+                    android:id="@+id/view_ratings_details_btn"
                     android:layout_below="@+id/ratings_table1"
                     android:text="View details"
                     android:layout_centerHorizontal="true"
                     android:layout_marginTop="8dp"
                     android:padding="8dp"
-                    android:clickable="true"
-                    android:textSize="16sp"
-                    android:foreground="?android:attr/selectableItemBackground"
+                    style="@style/Widget.MaterialComponents.Button.OutlinedButton"
                 />
 
             </RelativeLayout>
@@ -257,36 +254,41 @@
                 android:layout_marginEnd="16dp"
                 android:elevation="2dp"
                 android:layout_marginBottom="16dp">
-        
-                <TextView
+                
+                <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="No recent rider feedback"
-                    android:textStyle="bold"
-                    android:textSize="16sp"
-                    android:fontFamily="sans-serif-light"
-                    android:id="@+id/no_recents_tv1"
-                    android:textColor="@android:color/black"
-                />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="This is where you'll see feedback from riders who rate you under 5 stars."
-                    android:textSize="16sp"
-                    android:layout_alignParentStart="true"
-                    android:ellipsize="end"
-                    android:inputType="textMultiLine"
-                    android:maxLines="3"
-                    android:layout_below="@+id/no_recents_tv1"
-                    android:fontFamily="sans-serif-light"
-                    android:textColor="@android:color/black"
+                    android:orientation="vertical"
                     android:layout_toStartOf="@+id/review_dummy_iv1"
-                />
+                    android:layout_centerVertical="true">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="No recent rider feedback"
+                        android:textStyle="bold"
+                        android:textAppearance="?android:attr/textAppearanceMedium"
+                        android:fontFamily="sans-serif-light"
+                        android:id="@+id/no_recents_tv1"
+                    />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="This is where you'll see feedback from riders who rate you under 5 stars."
+                        android:textAppearance="?android:attr/textAppearanceSmall"
+                        android:layout_alignParentStart="true"
+                        android:ellipsize="end"
+                        android:inputType="textMultiLine"
+                        android:maxLines="3"
+                        android:fontFamily="sans-serif-light"
+                    />
+
+                </LinearLayout>
 
                 <ImageView
-                    android:layout_width="96dp"
-                    android:layout_height="96dp"
+                    android:layout_width="74dp"
+                    android:layout_height="74dp"
                     android:layout_alignParentEnd="true"
                     android:src="@drawable/ic_review1"
                     android:id="@+id/review_dummy_iv1"
@@ -351,7 +353,7 @@
 
     
 
-    </ScrollView>
+   </androidx.core.widget.NestedScrollView>
 
     
-</RelativeLayout>
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

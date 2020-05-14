@@ -1,5 +1,6 @@
 ﻿using Android.App;
 using Android.Content;
+using Cab360Driver.EnumsConstants;
 using Firebase;
 using Firebase.Auth;
 using Firebase.Database;
@@ -23,8 +24,8 @@ namespace Cab360Driver.Helpers
                 {
                     var options = new FirebaseOptions.Builder()
                         .SetApplicationId("taxiproject-185a4")
-                        .SetApiKey("AIzaSyDHXqe3Yh9Nl3wsxFItOoz1IwKiBRP7fxk")
-                        .SetDatabaseUrl("https://taxiproject-185a4.firebaseio.com")
+                        .SetApiKey(StringConstants.GetGoogleApiKey())
+                        .SetDatabaseUrl(StringConstants.GetDatabaseUrl())
                         .SetStorageBucket("taxiproject-185a4.appspot.com")
                         .Build();
                     app = FirebaseApp.InitializeApp(Application.Context, options);

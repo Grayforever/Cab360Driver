@@ -8,14 +8,14 @@
     android:background="@android:color/white"
     tools:ignore="HardcodedText">
 
-    <androidx.appcompat.widget.Toolbar
-        android:layout_width="0dp"
+    <include
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/drv_signup_toolbar"
-        android:background="@android:color/white"
+        layout="@layout/appbar_main"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        android:id="@+id/sign_appbar"
         />
 
 
@@ -25,7 +25,7 @@
         android:id="@+id/drv_signin_email_et"
         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
         android:hint="Email"
-        app:layout_constraintTop_toBottomOf="@+id/drv_signup_toolbar"
+        app:layout_constraintTop_toBottomOf="@+id/sign_appbar"
         android:layout_marginTop="32dp"
         android:layout_marginBottom="16dp"
         android:layout_marginStart="16dp"
