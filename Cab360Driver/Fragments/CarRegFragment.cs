@@ -3,7 +3,6 @@ using Android.OS;
 using Android.Runtime;
 using Android.Text;
 using Android.Views;
-using Android.Widget;
 using AndroidX.Annotations;
 using AndroidX.AppCompat.Widget;
 using Cab360Driver.Adapters;

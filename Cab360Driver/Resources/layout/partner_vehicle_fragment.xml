@@ -62,7 +62,6 @@
                         android:layout_height="wrap_content"
                         android:id="@+id/brand_ac_tv"
                         android:singleLine="true"
-                        
                         android:inputType="textCapWords"
                         android:imeOptions="actionNext"
                         android:lines="1"
