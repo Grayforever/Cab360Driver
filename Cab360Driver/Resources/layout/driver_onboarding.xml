@@ -32,7 +32,7 @@
         app:layout_constraintBottom_toTopOf="@+id/onbd_signin_btn"
         android:layout_marginBottom="16dp"
         android:textAppearance="?android:attr/textAppearanceLarge"
-        android:fontFamily="sans-serif-light"
+        
         android:layout_marginStart="16dp"
         android:layout_marginEnd="16dp"
         
@@ -50,7 +50,7 @@
         app:layout_constraintEnd_toStartOf="@+id/onbd_signup_btn"
         android:layout_marginEnd="8dp"
         android:layout_marginBottom="16dp"
-        android:fontFamily="sans-serif-light"
+        
         app:strokeWidth="2dp"
         style="@style/Widget.MaterialComponents.Button.OutlinedButton"
     />
@@ -68,7 +68,7 @@
         android:layout_marginStart="8dp"
         android:layout_marginEnd="16dp"
         android:layout_marginBottom="16dp"
-        android:fontFamily="sans-serif-light"             
+                     
     />
 </androidx.constraintlayout.widget.ConstraintLayout>
 

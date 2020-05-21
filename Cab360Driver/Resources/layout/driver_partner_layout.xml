@@ -33,7 +33,7 @@
                 android:layout_marginTop="16dp"
                 android:layout_marginStart="16dp"
                 android:layout_marginEnd="16dp"
-                android:fontFamily="sans-serif-light"
+                
                 android:layout_alignParentTop="true"
             />
 
@@ -112,7 +112,7 @@
                 android:text="@string/continue_txt"
                 android:textStyle="bold"
                 android:id="@+id/drv_part_cnt_btn"
-                android:fontFamily="sans-serif-light"
+                
                 android:layout_alignParentBottom="true"
             />
             

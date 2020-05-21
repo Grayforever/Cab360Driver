@@ -17,7 +17,7 @@
             android:layout_height="wrap_content"
             android:text="New Ride Request"
             android:layout_gravity="center"
-            android:fontFamily="sans-serif-light"
+            
             android:textAppearance="?android:attr/textAppearanceMedium"
         />
     </FrameLayout>
@@ -75,7 +75,7 @@
             android:text="Koforidua"
             android:textSize="16sp"
             android:layout_marginEnd="16dp"
-            android:fontFamily="sans-serif-light"
+            
             android:ellipsize="end"
             android:maxLines="1"
         />
@@ -89,7 +89,7 @@
             android:text="Accra"
             android:textSize="16sp"
             android:layout_marginEnd="16dp"
-            android:fontFamily="sans-serif-light"
+            
             android:ellipsize="end"
             android:maxLines="1"
         />
@@ -115,7 +115,7 @@
             android:drawableLeft="@drawable/ic_distance"
             android:drawablePadding="4dp"
             android:layout_alignParentStart="true"
-            android:fontFamily="sans-serif-light"
+            
             android:gravity="center"
             android:layout_marginTop="4dp"
         />
@@ -170,7 +170,7 @@
                 android:id="@+id/accept_ride_btn"
                 android:text="Accept"
                 android:textStyle="bold"
-                android:fontFamily="sans-serif-light"
+                
                 app:icon="@drawable/ic_mtrl_chip_checked_black"
                 android:layout_marginEnd="16dp"
             />

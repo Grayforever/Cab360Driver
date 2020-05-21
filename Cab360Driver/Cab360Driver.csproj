@@ -408,11 +408,6 @@
     </AndroidResource>
   </ItemGroup>
   <ItemGroup>
-    <AndroidResource Include="Resources\layout\offline_layout.xml">
-      <SubType>Designer</SubType>
-    </AndroidResource>
-  </ItemGroup>
-  <ItemGroup>
     <AndroidResource Include="Resources\anim\enter.xml" />
   </ItemGroup>
   <ItemGroup>
@@ -663,16 +658,6 @@
   </ItemGroup>
   <ItemGroup>
     <AndroidResource Include="Resources\layout\appbar_main.xml">
-      <SubType>Designer</SubType>
-    </AndroidResource>
-  </ItemGroup>
-  <ItemGroup>
-    <AndroidResource Include="Resources\layout\layout1.xml">
-      <SubType>Designer</SubType>
-    </AndroidResource>
-  </ItemGroup>
-  <ItemGroup>
-    <AndroidResource Include="Resources\layout\layout2.xml">
       <SubType>Designer</SubType>
     </AndroidResource>
   </ItemGroup>

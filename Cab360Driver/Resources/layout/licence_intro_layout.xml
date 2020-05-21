@@ -37,7 +37,7 @@
             android:paddingStart="16dp"
             android:paddingEnd="16dp"
             android:textSize="14sp"
-            android:fontFamily="sans-serif-light"
+            
             android:textColor="@android:color/black"
         />
 
@@ -85,7 +85,7 @@
                 android:textAllCaps="true"
                 app:backgroundTint="@color/colorAccent"
                 android:id="@+id/intro_takelicense_btn1"
-                android:fontFamily="sans-serif-light"
+                
                 style="@android:style/Widget.Material.Button.Colored"
                 android:textAppearance="?android:attr/textAppearanceMedium"
             />

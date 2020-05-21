@@ -23,7 +23,7 @@ using static Android.Widget.AutoCompleteTextView;
 
 namespace Cab360Driver.Fragments
 {
-    public class CarRegFragment : AndroidX.Fragment.App.Fragment, ITextWatcher, IOnKeyListener
+    public class CarRegFragment : BaseFragment, ITextWatcher, IOnKeyListener
     {
         private AppCompatAutoCompleteTextView CarBrandEt;
         private AppCompatAutoCompleteTextView CarModelEt;
@@ -49,18 +49,16 @@ namespace Cab360Driver.Fragments
             public CarModel CarDetails { get; set; }
         }
 
-        public override void OnCreate(Bundle savedInstanceState)
-        {
-            base.OnCreate(savedInstanceState);
-            
-            // Create your fragment here
-        }
-
-        public override View OnCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
+        public override View ProvideYourFragmentView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
         {
             var view = inflater.Inflate(Resource.Layout.partner_vehicle_fragment, container, false);
             InitControls(view);
             return view;
+        }
+
+        public override BaseFragment ProvideYourfragment()
+        {
+            return new CarRegFragment();
         }
 
         public async override void OnViewCreated(View view, Bundle savedInstanceState)
@@ -98,7 +96,8 @@ namespace Cab360Driver.Fragments
                 foreach(var car in MyResult.Results)
                 {
                     model.Add(car.Model);
-                    var modelAdapter = ArrayAdapterClass.CreateArrayAdapter(Activity, model);
+                    var model2 = model.Distinct().ToList();
+                    var modelAdapter = ArrayAdapterClass.CreateArrayAdapter(Activity, model2);
                     CarModelEt.Adapter = modelAdapter;
                 }
                    

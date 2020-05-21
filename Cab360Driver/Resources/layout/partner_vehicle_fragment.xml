@@ -30,7 +30,7 @@
                 android:id="@+id/part_vehi_intro_txt"
                 android:text="Tell us more about your car"
                 style="@style/Base.TextAppearance.AppCompat.Title"
-                android:fontFamily="sans-serif-light"
+                
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
@@ -62,7 +62,7 @@
                         android:layout_height="wrap_content"
                         android:id="@+id/brand_ac_tv"
                         android:singleLine="true"
-                        android:fontFamily="sans-serif-light"
+                        
                         android:inputType="textCapWords"
                         android:imeOptions="actionNext"
                         android:lines="1"
@@ -84,7 +84,7 @@
                         android:layout_height="wrap_content"
                         android:id="@+id/model_ac_tv"
                         android:singleLine="true"
-                        android:fontFamily="sans-serif-light"
+                        
                         android:inputType="textCapWords"
                         android:imeOptions="actionNext"
                         android:lines="1"
@@ -119,7 +119,7 @@
                         android:layout_height="wrap_content"
                         android:id="@+id/year_ac_tv"
                         android:singleLine="true"
-                        android:fontFamily="sans-serif-light"
+                        
                         android:inputType="number"
                         android:imeOptions="actionNext"
                         android:maxLines="1"
@@ -143,7 +143,7 @@
                         android:layout_height="wrap_content"
                         android:id="@+id/state_ac_tv"
                         android:singleLine="true"
-                        android:fontFamily="sans-serif-light"
+                        
                         android:inputType="none"
                         android:imeOptions="actionNext"
                         android:maxLines="1"
@@ -181,7 +181,7 @@
                         android:layout_height="wrap_content"
                         android:id="@+id/color_ac_tv"
                         android:singleLine="true"
-                        android:fontFamily="sans-serif-light"
+                        
                         android:inputType="textCapWords"
                         android:imeOptions="actionNext"
                         android:maxLines="1"
@@ -207,7 +207,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:hint="Registration number"
-                        android:fontFamily="sans-serif-light"
+                        
                         android:inputType="textCapCharacters"
                         android:imeOptions="actionNext"
                         />
@@ -232,7 +232,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:hint="Current owner"
-                    android:fontFamily="sans-serif-light"
+                    
                     android:inputType="textCapWords"
                     android:imeOptions="actionDone"
                     />
@@ -246,7 +246,7 @@
                 android:layout_below="@+id/curr_user_til"
                 android:textAppearance="?android:attr/textAppearanceMedium"
                 android:text="Please tick the appropriate box"
-                android:fontFamily="sans-serif-light"
+                
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/curr_user_til"
@@ -271,7 +271,7 @@
                     android:layout_columnWeight="1"
                     android:text="Roadworthy"
                     app:useMaterialThemeColors="true"
-                    android:fontFamily="sans-serif-light"
+                    
                     android:id="@+id/chk_road"
                     />
 
@@ -281,7 +281,7 @@
                     android:text="Insurance"
                     android:layout_columnWeight="1"
                     app:useMaterialThemeColors="true"
-                    android:fontFamily="sans-serif-light"
+                    
                     android:id="@+id/chk_insur"
                     />
 
@@ -291,7 +291,7 @@
                     android:text="Clean interior"
                     android:layout_columnWeight="1"
                     app:useMaterialThemeColors="true"
-                    android:fontFamily="sans-serif-light"
+                    
                     android:id="@+id/chk_inte"
                     />
 
@@ -301,7 +301,7 @@
                     android:text="Fire extinguisher"
                     android:layout_columnWeight="1"
                     app:useMaterialThemeColors="true"
-                    android:fontFamily="sans-serif-light"
+                    
                     android:id="@+id/chk_fire"
                     />
 
@@ -312,7 +312,7 @@
                 android:layout_height="wrap_content"
                 android:id="@+id/part_cont_btn"
                 android:text="Continue"
-                android:fontFamily="sans-serif-light"
+                
                 android:textStyle="bold"
                 android:enabled="false"
                 app:layout_constraintBottom_toBottomOf="parent"
