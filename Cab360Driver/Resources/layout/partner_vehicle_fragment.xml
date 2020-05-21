@@ -29,8 +29,7 @@
                 android:layout_height="wrap_content"
                 android:id="@+id/part_vehi_intro_txt"
                 android:text="Tell us more about your car"
-                style="@style/Base.TextAppearance.AppCompat.Title"
-                
+                android:textAppearance="?attr/textAppearanceHeadline6"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"

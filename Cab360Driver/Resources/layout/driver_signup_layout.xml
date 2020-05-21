@@ -34,7 +34,7 @@
                 android:layout_marginEnd="4dp"
                 app:layout_constraintEnd_toStartOf="@+id/drv_signup_lname_et"
                 android:hint="Firstname"
-                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+                >
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:layout_width="match_parent"
@@ -56,7 +56,7 @@
                 android:layout_marginStart="4dp"
                 android:hint="Lastname"
                 android:id="@+id/drv_signup_lname_et"
-                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+                >
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:layout_width="match_parent"
@@ -77,7 +77,7 @@
                 app:layout_constraintBottom_toTopOf="@+id/drv_signup_phone_et"
                 app:layout_constraintTop_toBottomOf="@+id/drv_signup_fname_et"
                 android:hint="Email"
-                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+                >
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:layout_width="match_parent"
@@ -97,7 +97,7 @@
                 app:layout_constraintBottom_toTopOf="@+id/drv_signup_pass_et"
                 app:layout_constraintTop_toBottomOf="@+id/drv_signup_email_et"
                 android:hint="Phone number"
-                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+                >
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:layout_width="match_parent"
@@ -118,7 +118,7 @@
                 app:layout_constraintTop_toBottomOf="@+id/drv_signup_phone_et"
                 android:hint="Password"
                 app:endIconMode="password_toggle"
-                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+                >
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:layout_width="match_parent"
@@ -133,6 +133,7 @@
                 android:layout_height="wrap_content"
                 android:id="@+id/drv_signup_city_et"
                 app:layout_constraintStart_toStartOf="parent"
+                android:hint="City"
                 app:layout_constraintEnd_toEndOf="parent"
                 android:layout_marginTop="8dp"
                 app:layout_constraintBottom_toTopOf="@+id/drv_signup_code_et"
@@ -145,10 +146,9 @@
                     android:id="@+id/autocity_et"
                     android:nextFocusForward="@+id/drv_signup_code_et1"
                     android:singleLine="true"
-                    
                     android:inputType="none"
                     android:imeOptions="actionNext"
-                    android:hint="City"
+                    
                 />
             </com.google.android.material.textfield.TextInputLayout>
 
@@ -162,8 +162,7 @@
                 app:layout_constraintBottom_toTopOf="@+id/drv_signup_sbmtbtn"
                 app:layout_constraintTop_toBottomOf="@+id/drv_signup_city_et"
                 app:helperText="Optional"
-                app:helperTextTextAppearance="?android:attr/textAppearanceSmall"
-                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+                >
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:layout_width="match_parent"
@@ -180,14 +179,13 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:id="@+id/drv_signup_sbmtbtn"
+                android:text="Continue"
+                android:layout_marginTop="8dp"
+                android:enabled="false"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/drv_signup_code_et"
-                android:text="Continue"
-                android:layout_marginTop="8dp"
-                android:textStyle="bold"
-                android:enabled="false"
                 
             />
 

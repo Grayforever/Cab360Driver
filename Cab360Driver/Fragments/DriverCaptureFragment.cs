@@ -24,7 +24,6 @@ namespace Cab360Driver.Fragments
         private ImageView NxtImg1, NxtImg2, NxtImg3;
         private Bitmap bitmapProfile;
         private TextView HeaderTxt1, HeaderTxt2, HeaderTxt3, MessageTxt1, MessageTxt2, MessageTxt3;
-        private ProgressBar progressBar;
 
         private int whichIsCaptured;
         bool _isCamLoaded = false;
@@ -88,8 +87,6 @@ namespace Cab360Driver.Fragments
             MessageTxt1 = view.FindViewById<TextView>(Resource.Id.drv_photo_txt);
             MessageTxt2 = view.FindViewById<TextView>(Resource.Id.drv_photo_txt);
             MessageTxt3 = view.FindViewById<TextView>(Resource.Id.drv_photo_txt);
-
-            progressBar = view.FindViewById<ProgressBar>(Resource.Id.prog1);
         }
 
         private void Card2_Click(object sender, EventArgs e)
@@ -108,7 +105,7 @@ namespace Cab360Driver.Fragments
 
         private void BeginLicenseCapture()
         {
-            //progressBar.Visibility = ViewStates.Visible;
+            //
             //LicenseIntroDialog.Show(FragmentManager, "showLicenceCapture");
             //LicenseIntroDialog.StartLicenseCamera += LicenseIntroDialog_StartLicenseCamera;
         }
@@ -120,7 +117,7 @@ namespace Cab360Driver.Fragments
 
         private void BeginProfileCapture()
         {
-            progressBar.Visibility = ViewStates.Visible;
+            
             CameraIntroDialog.Show(Activity.SupportFragmentManager, "showCameraAction");
             CameraIntroDialog.StartCameraAsync += CameraIntroDialog_StartCameraAsync;
         }
@@ -170,7 +167,6 @@ namespace Cab360Driver.Fragments
 
             if (file == null)
             {
-                progressBar.Visibility = ViewStates.Invisible;
                 return 0;
             }
                 

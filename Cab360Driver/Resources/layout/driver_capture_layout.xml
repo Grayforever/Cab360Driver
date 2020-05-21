@@ -4,37 +4,14 @@
 	xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@android:color/white">
+    tools:ignore="HardcodedText">
 
-    <com.google.android.material.appbar.AppBarLayout
+    
+    <include
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/drv_capt_appbar"
-        app:liftOnScroll="true">
-
-        <androidx.appcompat.widget.Toolbar
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/drv_capt_toolbar"
-            android:background="@android:color/white">
-
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="56dp">
-
-            <ProgressBar
-                android:layout_width="32dp"
-                android:layout_height="32dp"
-                android:layout_alignParentEnd="true"
-                android:id="@+id/prog1"
-                android:layout_centerVertical="true"
-                android:visibility="invisible"
-            
-            />
-        </RelativeLayout>
-
-    </androidx.appcompat.widget.Toolbar>
-    </com.google.android.material.appbar.AppBarLayout>
+        layout="@layout/appbar_main"
+        />
     
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
@@ -43,62 +20,55 @@
         android:fillViewport="true"
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
-        <RelativeLayout
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="match_parent"
+            android:padding="16dp">
 
             <TextView
-                android:layout_width="match_parent"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:id="@+id/drv_capt_welc_tv"
-                android:textAppearance="@style/Base.TextAppearance.AppCompat.Title"
-                android:textStyle="bold"
-                android:layout_marginStart="16dp"
-                android:layout_marginEnd="16dp"
-                android:layout_marginTop="16dp"
-                android:layout_marginBottom="16dp"
-                
+                android:text="Welcome, Daniel"
+                android:textAppearance="?attr/textAppearanceHeadline5"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
             />
 
             <TextView
-                android:layout_width="match_parent"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:id="@+id/drv_capt_req_tv"
-                android:layout_below="@+id/drv_capt_welc_tv"
                 android:text="Required steps"
-                android:textAppearance="?android:attr/textAppearanceSmall"
-                android:textStyle="bold"
-                android:layout_marginStart="16dp"
-                android:layout_marginEnd="16dp"
-                android:textColor="@android:color/black"
-                android:layout_marginBottom="4dp"
-                
+                android:textAppearance="?attr/textAppearanceBody1"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/drv_capt_welc_tv"
             />
 
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:id="@+id/drv_capt_head_tv"
-                android:layout_below="@+id/drv_capt_req_tv"
                 android:text="Here is what you need to do to set up your account"
-                android:maxLines="2"
-                android:textAppearance="?android:attr/textAppearanceSmall"
-                android:layout_marginStart="16dp"
-                android:layout_marginEnd="16dp"
-                android:layout_marginBottom="16dp"
-                android:textColor="@android:color/black"
+                android:textAppearance="?attr/textAppearanceBody1"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/drv_capt_req_tv"
                 
             />
 
             <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
                 android:orientation="vertical"
                 android:id="@+id/drv_capt_l2"
-                android:layout_below="@+id/drv_capt_head_tv"
-                android:layout_marginStart="8dp"
-                android:layout_marginEnd="8dp"
-                android:layout_marginBottom="56dp">
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/drv_capt_head_tv"
+                app:layout_constraintBottom_toBottomOf="parent"
+                android:layout_marginTop="24dp">
 
                 <androidx.cardview.widget.CardView
                     android:layout_width="match_parent"
@@ -258,7 +228,7 @@
    
             </LinearLayout>
 
-        </RelativeLayout>
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
     </androidx.core.widget.NestedScrollView>
 

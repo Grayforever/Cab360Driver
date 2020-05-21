@@ -47,22 +47,25 @@ namespace Cab360Driver.Fragments
             ContinueFab.Click += ContinueFab_Click;
         }
 
-        private void CheckIfEmpty()
+        private bool CheckIfEmpty()
         {
             var email = EmailText.EditText.Text;
 
             var pass = PassText.EditText.Text;
 
-            ContinueFab.Enabled = Patterns.EmailAddress.Matcher(email).Matches() && pass.Length >= 8;
-
+            bool enabled = Patterns.EmailAddress.Matcher(email).Matches() && pass.Length >= 8;
+            return enabled;
         }
 
         private void ContinueFab_Click(object sender, EventArgs e)
         {
+            CheckIfEmpty();
+            if (CheckIfEmpty() == false)
+                return;
+
             FireAuth.SignInWithEmailAndPassword(EmailText.EditText.Text, PassText.EditText.Text)
                 .AddOnSuccessListener(this)
                 .AddOnFailureListener(this);
-
 
         }
 
