@@ -14,7 +14,7 @@ using static Cab360Driver.Helpers.LocationCallbackHelper;
 
 namespace Cab360Driver.Fragments
 {
-    public class HomeFragment : AndroidX.Fragment.App.Fragment, IOnMapReadyCallback, IViewFactory
+    public class HomeFragment : BaseFragment, IOnMapReadyCallback, IViewFactory
     {
         public EventHandler<OnLocationCaptionEventArgs> CurrentLocation;
         public GoogleMap mainMap;
@@ -64,10 +64,15 @@ namespace Cab360Driver.Fragments
             CreateLocationRequest();
         }
 
-        public override View OnCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
+        public override View ProvideYourFragmentView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
         {
-            // Use this to return your custom view for this Fragment
-            View view = inflater.Inflate(Resource.Layout.home, container, false);
+            var view = inflater.Inflate(Resource.Layout.home, container, false);
+            InitControls(view);
+            return view;
+        }
+
+        private void InitControls(View view)
+        {
             SupportMapFragment mapFragment = ChildFragmentManager.FindFragmentById(Resource.Id.map).JavaCast<SupportMapFragment>();
             centerMarker = (ImageView)view.FindViewById(Resource.Id.centerMarker);
             mapFragment.GetMapAsync(this);
@@ -85,8 +90,11 @@ namespace Cab360Driver.Fragments
             tripButton.Click += TripButton_Click;
             callRiderButton.Click += CallRiderButton_Click;
             navigateButton.Click += NavigateButton_Click;
+        }
 
-            return view;
+        public override BaseFragment ProvideYourfragment()
+        {
+            return new HomeFragment();
         }
 
         void InitSwitcher()
@@ -116,7 +124,6 @@ namespace Cab360Driver.Fragments
             CallRider.Invoke(this, new EventArgs());
         }
 
-
         void TripButton_Click(object sender, EventArgs e)
         {
             if(!driverArrived && tripCreated)
@@ -142,7 +149,6 @@ namespace Cab360Driver.Fragments
             }
 
         }
-
 
         public void OnMapReady(GoogleMap googleMap)
         {  
@@ -187,7 +193,6 @@ namespace Cab360Driver.Fragments
 
         }
 
-
         void StartLocationUpdates()
         {
             locationProviderClient.RequestLocationUpdates(mLocationRequest, mLocationCallback, null);
@@ -212,7 +217,6 @@ namespace Cab360Driver.Fragments
             StopLocationUpdates();
         }
 
-
         public void CreateTrip(string ridername)
         {
             centerMarker.Visibility = ViewStates.Invisible;
@@ -233,6 +237,8 @@ namespace Cab360Driver.Fragments
             mainMap.Clear();
             mainMap.TrafficEnabled = false;
             mainMap.UiSettings.ZoomControlsEnabled = false;
-        } 
+        }
+
+        
     }
 }
