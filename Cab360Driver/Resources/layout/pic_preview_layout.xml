@@ -1,104 +1,76 @@
 
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical">
-
-    <ImageButton
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/back_btn"
-        android:src="@drawable/quantum_ic_arrow_back_grey600_24"
-        android:layout_margin="16dp"
-        android:backgroundTint="@android:color/white"
-    />
+    android:padding="16dp"
+    tools:ignore="HardcodedText">
 
     <Refractored.Controls.CircleImageView
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="0dp"
-        android:layout_weight="0.6"
-        android:layout_margin="16dp"
         android:id="@+id/preview_iv"
         android:scaleType="centerCrop"
         android:layout_centerInParent="true"
         android:src="@drawable/ic_user"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/wanna_txt"
+        android:layout_marginTop="@dimen/abc_action_bar_default_height_material"
+        android:layout_marginBottom="16dp"
     />
 
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="0.4"
-        android:orientation="vertical">
+    <TextView
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:id="@+id/wanna_txt"
+        android:text="Want to use this photo?"
+        android:textAppearance="?attr/textAppearanceHeadline5"
+        app:layout_constraintBottom_toTopOf="@+id/wanna_txt2"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:gravity="center"
+        android:layout_marginBottom="8dp"
+    />
 
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/wanna_txt"
-            android:text="Want to use this photo?"
-            android:textAppearance="?android:attr/textAppearanceLarge"
-            android:gravity="center"
-            android:textStyle="bold"
-            android:fontFamily="sans-serif-light"
-            android:layout_marginStart="16dp"
-            android:layout_marginEnd="16dp"
-            android:layout_marginBottom="8dp"
-        />
+    <TextView
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:id="@+id/wanna_txt2"
+        android:textAppearance="?attr/textAppearanceBody1"
+        android:text="By tapping SAVE, you agree that Cab360 may collect and process your photos with technology that allows us to verify your identity"
+        android:textAlignment="center"
+        android:inputType="textMultiLine"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/prev_retake_btn"
+        android:layout_marginBottom="8dp"
+    />
 
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/wanna_txt2"
-            android:layout_below="@+id/wanna_txt"
-            android:textAppearance="?android:attr/textAppearanceSmall"
-            android:layout_centerInParent="true"
-            android:text="By tapping SAVE, you agree that Cab360 may collect and process your photos with technology that allows us to verify your identity"
-            android:textAlignment="center"
-            android:inputType="textMultiLine"
-            android:gravity="center"
-            android:fontFamily="sans-serif-light"
-            android:layout_marginStart="16dp"
-            android:layout_marginEnd="16dp"
-        />
+    <com.google.android.material.button.MaterialButton
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:id="@+id/prev_retake_btn"
+        android:text="retake"
+        app:strokeWidth="2dp"
+        style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/prev_save_btn"
+        android:layout_marginEnd="4dp"
+    />
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
-            android:layout_marginStart="16dp"
-            android:layout_marginEnd="16dp"
-            android:orientation="horizontal">
+    <com.google.android.material.button.MaterialButton
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:id="@+id/prev_save_btn"
+        android:text="save"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/prev_retake_btn"
+        android:layout_marginStart="4dp"
+        
+    />
 
-            <com.google.android.material.button.MaterialButton
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="0.5"
-                android:id="@+id/prev_retake_btn"
-                android:text="retake"
-                android:textStyle="bold"
-                android:fontFamily="sans-serif-light"
-                android:layout_marginBottom="16dp"
-                app:strokeWidth="2dp"
-                android:padding="10dp"
-                android:layout_marginStart="2dp"
-                android:layout_marginEnd="8dp"
-                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
-            />
-
-            <com.google.android.material.button.MaterialButton
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="0.5"
-                android:id="@+id/prev_save_btn"
-                android:text="save"
-                android:textStyle="bold"
-                android:fontFamily="sans-serif-light"
-                android:layout_marginStart="8dp"
-                android:textColor="@drawable/btn_txt_clr_tggl"
-                android:layout_marginBottom="16dp"
-                android:layout_marginEnd="2dp"
-            />
-        </LinearLayout>
-    </RelativeLayout>
-
-</LinearLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

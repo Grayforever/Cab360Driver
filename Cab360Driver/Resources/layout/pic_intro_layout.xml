@@ -1,114 +1,82 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    tools:ignore="HardcodedText"
+    android:paddingStart="16dp"
+    android:paddingEnd="16dp"
+    android:paddingBottom="16dp"
+    android:paddingTop="?android:attr/actionBarSize">
 
-    <include
-        android:layout_width="match_parent"
+    <TextView
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        layout="@layout/appbar_main"
-        />
+        android:id="@+id/take_ya_pp_txt"
+        android:text="Before you begin, please make sure:"
+        android:textAppearance="?attr/textAppearanceHeadline5"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+    />
 
-    <androidx.core.widget.NestedScrollView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:fillViewport="true"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior">
+    <TextView
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:id="@+id/take_ya_pp_txt1"
+        android:text="1. Whole face and tops of shoulders is showing"
+        android:textAppearance="?attr/textAppearanceBody2"
+        app:layout_constraintTop_toBottomOf="@+id/take_ya_pp_txt"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="8dp"
+    />
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="vertical"
-            android:weightSum="2">
+    <TextView
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:id="@+id/take_ya_pp_txt2"
+        android:text="2. You dont have sunglasses and hat on"
+        android:textAppearance="?attr/textAppearanceBody2"
+        app:layout_constraintTop_toBottomOf="@+id/take_ya_pp_txt1"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+    />
 
-            <RelativeLayout
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_weight="0.5"
-                android:layout_marginTop="24dp"
-                android:layout_marginStart="16dp"
-                android:layout_marginEnd="16dp">
+    <TextView
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:id="@+id/take_ya_pp_txt3"
+        android:text="3. Your environment is well-lit"
+        android:textAppearance="?attr/textAppearanceBody2"
+        app:layout_constraintTop_toBottomOf="@+id/take_ya_pp_txt2"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+    />
 
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/take_ya_pp_txt"
-                    android:text="Before you begin, please make sure:"
-                    android:layout_marginBottom="8dp"
-                    android:textAppearance="?android:attr/textAppearanceMedium"
-                />
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:id="@+id/preview_iv1"
+        android:src="@drawable/ic_user"
+        android:scaleType="centerCrop"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/take_ya_pp_txt3"
+        app:layout_constraintBottom_toTopOf="@+id/intro_takephoto_btn"
+        android:layout_marginTop="16dp"
+        android:layout_marginBottom="16dp"
+    />
 
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/take_ya_pp_txt1"
-                    android:layout_below="@+id/take_ya_pp_txt"
-                    android:text="1. Whole face and tops of shoulders is showing"
-                    
-                    android:textAppearance="?android:attr/textAppearanceSmall"
-                />
-
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/take_ya_pp_txt2"
-                    android:layout_below="@+id/take_ya_pp_txt1"
-                    android:text="2. You dont have sunglasses and hat on"
-                    
-                    android:textAppearance="?android:attr/textAppearanceSmall"
-                />
-
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/take_ya_pp_txt3"
-                    android:layout_below="@+id/take_ya_pp_txt2"
-                    android:text="3. Your environment is well-lit"
-                    
-                    android:textAppearance="?android:attr/textAppearanceSmall"
-                />
-
-            
-
-            </RelativeLayout>
-
-            <RelativeLayout
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_weight="1.5"
-                android:layout_gravity="bottom"
-                android:layout_marginStart="16dp"
-                android:layout_marginEnd="16dp">
-
-                <de.hdodenhof.circleimageview.CircleImageView
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:id="@+id/preview_iv1"
-                    android:src="@drawable/ic_user"
-                    android:scaleType="centerCrop"
-                    android:layout_alignParentTop="true"
-                    android:layout_above="@+id/intro_takephoto_btn"
-                    android:layout_marginBottom="8dp"
-                />
-
-                <com.google.android.material.button.MaterialButton
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="take photo"
-                    android:textStyle="bold"
-                    android:id="@+id/intro_takephoto_btn"
-                    
-                    android:layout_alignParentBottom="true"
-                    android:layout_marginBottom="16dp"
-                    android:layout_marginStart="2dp"
-                    android:layout_marginEnd="2dp"
-                />
-
-            </RelativeLayout>
-
-            
-    </LinearLayout>
-    </androidx.core.widget.NestedScrollView>
-</androidx.coordinatorlayout.widget.CoordinatorLayout>
+    <com.google.android.material.button.MaterialButton
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="take photo"
+        android:id="@+id/intro_takephoto_btn"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+    />
+</androidx.constraintlayout.widget.ConstraintLayout>
