@@ -16,7 +16,6 @@ using Cab360Driver.EnumsConstants;
 using Cab360Driver.EventListeners;
 using Cab360Driver.Fragments;
 using Cab360Driver.Helpers;
-using Cab360Driver.Utils;
 using CN.Pedant.SweetAlert;
 using Google.Android.Material.Badge;
 using Google.Android.Material.BottomNavigation;

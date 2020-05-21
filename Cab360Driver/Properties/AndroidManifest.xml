@@ -12,7 +12,7 @@
 		android:supportsRtl="true"
 		android:hardwareAccelerated="true"
 		android:theme="@style/AppTheme">
-		<meta-data android:name="com.google.android.geo.API_KEY" android:value="@string/mapKey" />
+		<meta-data android:name="com.google.android.geo.API_KEY" android:value="@string/google_api_key" />
 		<meta-data android:name="com.google.android.gms.vision.DEPENDENCIES" android:value="face"/>
 		<provider android:name="android.support.v4.content.FileProvider" 
 				android:authorities="${applicationId}.fileprovider" 
