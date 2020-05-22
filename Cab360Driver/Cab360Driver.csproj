@@ -121,6 +121,7 @@
     <Compile Include="Fragments\RatingsFragment.cs" />
     <Compile Include="Helpers\AppDataHelper.cs" />
     <Compile Include="DataModels\DirectionParser.cs" />
+    <Compile Include="Helpers\CameraSource.cs" />
     <Compile Include="Helpers\LocationCallbackHelper.cs" />
     <Compile Include="Helpers\MapFunctionHelper.cs" />
     <Compile Include="Helpers\NotificationHelper.cs" />

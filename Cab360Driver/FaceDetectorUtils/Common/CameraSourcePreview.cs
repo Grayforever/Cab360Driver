@@ -9,12 +9,10 @@ using Android.Provider;
 using Android.Runtime;
 using Android.Util;
 using Android.Views;
-using Android.Views.Accessibility;
 using AndroidX.Core.App;
 using AndroidX.Core.Content;
 using Java.IO;
 using Java.Lang;
-using System;
 using Math = System.Math;
 
 namespace Cab360Driver.FaceDetectorUtils.Common
