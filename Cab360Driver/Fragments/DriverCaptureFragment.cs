@@ -140,11 +140,11 @@ namespace Cab360Driver.Fragments
                 }
                 catch (System.OperationCanceledException oce)
                 {
-
+                    Toast.MakeText(Activity, oce.Message, ToastLength.Short).Show();
                 }
                 catch(Exception e)
                 {
-
+                    Toast.MakeText(Activity, e.Message, ToastLength.Short).Show();
                 }
                 cts = null;
             }

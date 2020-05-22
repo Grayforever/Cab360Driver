@@ -115,6 +115,7 @@
                             android:layout_alignParentEnd="true"
                             android:layout_centerVertical="true"
                             android:src="@drawable/ic_next"
+                            android:contentDescription="@string/icon_content_description"
                         />
                     </RelativeLayout>
 

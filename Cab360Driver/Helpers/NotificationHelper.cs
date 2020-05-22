@@ -37,7 +37,7 @@ namespace Cab360Driver.Helpers
             PendingIntent pendingIntent = PendingIntent.GetActivity(context, 0, intent, PendingIntentFlags.CancelCurrent);
 
             Notification.Builder builder = new Notification.Builder(context, PRIMARY_CHANNEL)
-                .SetContentTitle("Uber Driver")
+                .SetContentTitle("Cab360 Driver")
                 .SetSmallIcon(Resource.Drawable.ic_location)
                 .SetLargeIcon(BitmapFactory.DecodeResource(res, Resource.Mipmap.ic_launcher))
                 .SetContentText("You have a new trip request")
@@ -56,11 +56,11 @@ namespace Cab360Driver.Helpers
             Intent intent = new Intent(context, typeof(MainActivity));
             intent.AddFlags(ActivityFlags.SingleTop);
             PendingIntent pendingIntent = PendingIntent.GetActivity(context, 0, intent, PendingIntentFlags.CancelCurrent);
-            var path = Android.Net.Uri.Parse("android.resource://com.ufinix.uberdriver/" + Resource.Raw.alert);
+            var path = Android.Net.Uri.Parse("android.resource://com.graylabs.Cab360Driver/" + Resource.Raw.alert);
 
 
             Notification.Builder builder = new Notification.Builder(context)
-                .SetContentTitle("Uber Driver")
+                .SetContentTitle("Cab360 Driver")
                 .SetSmallIcon(Resource.Drawable.ic_location)
                 .SetLargeIcon(BitmapFactory.DecodeResource(res, Resource.Mipmap.ic_launcher))
                 .SetTicker("You have a new trip request")

@@ -49,7 +49,6 @@ namespace Cab360Driver.Activities
         public CarRegFragment CarRegFragment = new CarRegFragment();
         public CarPicsFragment CarPicsFragment = new CarPicsFragment();
         private string stage;
-        private bool shouldCauseExit = false;
         bool SmoothScroll = false;
 
         public override void OnRequestPermissionsResult(int requestCode, string[] permissions, Android.Content.PM.Permission[] grantResults)
@@ -85,31 +84,27 @@ namespace Cab360Driver.Activities
         {
             if (!string.IsNullOrEmpty(stage))
             {
-                if (stage == "1")
+                if (stage == RegistrationStage.Partnering.ToString())
                 {
-                    shouldCauseExit = true;
                     regAdapter.NotifyDataSetChanged();
                     RegViewPager.SetCurrentItem(3, SmoothScroll);
                     PartnerFragment.PartnerSelected += PartnerFragment_PartnerSelected;
                 }
-                else if (stage == "2")
-                {
-                    shouldCauseExit = true;                                         
+                else if (stage == RegistrationStage.Capturing.ToString())
+                {                                         
                     regAdapter.NotifyDataSetChanged();
                     RegViewPager.SetCurrentItem(4, SmoothScroll);
                     CaptureFragment.ProfileCaptured += DriverCaptureFragment_ProfileCaptured;
                 }
-                else if (stage == "3")
+                else if (stage == RegistrationStage.CarRegistering.ToString())
                 {
-                    shouldCauseExit = true;
                     regAdapter.NotifyDataSetChanged();
                     RegViewPager.SetCurrentItem(5, SmoothScroll);
                     CarRegFragment.OnCardetailsSaved += CarRegFragment_OnCardetailsSaved;
                 }
 
-                else if (stage == "4")
+                else if (stage == RegistrationStage.CarCapturing.ToString())
                 {
-                    shouldCauseExit = true;
                     regAdapter.NotifyDataSetChanged();
                     RegViewPager.SetCurrentItem(6, SmoothScroll);
                 }
@@ -355,12 +350,7 @@ namespace Cab360Driver.Activities
 
         public override void OnBackPressed()
         {
-            
             base.OnBackPressed();
-            if(shouldCauseExit == true)
-            {
-                Finish();
-            }
         }
     }
 }
