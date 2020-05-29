@@ -9,4 +9,5 @@
   <string name="driver_head_txt">Driving</string>
   <string name="google_api_key">AIzaSyDHXqe3Yh9Nl3wsxFItOoz1IwKiBRP7fxk</string>
   <string name="databaseUrl">https://taxiproject-185a4.firebaseio.com</string>
+  <string name="string_attention_seekr">Needs your attention</string>
 </resources>

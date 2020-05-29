@@ -92,8 +92,8 @@
                             android:layout_height="wrap_content"
                             android:text="Recommended next step"
                             android:id="@+id/rec_text"
-                            android:textColor="@android:color/black"
                             android:layout_alignParentTop="true"
+                            android:textAppearance="?attr/textAppearanceBody2"
                         />
 
                         <TextView
@@ -101,10 +101,8 @@
                             android:layout_height="wrap_content"
                             android:text="Driver Photo"
                             android:id="@+id/drv_photo_txt"
-                            android:textSize="16dp"
-                            android:textStyle="bold"
-                            android:textColor="@android:color/black"
                             android:layout_alignParentBottom="true"
+                            android:textAppearance="?attr/textAppearanceSubtitle2"
                             
                         />
 
@@ -143,8 +141,8 @@
                             android:layout_height="wrap_content"
                             android:text="Recommended next step"
                             android:id="@+id/rec_text2"
-                            android:textColor="@android:color/black"
                             android:layout_alignParentTop="true"
+                            android:textAppearance="?attr/textAppearanceBody2"
                         />
 
                         <TextView
@@ -152,10 +150,8 @@
                             android:layout_height="wrap_content"
                             android:text="Drivers License"
                             android:id="@+id/drv_photo_txt2"
-                            android:textSize="16dp"
-                            android:textStyle="bold"
-                            android:textColor="@android:color/black"
                             android:layout_alignParentBottom="true"
+                            android:textAppearance="?attr/textAppearanceSubtitle2"
                             
                         />
 
@@ -166,6 +162,7 @@
                             android:layout_alignParentEnd="true"
                             android:layout_centerVertical="true"
                             android:src="@drawable/ic_next"
+                            android:contentDescription="@string/icon_content_description"
                         />
 
                     </RelativeLayout>
@@ -197,8 +194,8 @@
                             android:layout_height="wrap_content"
                             android:text="Recommended next step"
                             android:id="@+id/rec_text3"
-                            android:textColor="@android:color/black"
                             android:layout_alignParentTop="true"
+                            android:textAppearance="?attr/textAppearanceBody2"
                         />
 
                         <TextView
@@ -206,9 +203,7 @@
                             android:layout_height="wrap_content"
                             android:text="Reverse side of Drivers License"
                             android:id="@+id/drv_photo_txt3"
-                            android:textSize="16dp"
-                            android:textStyle="bold"
-                            android:textColor="@android:color/black"
+                            android:textAppearance="?attr/textAppearanceSubtitle2"
                             android:layout_alignParentBottom="true"
                             
                         />

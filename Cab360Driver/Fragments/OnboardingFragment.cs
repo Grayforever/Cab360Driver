@@ -1,7 +1,7 @@
 ﻿using Android.OS;
 using Android.Views;
 using Android.Widget;
-using Bumptech.Glide;
+using BumpTech.GlideLib;
 using Google.Android.Material.Button;
 using System;
 
@@ -29,8 +29,13 @@ namespace Cab360Driver.Fragments
             SignUpBtn = view.FindViewById<MaterialButton>(Resource.Id.onbd_signup_btn);
             Iview = view.FindViewById<ImageView>(Resource.Id.oboarding_gif);
             SignInBtn.Click += SignInBtn_Click; SignUpBtn.Click += SignUpBtn_Click;
-            SetIntroBanner();
             return view;
+        }
+
+        public override void OnViewCreated(View view, Bundle savedInstanceState)
+        {
+            base.OnViewCreated(view, savedInstanceState);
+            SetIntroBanner();
         }
 
         private void SetIntroBanner()

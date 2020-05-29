@@ -1,4 +1,5 @@
-﻿using Android.Graphics;
+﻿using Android.Gms.Tasks;
+using Android.Graphics;
 using Android.OS;
 using Android.Runtime;
 using Android.Text;
@@ -8,10 +9,15 @@ using AndroidX.AppCompat.Widget;
 using Cab360Driver.Adapters;
 using Cab360Driver.DataModels;
 using Cab360Driver.EnumsConstants;
+using Cab360Driver.EventListeners;
+using Cab360Driver.Helpers;
 using Cab360Driver.IServices;
+using Firebase.Auth;
+using Firebase.Database;
 using Google.Android.Material.Button;
 using Google.Android.Material.TextField;
 using Java.Lang;
+using Java.Util;
 using Refit;
 using System;
 using System.Collections.Generic;
@@ -22,7 +28,7 @@ using static Android.Widget.AutoCompleteTextView;
 
 namespace Cab360Driver.Fragments
 {
-    public class CarRegFragment : BaseFragment, ITextWatcher, IOnKeyListener
+    public class CarRegFragment : AndroidX.Fragment.App.Fragment, ITextWatcher, IOnKeyListener, IOnSuccessListener, IOnFailureListener
     {
         private AppCompatAutoCompleteTextView CarBrandEt;
         private AppCompatAutoCompleteTextView CarModelEt;
@@ -41,30 +47,31 @@ namespace Cab360Driver.Fragments
         private string currUser;
         private string regNo;
         private ICarsApi CarsApi;
+        public event EventHandler CarRegComplete;
+        FirebaseAuth FireAuth;
+        FirebaseDatabase FireDatabase;
+        private TaskCompletionListeners TaskCompletionListener = new TaskCompletionListeners();
+        DatabaseReference driverRef;
 
-        public event EventHandler<CarModelArgs> OnCardetailsSaved;
-        public class CarModelArgs : EventArgs
+        public override void OnCreate(Bundle savedInstanceState)
         {
-            public CarModel CarDetails { get; set; }
+            base.OnCreate(savedInstanceState);
+            FireAuth = AppDataHelper.GetFirebaseAuth();
+            driverRef = AppDataHelper.GetParentReference().Child(FireAuth.CurrentUser.Uid);
+            FireDatabase = AppDataHelper.GetDatabase();
         }
 
-        public override View ProvideYourFragmentView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
+        public override View OnCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
         {
             var view = inflater.Inflate(Resource.Layout.partner_vehicle_fragment, container, false);
             InitControls(view);
             return view;
         }
 
-        public override BaseFragment ProvideYourfragment()
-        {
-            return new CarRegFragment();
-        }
-
         public async override void OnViewCreated(View view, Bundle savedInstanceState)
         {
             base.OnViewCreated(view, savedInstanceState);
 
-            //getting years from 1992 to current
             List<int> Years = new List<int>();
 
             for (int i = DateTime.UtcNow.Year; i >= 1992; i--)
@@ -174,12 +181,53 @@ namespace Cab360Driver.Fragments
 
             };
 
-            SendToActivity(carModel);
+            HashCarDetails(carModel);
         }
 
-        private void SendToActivity(CarModel carModel)
+        private void HashCarDetails(CarModel carModel)
         {
-            OnCardetailsSaved.Invoke(this, new CarModelArgs { CarDetails = carModel });
+            HashMap carMap = new HashMap();
+            carMap.Put("car_model", carModel.Model);
+            carMap.Put("car_brand", carModel.Brand);
+            carMap.Put("car_year", carModel.Year);
+            carMap.Put("car_color", carModel.Color);
+            carMap.Put("car_condition", carModel.Condition);
+            carMap.Put("curr_user", carModel.CurrUser);
+            carMap.Put("reg_no", carModel.RegNo);
+
+            SaveCarDetailsToDb(carMap);
+        }
+
+        private void SaveCarDetailsToDb(HashMap carMap)
+        {
+            driverRef = FireDatabase.GetReference("RegUnVerifiedCars/" + FireAuth.CurrentUser.Uid);
+            driverRef.SetValue(carMap)
+                .AddOnSuccessListener(this)
+                .AddOnFailureListener(this);
+        }
+
+        public void OnSuccess(Java.Lang.Object result)
+        {
+            driverRef.Child("stage_of_registration").SetValue(RegistrationStage.CarCapturing.ToString())
+                    .AddOnSuccessListener(TaskCompletionListener)
+                    .AddOnFailureListener(TaskCompletionListener);
+            TaskCompletionListener.Successful += TaskCompletionListener_Successful;
+            TaskCompletionListener.Failure += TaskCompletionListener_Failure;
+        }
+
+        private void TaskCompletionListener_Failure(object sender, EventArgs e)
+        {
+            
+        }
+
+        private void TaskCompletionListener_Successful(object sender, TaskCompletionListeners.ResultArgs e)
+        {
+            CarRegComplete.Invoke(this, new EventArgs());
+        }
+
+        public void OnFailure(Java.Lang.Exception e)
+        {
+            
         }
 
         public void AfterTextChanged(IEditable s)
@@ -221,6 +269,8 @@ namespace Cab360Driver.Fragments
             }
             return false;
         }
+
+        
 
         public class Validator : Java.Lang.Object, IValidator
         {

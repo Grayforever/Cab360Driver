@@ -1,7 +1,5 @@
 ﻿using Android.OS;
-using Android.Support.V7.Widget;
 using Android.Views;
-using Google.Android.Material.BottomNavigation;
 
 namespace Cab360Driver.Fragments
 {

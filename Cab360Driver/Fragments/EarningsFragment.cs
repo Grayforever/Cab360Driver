@@ -1,7 +1,10 @@
 ﻿using Android.OS;
+using Android.Util;
 using Android.Views;
+using Android.Widget;
 using AndroidX.AppCompat.Widget;
 using Cab360Driver.Adapters;
+using Google.Android.Material.Button;
 using Microcharts;
 using Microcharts.Droid;
 using SkiaSharp;
@@ -11,18 +14,12 @@ namespace Cab360Driver.Fragments
 {
     public class EarningsFragment : BaseFragment
     {
+        private const string TAG = "WidgetTesst";
         public override BaseFragment ProvideYourfragment()
         {
             return new EarningsFragment();
         }
-        private enum ChartType
-        {
-            BarChart,
-            RadarChart,
-            PointChart,
-            DonutChart,
-            LineChart
-        }
+
         private string[] chartArray = { "Bar Chart", "Radar Chart", "Point Chart", "Radial Chart", "Line Chart"};
 
         private ChartView ChartView;
@@ -39,9 +36,22 @@ namespace Cab360Driver.Fragments
             ChartView = view.FindViewById<ChartView>(Resource.Id.earn_chartview);
             var ChartTypespinner = view.FindViewById<AppCompatSpinner>(Resource.Id.chart_type_spinner);
             var adapter = ArrayAdapterClass.CreateArrayAdapter(Activity, chartArray);
+            var withdrawBtn = view.FindViewById<MaterialButton>(Resource.Id.earn_withdraw_btn);
+            var totalTripTxt = view.FindViewById<TextView>(Resource.Id.earn_tot_trip_txt);
+            var totalKmTxt = view.FindViewById<TextView>(Resource.Id.earn_tot_dis_txt);
+            var earnTotAmtTxt = view.FindViewById<TextView>(Resource.Id.earn_amt_hd);
+            var earnAmtTxt = view.FindViewById<TextView>(Resource.Id.earn_trip_txt);
+            var earnTrip = view.FindViewById<TextView>(Resource.Id.earn_trip_txt);
+
+            withdrawBtn.Click += WithdrawBtn_Click;
             ChartTypespinner.Adapter = adapter;
             ChartTypespinner.ItemSelected += ChartTypespinner_ItemSelected;
             DrawChart(0);
+        }
+
+        private void WithdrawBtn_Click(object sender, System.EventArgs e)
+        {
+            Log.Info(TAG, "Withdraw btn working");
         }
 
         private void ChartTypespinner_ItemSelected(object sender, Android.Widget.AdapterView.ItemSelectedEventArgs e)

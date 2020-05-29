@@ -18,30 +18,32 @@
         android:fillViewport="true"
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
-        <RelativeLayout
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="match_parent"
+            android:padding="16dp">
 
             <TextView
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:id="@+id/drv_part_intro_txt"
                 android:text="@string/drv_partner_header"
                 android:textAppearance="?attr/textAppearanceHeadline5"
-                android:layout_marginTop="16dp"
-                android:layout_marginStart="16dp"
-                android:layout_marginEnd="16dp"
-                android:layout_alignParentTop="true"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
             />
 
             <com.google.android.material.button.MaterialButtonToggleGroup
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:id="@+id/drv_part_tggl_grp"
                 app:singleSelection="true"
                 app:checkedButton="@+id/drv_tggl_partner_btn"
-                android:id="@+id/drv_part_tggl_grp"
-                android:layout_below="@+id/drv_part_intro_txt"
-                android:layout_centerHorizontal="true">
+                app:layout_constraintTop_toBottomOf="@+id/drv_part_intro_txt"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                android:gravity="center">
 
                 <com.google.android.material.button.MaterialButton
                     android:layout_width="wrap_content"
@@ -62,56 +64,59 @@
             </com.google.android.material.button.MaterialButtonToggleGroup>>
 
             <androidx.cardview.widget.CardView
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
                 android:id="@+id/drv_part_cv1"
-                android:layout_below="@+id/drv_part_tggl_grp"
-                android:layout_above="@+id/drv_part_cnt_btn"
-                android:layout_marginStart="16dp"
-                android:layout_marginEnd="16dp"
-                android:layout_marginTop="16dp"
+                android:stateListAnimator="@animator/lift_on_touch"
                 app:cardPreventCornerOverlap="true"
-                android:stateListAnimator="@animator/lift_on_touch">
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/drv_part_tggl_grp"
+                app:layout_constraintBottom_toTopOf="@+id/drv_part_cnt_btn">
 
-                <LinearLayout
+                <androidx.constraintlayout.widget.ConstraintLayout
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_margin="4dp"
-                    android:padding="4dp"
-                    android:orientation="vertical"
-                    android:weightSum="3">
+                    android:padding="4dp">
 
                     <TextSwitcher
-                        android:layout_width="wrap_content"
-                        android:layout_height="0dp"
-                        android:layout_weight="0.5"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
                         android:id="@+id/drv_part_txt_swtchr1"
                         android:textAlignment="center"
-                        android:layout_gravity="top| center_horizontal"
                         android:layout_marginBottom="8dp"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintBottom_toTopOf="@+id/drv_part_img_swtchr1"
                         />
 
                     <ImageSwitcher
-                        android:layout_width="match_parent"
+                        android:layout_width="0dp"
                         android:layout_height="0dp"
-                        android:layout_weight="2.5"
                         android:id="@+id/drv_part_img_swtchr1"
                         android:layout_marginTop="8dp"
-                        android:layout_gravity="bottom| center_horizontal"/>
-                </LinearLayout>
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/drv_part_txt_swtchr1"
+                        />
+                </androidx.constraintlayout.widget.ConstraintLayout>
 
             </androidx.cardview.widget.CardView>
 
             <com.google.android.material.button.MaterialButton
-                android:layout_width="match_parent"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_margin="16dp"
                 android:text="@string/continue_txt"
                 android:id="@+id/drv_part_cnt_btn"
-                android:layout_alignParentBottom="true"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
             />
             
-        </RelativeLayout>
+        </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.core.widget.NestedScrollView>
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

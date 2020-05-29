@@ -1,8 +1,14 @@
 ﻿using Android.Content;
+using Android.Gms.Tasks;
 using Android.OS;
+using Android.Util;
 using Android.Views;
 using Android.Widget;
 using Cab360Driver.EnumsConstants;
+using Cab360Driver.EventListeners;
+using Cab360Driver.Helpers;
+using Firebase.Auth;
+using Firebase.Database;
 using Google.Android.Material.Button;
 using System;
 using static Android.Widget.ViewSwitcher;
@@ -10,26 +16,31 @@ using static Google.Android.Material.Button.MaterialButtonToggleGroup;
 
 namespace Cab360Driver.Fragments
 {
-    public class DriverPartnerFragment : AndroidX.Fragment.App.Fragment, IOnButtonCheckedListener, IViewFactory
+    public class DriverPartnerFragment : AndroidX.Fragment.App.Fragment, IOnButtonCheckedListener, IViewFactory, IOnSuccessListener, IOnFailureListener
     {
         private MaterialButton ContinueBtn;
         TextSwitcher InfoTSwitcher;
         MaterialButtonToggleGroup AccountTypeTGroup;
         ImageSwitcher InfoImgSwitcher;
         MakeViewClass makeView;
+        FirebaseAuth FireAuth;
+        DatabaseReference driverRef;
         bool partner = true;
 
         public class PartnerEventArgs : EventArgs
         {
-            public bool IsPartner { get; set; }
+            public bool IsPartnerComplete { get; set; }
         }
+
+        public event EventHandler<PartnerEventArgs> PartnerTypeComplete;
+        private TaskCompletionListeners TaskCompletionListener = new TaskCompletionListeners();
 
         public override void OnCreate(Bundle savedInstanceState)
         {
             base.OnCreate(savedInstanceState);
+            FireAuth = AppDataHelper.GetFirebaseAuth();
+            driverRef = AppDataHelper.GetParentReference().Child(FireAuth.CurrentUser.Uid);
         }
-
-        public event EventHandler<PartnerEventArgs> PartnerSelected;
 
         public override View OnCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
         {
@@ -51,14 +62,53 @@ namespace Cab360Driver.Fragments
             AccountTypeTGroup.AddOnButtonCheckedListener(this);
         }
 
+        public void OnButtonChecked(MaterialButtonToggleGroup p0, int p1, bool p2)
+        {
+            switch (p1)
+            {
+                case Resource.Id.drv_tggl_partner_btn:
+                    partner = true;
+                    InfoTSwitcher.SetText(GetString(Resource.String.partner_desc_txt));
+                    InfoImgSwitcher.SetImageResource(Resource.Drawable.ic_driver1);
+                    break;
+
+                case Resource.Id.drv_tggl_driver_btn:
+                    partner = false;
+                    InfoTSwitcher.SetText(GetString(Resource.String.driving_desc_txt));
+                    InfoImgSwitcher.SetImageResource(Resource.Drawable.ic_driver2);
+                    break;
+            }
+        }
+
         private void ContinueBtn_Click(object sender, EventArgs e)
         {
-            PartnerSelected.Invoke(this, new PartnerEventArgs { IsPartner =  partner});
+            driverRef.Child("isPartner").SetValue(partner.ToString())
+                .AddOnSuccessListener(this)
+                .AddOnFailureListener(this);
+            
+        }
+
+        public void OnSuccess(Java.Lang.Object result)
+        {
+            driverRef.Child("stage_of_registration").SetValue(RegistrationStage.Capturing.ToString())
+               .AddOnSuccessListener(TaskCompletionListener)
+               .AddOnFailureListener(TaskCompletionListener);
+            TaskCompletionListener.Successful += TaskCompletionListener_Successful;
+        }
+
+        private void TaskCompletionListener_Successful(object sender, TaskCompletionListeners.ResultArgs e)
+        {
+            PartnerTypeComplete.Invoke(this, new PartnerEventArgs { IsPartnerComplete = true });
+        }
+
+        public void OnFailure(Java.Lang.Exception e)
+        {
+            Log.Error("database error", e.Message);
         }
 
         private void InitImgSwitcher()
         {
-            makeView = new MakeViewClass(this.Activity);
+            makeView = new MakeViewClass(Activity);
             InfoImgSwitcher.SetFactory(makeView);
             InfoImgSwitcher.SetInAnimation(Activity, Resource.Animation.slide_in_right);
             InfoImgSwitcher.SetOutAnimation(Activity, Resource.Animation.slide_out_left);
@@ -96,24 +146,6 @@ namespace Cab360Driver.Fragments
             textInfos.Gravity = GravityFlags.Center | GravityFlags.CenterVertical;
             textInfos.SetTextAppearance(Resource.Style.TextAppearance_AppCompat_Body1);
             return textInfos;
-        }
-
-        public void OnButtonChecked(MaterialButtonToggleGroup p0, int p1, bool p2)
-        {
-            switch (p1)
-            {
-                case Resource.Id.drv_tggl_partner_btn:
-                    partner = true;
-                    InfoTSwitcher.SetText(GetString(Resource.String.partner_desc_txt));
-                    InfoImgSwitcher.SetImageResource(Resource.Drawable.ic_driver1);
-                    break;
-
-                case Resource.Id.drv_tggl_driver_btn:
-                    partner = false;
-                    InfoTSwitcher.SetText(GetString(Resource.String.driving_desc_txt));
-                    InfoImgSwitcher.SetImageResource(Resource.Drawable.ic_driver2);
-                    break;
-            }
         }
     }
 }

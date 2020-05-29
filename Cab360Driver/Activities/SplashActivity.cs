@@ -1,13 +1,12 @@
 ﻿using Android.App;
 using Android.Content;
 using Android.OS;
-using AndroidX.AppCompat.App;
-using Cab360Driver.Helpers;
 using Android.Util;
-using Firebase.Database;
-using Firebase.Auth;
-using System;
+using AndroidX.AppCompat.App;
 using Cab360Driver.EnumsConstants;
+using Cab360Driver.Helpers;
+using Firebase.Auth;
+using Firebase.Database;
 
 namespace Cab360Driver.Activities
 {
@@ -27,13 +26,12 @@ namespace Cab360Driver.Activities
         protected override void OnResume()
         {
             base.OnResume();
-            var currUser = AppDataHelper.GetCurrentUser();
-            RouteToAppropriatePage(currUser);
+            RouteToAppropriatePage(AppDataHelper.GetCurrentUser());
         }
 
         private void RouteToAppropriatePage(FirebaseUser currUser)
         {
-            if (currUser == null)
+            if(currUser is null)
             {
                 var intent2 = new Intent(this, typeof(OnboardingActivity));
                 intent2.AddFlags(ActivityFlags.ClearTask | ActivityFlags.ClearTop | ActivityFlags.NewTask);
@@ -54,7 +52,7 @@ namespace Cab360Driver.Activities
 
         public void OnCancelled(DatabaseError error)
         {
-
+            Log.Error("FireDataError", error.Message);
         }
 
         public void OnDataChange(DataSnapshot snapshot)
@@ -76,7 +74,7 @@ namespace Cab360Driver.Activities
 
         private void StartWhichActivity(string stage)
         {
-            Log.Debug("stage before exit: ", stage);
+            Log.Info("stage before exit: ", stage);
             if (!stage.Contains(RegistrationStage.Registration.ToString()))
             {
                 var intent3 = new Intent(this, typeof(MainActivity));

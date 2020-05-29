@@ -1,4 +1,5 @@
-<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.coordinatorlayout.widget.CoordinatorLayout 
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/ratings_root"
@@ -290,6 +291,7 @@
                     android:src="@drawable/ic_review1"
                     android:id="@+id/review_dummy_iv1"
                     android:layout_marginStart="8dp"
+                    android:contentDescription="@string/icon_content_description"
                 />
             </RelativeLayout>
 
@@ -341,7 +343,7 @@
                     android:id="@+id/rater_duration_tv"
                     android:text="0d"
                     android:layout_alignParentEnd="true"
-                    android:textColor="#FFCF66"
+                    android:textColor="@color/colorIvory"
                 />
 
             </RelativeLayout>

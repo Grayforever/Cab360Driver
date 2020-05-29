@@ -1,45 +1,49 @@
 ﻿using Android.Content;
 using Android.Gms.Tasks;
-using Android.InputMethodServices;
 using Android.OS;
 using Android.Runtime;
 using Android.Text;
+using Android.Util;
 using Android.Views;
 using Android.Views.InputMethods;
 using AndroidX.AppCompat.Widget;
 using AndroidX.CoordinatorLayout.Widget;
 using Cab360Driver.Adapters;
 using Cab360Driver.DataModels;
+using Cab360Driver.EnumsConstants;
+using Cab360Driver.EventListeners;
 using Cab360Driver.Helpers;
+using Firebase.Auth;
+using Firebase.Database;
 using Google.Android.Material.Button;
 using Google.Android.Material.TextField;
 using Java.Lang;
+using Java.Util;
 using System;
 using static Android.Views.View;
 
 namespace Cab360Driver.Fragments
 {
-    public class DriverRegisterFragment : AndroidX.Fragment.App.Fragment, IOnKeyListener, ITextWatcher, IOnSuccessListener, IOnFailureListener
+    public class DriverRegisterFragment : AndroidX.Fragment.App.Fragment, IOnKeyListener, IOnSuccessListener, IOnFailureListener
     {
         private TextInputLayout FnameText, LnameText, EmailText, PhoneText, PassText, CodeText;
         private AppCompatAutoCompleteTextView CityText;
         private MaterialButton SubmitBtn;
-        private Driver DriverPersonal;
         private CoordinatorLayout driverSignupRoot;
         private string[] names = { "Accra", "Kumasi", "Taadi" };
-
-        public class SignUpSuccessArgs : EventArgs
-        {
-            public Driver driver { get; set; }
-        }
+        private TaskCompletionListeners DriverProfileListener = new TaskCompletionListeners();
+        private TaskCompletionListeners TaskCompletionListener = new TaskCompletionListeners();
+        private FirebaseAuth FireAuth;
+        private DatabaseReference driverRef;
 
         public event EventHandler<SignUpSuccessArgs> SignUpSuccess;
 
         public override void OnCreate(Bundle savedInstanceState)
         {
             base.OnCreate(savedInstanceState);
-            // Create your fragment here
-            
+            FireAuth = AppDataHelper.GetFirebaseAuth();
+            driverRef = AppDataHelper.GetParentReference().Child(FireAuth.CurrentUser.Uid);
+
         }
 
         public override View OnCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
@@ -48,8 +52,6 @@ namespace Cab360Driver.Fragments
             GetControls(view);
             return view;
         }
-
-        
 
         private void GetControls(View view)
         {
@@ -67,102 +69,128 @@ namespace Cab360Driver.Fragments
         public override void OnViewCreated(View view, Bundle savedInstanceState)
         {
             base.OnViewCreated(view, savedInstanceState);
-            var auth = AppDataHelper.GetFirebaseAuth();
-
             FnameText.SetOnKeyListener(this);
-            FnameText.EditText.AddTextChangedListener(this);
+            FnameText.EditText.AfterTextChanged += EditText_AfterTextChanged;
 
             LnameText.SetOnKeyListener(this);
-            LnameText.EditText.AddTextChangedListener(this);
+            LnameText.EditText.AfterTextChanged += EditText_AfterTextChanged;
 
-            PassText.EditText.AddTextChangedListener(this);
+            PassText.EditText.AfterTextChanged += EditText_AfterTextChanged;
             PassText.SetOnKeyListener(this);
 
             EmailText.SetOnKeyListener(this);
-            EmailText.EditText.AddTextChangedListener(this);
+            EmailText.EditText.AfterTextChanged += EditText_AfterTextChanged;
 
             PhoneText.SetOnKeyListener(this);
-            PhoneText.EditText.AddTextChangedListener(this);
+            PhoneText.EditText.AfterTextChanged += EditText_AfterTextChanged;
 
             var adapter = ArrayAdapterClass.CreateArrayAdapter(Activity, names);
             CityText.Adapter = adapter;
             CityText.SetOnKeyListener(this);
-            CityText.AddTextChangedListener(this);
+            CityText.AfterTextChanged += EditText_AfterTextChanged;
 
-            SubmitBtn.Click += delegate
+            SubmitBtn.Click += (s1, e1) =>
             {
-                DriverPersonal = new Driver
-                {
-                    Fname = FnameText.EditText.Text,
-                    Lname = LnameText.EditText.Text,
-                    Phone = PhoneText.EditText.Text,
-                    City = CityText.Text,
-                    Code = CodeText.EditText.Text,
-                    Email = EmailText.EditText.Text,
-                    IsPartner = "true"
-                };
-
-                auth.CreateUserWithEmailAndPassword(DriverPersonal.Email, PassText.EditText.Text)
+                FireAuth.CreateUserWithEmailAndPassword(EmailText.EditText.Text, PassText.EditText.Text)
                     .AddOnSuccessListener(this)
                     .AddOnFailureListener(this);
             };
         }
 
-        public void CheckIfEmpty()
-        {
-            var email = EmailText.EditText.Text;
-            var fname = FnameText.EditText.Text;
-            var lname = LnameText.EditText.Text;
-            var city = CityText.Text;
-            var code = CodeText.EditText.Text;
-            var phone = PhoneText.EditText.Text;
-            var pass = PassText.EditText.Text;
-
-            SubmitBtn.Enabled = Android.Util.Patterns.EmailAddress.Matcher(email).Matches() && fname.Length >= 3 && 
-                lname.Length >= 3 && city.Length >=2 && phone.Length >=8 && pass.Length >=8;
-        }
-
-
-        public void OnSuccess(Java.Lang.Object result)
-        {
-            SignUpSuccess?.Invoke(this, new SignUpSuccessArgs { driver = DriverPersonal });
-        }
-
-        public void OnFailure(Java.Lang.Exception e)
-        {
-            Android.Util.Log.Debug("sign uperror: ", e.Message);
-        }
-
-        public void AfterTextChanged(IEditable s)
+        private void EditText_AfterTextChanged(object sender, AfterTextChangedEventArgs e)
         {
             CheckIfEmpty();
         }
 
-        public void BeforeTextChanged(ICharSequence s, int start, int count, int after)
+        public void OnSuccess(Java.Lang.Object result)
+        {
+            var driverPersonal = new Driver
+            {
+                Fname = FnameText.EditText.Text,
+                Lname = LnameText.EditText.Text,
+                Phone = PhoneText.EditText.Text,
+                City = CityText.Text,
+                Code = CodeText.EditText.Text,
+                Email = EmailText.EditText.Text,
+                IsPartner = "true"
+            };
+            HashDriver(driverPersonal);
+        }
+
+        public void OnFailure(Java.Lang.Exception e)
+        {
+            Log.Debug("sign uperror: ", e.Message);
+        }
+
+        private void HashDriver(Driver driverPersonal)
+        {
+            HashMap Cab360Drivers = new HashMap();
+            Cab360Drivers.Put("firstname", driverPersonal.Fname);
+            Cab360Drivers.Put("lastname", driverPersonal.Lname);
+            Cab360Drivers.Put("email", driverPersonal.Email);
+            Cab360Drivers.Put("phone", driverPersonal.Phone);
+            Cab360Drivers.Put("city", driverPersonal.City);
+            Cab360Drivers.Put("invitecode", driverPersonal.Code);
+            Cab360Drivers.Put("created_at", DateTime.UtcNow.ToString());
+            Cab360Drivers.Put("isPartner", driverPersonal.IsPartner);
+            Cab360Drivers.Put("stage_of_registration", RegistrationStage.Registration.ToString());
+            SaveDriverToDb(Cab360Drivers);
+        }
+
+        private void SaveDriverToDb(HashMap cab360Drivers)
+        {
+            driverRef.SetValue(cab360Drivers)
+                .AddOnSuccessListener(DriverProfileListener)
+                .AddOnFailureListener(DriverProfileListener);
+            DriverProfileListener.Successful += DriverProfileListener_Successful;
+            DriverProfileListener.Failure += DriverProfileListener_Failure;
+        }
+
+        private void DriverProfileListener_Failure(object sender, EventArgs e)
+        {
+
+        }
+
+        private void DriverProfileListener_Successful(object sender, TaskCompletionListeners.ResultArgs e)
+        {
+            driverRef.Child("stage_of_registration").SetValue(RegistrationStage.Partnering.ToString())
+                .AddOnSuccessListener(TaskCompletionListener)
+                .AddOnFailureListener(TaskCompletionListener);
+            TaskCompletionListener.Successful += TaskCompletionListener_Successful;
+            TaskCompletionListener.Failure += TaskCompletionListener_Failure;
+        }
+
+        private void TaskCompletionListener_Failure(object sender, EventArgs e)
         {
             
         }
 
-        public void OnTextChanged(ICharSequence s, int start, int before, int count)
+        private void TaskCompletionListener_Successful(object sender, TaskCompletionListeners.ResultArgs e)
         {
-            
+            SignUpSuccess.Invoke(this, new SignUpSuccessArgs { IsCompleted = true });
         }
 
-        void HideKeyboard(View view)
+        private void HideKeyboard(View view)
         {
             try
             {
                 InputMethodManager ime = (InputMethodManager)Activity.GetSystemService(Context.InputMethodService);
                 ime.HideSoftInputFromWindow(view.WindowToken, HideSoftInputFlags.None);
             }
-            catch (System.Exception)
+            catch (System.Exception e)
             {
 
-                throw;
+                Log.Error("Keyboard error", e.Message);
             }
         }
 
-        public bool OnKey(View v, [GeneratedEnum] Android.Views.Keycode keyCode, KeyEvent e)
+        private void CheckIfEmpty()
+        {
+            SubmitBtn.Enabled = Patterns.EmailAddress.Matcher(EmailText.EditText.Text).Matches() && FnameText.EditText.Text.Length >= 3 &&
+                LnameText.EditText.Text.Length >= 3 && CityText.Text.Length >= 2 && PhoneText.EditText.Text.Length >= 8 && PassText.EditText.Text.Length >= 8;
+        }
+
+        public bool OnKey(View v, [GeneratedEnum] Keycode keyCode, KeyEvent e)
         {
             var action = e.Action;
             if (action == KeyEventActions.Up)
@@ -171,5 +199,11 @@ namespace Cab360Driver.Fragments
             }
             return false;
         }
+
+        public class SignUpSuccessArgs : EventArgs
+        {
+            public bool IsCompleted { get; set; }
+        }
+
     }
 }
