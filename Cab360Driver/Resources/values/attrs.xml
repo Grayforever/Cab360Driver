@@ -1,8 +1,0 @@
-﻿<?xml version="1.0" encoding="utf-8" ?>
-<resources>
-  <declare-styleable name="CheckableCardView">
-    <attr name="card_text_head" format="string|reference"/>
-    <attr name="card_text_body" format="string|reference"/>
-    <attr name="card_end_icon" format="integer"/>
-  </declare-styleable>
-</resources>

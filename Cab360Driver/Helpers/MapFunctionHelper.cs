@@ -53,7 +53,7 @@ namespace Cab360Driver.Helpers
 
 
             //Building the final url string
-            string url = StringConstants.GetDirectionsBaseGateway() + output + "?" + parameters + StringConstants.GetGoogleApiKey();
+            string url = StringConstants.GetDirectionsBaseGateway() + output + "?" + parameters + Resource.String.google_api_key;
 
 
             string json = "";

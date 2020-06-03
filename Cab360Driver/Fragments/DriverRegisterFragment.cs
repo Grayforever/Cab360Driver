@@ -1,11 +1,9 @@
-﻿using Android.Content;
-using Android.Gms.Tasks;
+﻿using Android.Gms.Tasks;
 using Android.OS;
 using Android.Runtime;
 using Android.Text;
 using Android.Util;
 using Android.Views;
-using Android.Views.InputMethods;
 using AndroidX.AppCompat.Widget;
 using AndroidX.CoordinatorLayout.Widget;
 using Cab360Driver.Adapters;
@@ -17,7 +15,6 @@ using Firebase.Auth;
 using Firebase.Database;
 using Google.Android.Material.Button;
 using Google.Android.Material.TextField;
-using Java.Lang;
 using Java.Util;
 using System;
 using static Android.Views.View;
@@ -41,8 +38,8 @@ namespace Cab360Driver.Fragments
         public override void OnCreate(Bundle savedInstanceState)
         {
             base.OnCreate(savedInstanceState);
-            FireAuth = AppDataHelper.GetFirebaseAuth();
-            driverRef = AppDataHelper.GetParentReference().Child(FireAuth.CurrentUser.Uid);
+            
+            
 
         }
 
@@ -91,6 +88,7 @@ namespace Cab360Driver.Fragments
 
             SubmitBtn.Click += (s1, e1) =>
             {
+                FireAuth = AppDataHelper.GetFirebaseAuth();
                 FireAuth.CreateUserWithEmailAndPassword(EmailText.EditText.Text, PassText.EditText.Text)
                     .AddOnSuccessListener(this)
                     .AddOnFailureListener(this);
@@ -139,6 +137,7 @@ namespace Cab360Driver.Fragments
 
         private void SaveDriverToDb(HashMap cab360Drivers)
         {
+            driverRef = AppDataHelper.GetParentReference().Child(FireAuth.CurrentUser.Uid);
             driverRef.SetValue(cab360Drivers)
                 .AddOnSuccessListener(DriverProfileListener)
                 .AddOnFailureListener(DriverProfileListener);
@@ -168,20 +167,6 @@ namespace Cab360Driver.Fragments
         private void TaskCompletionListener_Successful(object sender, TaskCompletionListeners.ResultArgs e)
         {
             SignUpSuccess.Invoke(this, new SignUpSuccessArgs { IsCompleted = true });
-        }
-
-        private void HideKeyboard(View view)
-        {
-            try
-            {
-                InputMethodManager ime = (InputMethodManager)Activity.GetSystemService(Context.InputMethodService);
-                ime.HideSoftInputFromWindow(view.WindowToken, HideSoftInputFlags.None);
-            }
-            catch (System.Exception e)
-            {
-
-                Log.Error("Keyboard error", e.Message);
-            }
         }
 
         private void CheckIfEmpty()

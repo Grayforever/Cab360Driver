@@ -101,6 +101,7 @@
     <Compile Include="EventListeners\SweetAlertEventListeners.cs" />
     <Compile Include="EventListeners\TaskCompletionListeners.cs" />
     <Compile Include="Fragments\AccountFragment.cs" />
+    <Compile Include="Fragments\AckFragment.cs" />
     <Compile Include="Fragments\BaseFragment.cs" />
     <Compile Include="Fragments\BeforeUSnap2Fragment.cs" />
     <Compile Include="Fragments\BeforeUSnapFragment.cs" />
@@ -126,16 +127,30 @@
     <Compile Include="MainActivity.cs" />
     <Compile Include="Resources\Resource.designer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="SliderCard\CardsUpdater.cs" />
     <Compile Include="SliderCard\SliderCard.cs" />
     <Compile Include="Utils\BackgroundBitmapCache.cs" />
+    <Compile Include="Utils\CameraUtils.cs" />
     <Compile Include="Utils\DecodeBitmapTask.cs" />
   </ItemGroup>
   <ItemGroup>
     <GoogleServicesJson Include="google-services.json" />
+    <AndroidAsset Include="Assets\open-sans-extrabold.ttf" />
     <None Include="Resources\AboutResources.txt" />
     <None Include="Properties\AndroidManifest.xml" />
     <None Include="Assets\AboutAssets.txt" />
     <AndroidResource Include="Resources\raw\gray_mapstyle.json" />
+    <AndroidResource Include="Resources\drawable-nodpi\map_beijing.webp" />
+    <AndroidResource Include="Resources\drawable-nodpi\map_greece.webp" />
+    <AndroidResource Include="Resources\drawable-nodpi\map_london.webp" />
+    <AndroidResource Include="Resources\drawable-nodpi\map_paris.webp" />
+    <AndroidResource Include="Resources\drawable-nodpi\map_seoul.webp" />
+    <AndroidResource Include="Resources\drawable\p5.webp" />
+    <AndroidResource Include="Resources\drawable\p1.webp" />
+    <AndroidResource Include="Resources\drawable\p2.webp" />
+    <AndroidResource Include="Resources\drawable\p3.webp" />
+    <AndroidResource Include="Resources\drawable\p4.webp" />
+    <AndroidResource Include="Resources\drawable\clock.webp" />
   </ItemGroup>
   <ItemGroup>
     <AndroidResource Include="Resources\layout\activity_main.xml">
@@ -401,9 +416,6 @@
     </AndroidResource>
   </ItemGroup>
   <ItemGroup>
-    <AndroidResource Include="Resources\drawable-v24\circleyellowfil.xml" />
-  </ItemGroup>
-  <ItemGroup>
     <AndroidResource Include="Resources\drawable-v24\circular_grey_bordersolid.xml" />
   </ItemGroup>
   <ItemGroup>
@@ -431,22 +443,7 @@
     <AndroidResource Include="Resources\drawable\bg_bottomsheet_dg.xml" />
   </ItemGroup>
   <ItemGroup>
-    <AndroidResource Include="Resources\drawable-v24\radio_selector.xml" />
-  </ItemGroup>
-  <ItemGroup>
-    <AndroidResource Include="Resources\drawable-v24\radio_selector_start.xml" />
-  </ItemGroup>
-  <ItemGroup>
-    <AndroidResource Include="Resources\drawable-v24\radio_selector_end.xml" />
-  </ItemGroup>
-  <ItemGroup>
-    <AndroidResource Include="Resources\drawable-v24\radio_txt_selector.xml" />
-  </ItemGroup>
-  <ItemGroup>
     <AndroidResource Include="Resources\drawable-v24\ic_bell.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <AndroidResource Include="Resources\drawable-v24\circle_border_outline.xml" />
   </ItemGroup>
   <ItemGroup>
     <AndroidResource Include="Resources\drawable-v24\ic_review1.png" />
@@ -467,34 +464,13 @@
     <AndroidResource Include="Resources\drawable-v24\ic_star.xml" />
   </ItemGroup>
   <ItemGroup>
-    <AndroidResource Include="Resources\drawable-v24\bottomnav_iconstate_list.xml" />
-  </ItemGroup>
-  <ItemGroup>
     <AndroidResource Include="Resources\drawable\border_bg.xml" />
-  </ItemGroup>
-  <ItemGroup>
-    <AndroidResource Include="Resources\drawable\boy_new.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <AndroidResource Include="Resources\drawable\btn_background.xml" />
-  </ItemGroup>
-  <ItemGroup>
-    <AndroidResource Include="Resources\drawable\btn_txt_clr_tggl.xml" />
-  </ItemGroup>
-  <ItemGroup>
-    <AndroidResource Include="Resources\drawable\cardview_focus_bg_tggl.xml" />
   </ItemGroup>
   <ItemGroup>
     <AndroidResource Include="Resources\drawable\circle.xml" />
   </ItemGroup>
   <ItemGroup>
     <AndroidResource Include="Resources\drawable\circle_border.xml" />
-  </ItemGroup>
-  <ItemGroup>
-    <AndroidResource Include="Resources\drawable\divider.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <AndroidResource Include="Resources\drawable\grad.xml" />
   </ItemGroup>
   <ItemGroup>
     <AndroidResource Include="Resources\drawable\greenball.png" />
@@ -539,9 +515,6 @@
     <AndroidResource Include="Resources\drawable\redball.png" />
   </ItemGroup>
   <ItemGroup>
-    <AndroidResource Include="Resources\drawable\secondary_btn_bg.xml" />
-  </ItemGroup>
-  <ItemGroup>
     <AndroidResource Include="Resources\drawable\taxi.png" />
   </ItemGroup>
   <ItemGroup>
@@ -580,19 +553,7 @@
     <AndroidResource Include="Resources\drawable-v24\ic_cancel.png" />
   </ItemGroup>
   <ItemGroup>
-    <AndroidResource Include="Resources\values\attrs.xml" />
-  </ItemGroup>
-  <ItemGroup>
     <Folder Include="BroadcastReceivers\" />
-  </ItemGroup>
-  <ItemGroup>
-    <AndroidResource Include="Resources\drawable-v24\partner_radio_border.xml" />
-  </ItemGroup>
-  <ItemGroup>
-    <AndroidResource Include="Resources\drawable-v24\partner_radio_start.xml" />
-  </ItemGroup>
-  <ItemGroup>
-    <AndroidResource Include="Resources\drawable-v24\partner_radio_end.xml" />
   </ItemGroup>
   <ItemGroup>
     <AndroidResource Include="Resources\drawable-v24\ic_driver2.jpg" />
@@ -634,10 +595,45 @@
     <AndroidResource Include="Resources\drawable-xxxhdpi\map_vehi_icon_blk.png" />
   </ItemGroup>
   <ItemGroup>
-    <AndroidResource Include="Resources\layout\activity_details.xml" />
+    <AndroidResource Include="Resources\layout\layout_slider_card.xml" />
   </ItemGroup>
   <ItemGroup>
-    <AndroidResource Include="Resources\layout\layout_slider_card.xml" />
+    <AndroidResource Include="Resources\anim\fade_in.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\anim\fade_out.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\anim\slide_in_bottom.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\anim\slide_in_left.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\anim\slide_in_top.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\anim\slide_out_bottom.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\anim\slide_out_right.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\anim\slide_out_top.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable\gradient_map.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable\green_dot_big.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable\green_dot_small.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\layout\driver_ack_layout.xml">
+      <SubType>Designer</SubType>
+    </AndroidResource>
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\Android\Xamarin.Android.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it.

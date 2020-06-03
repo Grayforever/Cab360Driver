@@ -1,7 +1,5 @@
-﻿using Android.Views;
-using AndroidX.Fragment.App;
+﻿using AndroidX.Fragment.App;
 using AndroidX.Lifecycle;
-using AndroidX.RecyclerView.Widget;
 using AndroidX.ViewPager2.Adapter;
 using System.Collections.Generic;
 

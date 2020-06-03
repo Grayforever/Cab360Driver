@@ -8,8 +8,6 @@ using Cab360Driver.Adapters;
 using Cab360Driver.EnumsConstants;
 using Cab360Driver.Fragments;
 using Cab360Driver.Helpers;
-using Firebase.Auth;
-using Firebase.Database;
 using System;
 
 
@@ -25,28 +23,27 @@ namespace Cab360Driver.Activities
         private RegistrationFragmentsAdapter regAdapter;
         private ViewPager2 RegViewPager;
 
-        //fragments init
-        public OnboardingFragment OnboardingFragment = new OnboardingFragment();
-        public DriverSignInFragment SignInFragment = new DriverSignInFragment();
-        public DriverRegisterFragment RegisterFragment = new DriverRegisterFragment();
-        public DriverCaptureFragment CaptureFragment = new DriverCaptureFragment();
-        public DriverPartnerFragment PartnerFragment = new DriverPartnerFragment();
-        public CarRegFragment CarRegFragment = new CarRegFragment();
-        public CarPicsFragment CarPicsFragment = new CarPicsFragment();
-        bool SmoothScroll = false;
+        private OnboardingFragment OnboardingFragment = new OnboardingFragment();
+        private DriverSignInFragment SignInFragment = new DriverSignInFragment();
+        private DriverRegisterFragment RegisterFragment = new DriverRegisterFragment();
+        private DriverCaptureFragment CaptureFragment = new DriverCaptureFragment();
+        private DriverPartnerFragment PartnerFragment = new DriverPartnerFragment();
+        private CarRegFragment CarRegFragment = new CarRegFragment();
+        private CarPicsFragment CarPicsFragment = new CarPicsFragment();
+        private AckFragment AckFragment = new AckFragment();
+        private bool isSmoothScroll = false;
 
         protected override void OnCreate(Bundle savedInstanceState)
         {
             base.OnCreate(savedInstanceState);
             SetContentView(Resource.Layout.container_main);
-
+            
             RegViewPager = FindViewById<ViewPager2>(Resource.Id.reg_viewpager1);
             RegViewPager.Orientation = ViewPager2.OrientationHorizontal;
-            RegViewPager.OffscreenPageLimit = 3;
+            RegViewPager.OffscreenPageLimit = 4;
             RegViewPager.UserInputEnabled = false;
-
-            SetViewPagerAdapter();        
             GetStage(AppDataHelper.GetStage());
+            SetViewPagerAdapter();                
             RequestPermissions(StringConstants.GetLocationPermissiongroup(), 0);  
         }
 
@@ -57,26 +54,32 @@ namespace Cab360Driver.Activities
                 if (stage == RegistrationStage.Partnering.ToString())
                 {
                     regAdapter.NotifyDataSetChanged();
-                    RegViewPager.SetCurrentItem(3, SmoothScroll);
+                    RegViewPager.SetCurrentItem(3, isSmoothScroll);
                     PartnerFragment.PartnerTypeComplete += PartnerFragment_PartnerTypeComplete;
                 }
                 else if (stage == RegistrationStage.Capturing.ToString())
                 {                                         
                     regAdapter.NotifyDataSetChanged();
-                    RegViewPager.SetCurrentItem(4, SmoothScroll);
+                    RegViewPager.SetCurrentItem(4, isSmoothScroll);
                     CaptureFragment.ProfileCaptured += DriverCaptureFragment_ProfileCaptured;
                 }
                 else if (stage == RegistrationStage.CarRegistering.ToString())
                 {
                     regAdapter.NotifyDataSetChanged();
-                    RegViewPager.SetCurrentItem(5, SmoothScroll);
+                    RegViewPager.SetCurrentItem(5, isSmoothScroll);
                     CarRegFragment.CarRegComplete += CarRegFragment_CarRegComplete;
                 }
 
                 else if (stage == RegistrationStage.CarCapturing.ToString())
                 {
                     regAdapter.NotifyDataSetChanged();
-                    RegViewPager.SetCurrentItem(6, SmoothScroll);
+                    RegViewPager.SetCurrentItem(6, isSmoothScroll);
+                }
+
+                else if (stage == RegistrationStage.Agreement.ToString())
+                {
+                    regAdapter.NotifyDataSetChanged();
+                    RegViewPager.SetCurrentItem(7, isSmoothScroll);
                 }
             }
             else
@@ -106,19 +109,70 @@ namespace Cab360Driver.Activities
             OnboardingFragment.SignUp += OnboardingFragment_SignUp;
         }
 
+        private void SetRegisterFrag()
+        {
+            regAdapter.NotifyDataSetChanged();
+            RegViewPager.SetCurrentItem(2, isSmoothScroll);
+            RegisterFragment.SignUpSuccess += RegisterFragment_SignUpSuccess;
+
+        }
+
+        private void SetSignInFrag()
+        {
+            regAdapter.NotifyDataSetChanged();
+            RegViewPager.SetCurrentItem(1, isSmoothScroll);
+        }
+
+        private void SetPartnerFrag()
+        {
+            regAdapter.NotifyDataSetChanged();
+            RegViewPager.SetCurrentItem(3, isSmoothScroll);
+            PartnerFragment.PartnerTypeComplete += PartnerFragment_PartnerTypeComplete;
+        }
+
+        private void SetCaptureFrag()
+        {
+            regAdapter.NotifyDataSetChanged();
+            RegViewPager.SetCurrentItem(4, isSmoothScroll);
+            CaptureFragment.ProfileCaptured += DriverCaptureFragment_ProfileCaptured;
+        }
+
+        private void SetCarCaptFrag()
+        {
+            regAdapter.NotifyDataSetChanged();
+            RegViewPager.SetCurrentItem(6, isSmoothScroll);
+            CarPicsFragment.CarCaptureComplete += CarPicsFragment_CarCaptureComplete;
+        }
+
+        private void SetCarRegFrag()
+        {
+            regAdapter.NotifyDataSetChanged();
+            RegViewPager.SetCurrentItem(5, isSmoothScroll);
+            CarRegFragment.CarRegComplete += CarRegFragment_CarRegComplete;
+        }
+
+        private void SetAckFrag()
+        {
+            regAdapter.NotifyDataSetChanged();
+            RegViewPager.SetCurrentItem(7, isSmoothScroll);
+            AckFragment.OnSkip += AckFragment_OnSkip;
+        }
+
+        private void AckFragment_OnSkip(object sender, EventArgs e)
+        {
+            var intent = new Intent(this, typeof(MainActivity));
+            intent.SetFlags(ActivityFlags.ClearTask | ActivityFlags.ClearTop | ActivityFlags.NewTask);
+            StartActivity(intent);
+        }
+
         private void OnboardingFragment_SignIn(object sender, EventArgs e)
         {
-            //sign  in fragment
-            regAdapter.NotifyDataSetChanged();
-            RegViewPager.SetCurrentItem(1, SmoothScroll);
+            SetSignInFrag();
         }
 
         private void OnboardingFragment_SignUp(object sender, EventArgs e)
         {
-            //sign up fragment
-            regAdapter.NotifyDataSetChanged();
-            RegViewPager.SetCurrentItem(2, SmoothScroll);
-            RegisterFragment.SignUpSuccess += RegisterFragment_SignUpSuccess;
+            SetRegisterFrag();
         }
 
         private void RegisterFragment_SignUpSuccess(object sender, DriverRegisterFragment.SignUpSuccessArgs e)
@@ -126,9 +180,7 @@ namespace Cab360Driver.Activities
             bool status = e.IsCompleted;
             if(status == true)
             {
-                regAdapter.NotifyDataSetChanged();
-                RegViewPager.SetCurrentItem(3, SmoothScroll);
-                PartnerFragment.PartnerTypeComplete += PartnerFragment_PartnerTypeComplete;
+                SetPartnerFrag();
             }
         }
 
@@ -137,31 +189,23 @@ namespace Cab360Driver.Activities
             bool isSuccess = e.IsPartnerComplete;
             if (isSuccess is true)
             {
-                regAdapter.NotifyDataSetChanged();
-                RegViewPager.SetCurrentItem(4, SmoothScroll);
-                CaptureFragment.ProfileCaptured += DriverCaptureFragment_ProfileCaptured; 
+                SetCaptureFrag();
             }
         }
 
         private void DriverCaptureFragment_ProfileCaptured(object sender, EventArgs e)
         {
-            regAdapter.NotifyDataSetChanged();
-            RegViewPager.SetCurrentItem(5, SmoothScroll);
-            CarRegFragment.CarRegComplete += CarRegFragment_CarRegComplete;
+            SetCarRegFrag();
         }
 
         private void CarRegFragment_CarRegComplete(object sender, EventArgs e)
         {
-            regAdapter.NotifyDataSetChanged();
-            RegViewPager.SetCurrentItem(6, SmoothScroll);
-            CarPicsFragment.CarCaptureComplete += CarPicsFragment_CarCaptureComplete;
+            SetCarCaptFrag();
         }
 
         private void CarPicsFragment_CarCaptureComplete(object sender, EventArgs e)
         {
-            var intent = new Intent(this, typeof(MainActivity));
-            intent.SetFlags(ActivityFlags.ClearTask | ActivityFlags.ClearTop | ActivityFlags.NewTask);
-            StartActivity(intent);
+            SetAckFrag();
         }
 
         public override void OnBackPressed()

@@ -13,7 +13,7 @@ namespace Cab360Driver.Activities
     [Activity(MainLauncher = true, ScreenOrientation = Android.Content.PM.ScreenOrientation.Portrait)]
     public class SplashActivity : AppCompatActivity, IValueEventListener
     {
-        private ISharedPreferences preferences = Application.Context.GetSharedPreferences("appSession", FileCreationMode.MultiProcess);
+        private ISharedPreferences preferences = Application.Context.GetSharedPreferences("appSession", FileCreationMode.Private);
         private ISharedPreferencesEditor editor;
 
         protected override void OnCreate(Bundle savedInstanceState)
@@ -75,7 +75,7 @@ namespace Cab360Driver.Activities
         private void StartWhichActivity(string stage)
         {
             Log.Info("stage before exit: ", stage);
-            if (!stage.Contains(RegistrationStage.Registration.ToString()))
+            if (stage == RegistrationStage.RegistrationDone.ToString())
             {
                 var intent3 = new Intent(this, typeof(MainActivity));
                 intent3.AddFlags(ActivityFlags.ClearTask | ActivityFlags.ClearTop | ActivityFlags.NewTask);

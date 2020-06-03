@@ -24,8 +24,8 @@ namespace Cab360Driver.Helpers
                 {
                     var options = new FirebaseOptions.Builder()
                         .SetApplicationId("taxiproject-185a4")
-                        .SetApiKey(StringConstants.GetGoogleApiKey())
-                        .SetDatabaseUrl(StringConstants.GetDatabaseUrl())
+                        .SetApiKey("AIzaSyDHXqe3Yh9Nl3wsxFItOoz1IwKiBRP7fxk")
+                        .SetDatabaseUrl("https://taxiproject-185a4.firebaseio.com")
                         .SetStorageBucket("taxiproject-185a4.appspot.com")
                         .Build();
                     app = FirebaseApp.InitializeApp(Application.Context, options);

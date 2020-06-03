@@ -1,13 +1,7 @@
-﻿using Android.Graphics;
-using Android.OS;
+﻿using Android.OS;
 using Android.Views;
 using Cab360Driver.EnumsConstants;
 using Cab360Driver.EventListeners;
-using Cab360Driver.Helpers;
-using Cab360Driver.Utils;
-using Firebase.Auth;
-using Firebase.Database;
-using Firebase.Storage;
 using Google.Android.Material.Button;
 using System;
 
@@ -16,21 +10,12 @@ namespace Cab360Driver.Fragments
     public class CarPicsFragment : AndroidX.Fragment.App.Fragment
     {
         public event EventHandler CarCaptureComplete;
-        private FirebaseAuth FireAuth;
-        private FirebaseDatabase FireDatabase;
         private TaskCompletionListeners TaskCompletionListener = new TaskCompletionListeners();
-        private DatabaseReference driverRef;
-        private StorageReference StoreRef;
-        private FirebaseStorage FireStorage;
 
         public override void OnCreate(Bundle savedInstanceState)
         {
             base.OnCreate(savedInstanceState);
-            FireAuth = AppDataHelper.GetFirebaseAuth();
-            driverRef = AppDataHelper.GetParentReference().Child(FireAuth.CurrentUser.Uid);
-            FireDatabase = AppDataHelper.GetDatabase();
-            FireStorage = FirebaseStorage.Instance;
-            StoreRef = FireStorage.GetReferenceFromUrl("gs://taxiproject-185a4.appspot.com");
+            
         }
 
         public override View OnCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)

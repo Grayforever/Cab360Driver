@@ -3,6 +3,7 @@ using Android.Graphics;
 using Android.OS;
 using Android.Runtime;
 using Android.Text;
+using Android.Util;
 using Android.Views;
 using AndroidX.Annotations;
 using AndroidX.AppCompat.Widget;
@@ -51,14 +52,11 @@ namespace Cab360Driver.Fragments
         FirebaseAuth FireAuth;
         FirebaseDatabase FireDatabase;
         private TaskCompletionListeners TaskCompletionListener = new TaskCompletionListeners();
-        DatabaseReference driverRef;
 
         public override void OnCreate(Bundle savedInstanceState)
         {
             base.OnCreate(savedInstanceState);
-            FireAuth = AppDataHelper.GetFirebaseAuth();
-            driverRef = AppDataHelper.GetParentReference().Child(FireAuth.CurrentUser.Uid);
-            FireDatabase = AppDataHelper.GetDatabase();
+            
         }
 
         public override View OnCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
@@ -108,10 +106,10 @@ namespace Cab360Driver.Fragments
                 }
                    
             }
-            catch (System.Exception)
+            catch (System.Exception e)
             {
 
-                throw;
+                Log.Error("api error", e.Message);
             }
 
             CarBrandEt.AddTextChangedListener(this);
@@ -178,7 +176,6 @@ namespace Cab360Driver.Fragments
                 Condition = condition,
                 CurrUser = currUser,
                 RegNo = regNo
-
             };
 
             HashCarDetails(carModel);
@@ -200,14 +197,17 @@ namespace Cab360Driver.Fragments
 
         private void SaveCarDetailsToDb(HashMap carMap)
         {
-            driverRef = FireDatabase.GetReference("RegUnVerifiedCars/" + FireAuth.CurrentUser.Uid);
-            driverRef.SetValue(carMap)
+            FireAuth = AppDataHelper.GetFirebaseAuth();
+            FireDatabase = AppDataHelper.GetDatabase();
+            var vehicleRef = FireDatabase.GetReference("RegUnVerifiedCars/" + FireAuth.CurrentUser.Uid);
+            vehicleRef.SetValue(carMap)
                 .AddOnSuccessListener(this)
                 .AddOnFailureListener(this);
         }
 
         public void OnSuccess(Java.Lang.Object result)
         {
+            var driverRef = AppDataHelper.GetParentReference().Child(FireAuth.CurrentUser.Uid);
             driverRef.Child("stage_of_registration").SetValue(RegistrationStage.CarCapturing.ToString())
                     .AddOnSuccessListener(TaskCompletionListener)
                     .AddOnFailureListener(TaskCompletionListener);

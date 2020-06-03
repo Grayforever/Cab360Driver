@@ -1,14 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
-using Android.App;
-using Android.Content;
-using Android.OS;
-using Android.Runtime;
-using Android.Views;
-using Android.Widget;
+﻿using Android.Views;
 using AndroidX.RecyclerView.Widget;
 using static Android.Views.View;
 
@@ -18,7 +8,7 @@ namespace Cab360Driver.Adapters
     {
         private int count;
         private int[] content;
-        private View.IOnClickListener listener;
+        private IOnClickListener listener;
 
         public SliderAdapter(int[] content, int count, View.IOnClickListener listener)
         {

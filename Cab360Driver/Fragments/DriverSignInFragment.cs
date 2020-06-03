@@ -25,8 +25,7 @@ namespace Cab360Driver.Fragments
         {
             base.OnCreate(savedInstanceState);
 
-            FireAuth = AppDataHelper.GetFirebaseAuth();
-            FireDatabase = AppDataHelper.GetDatabase();
+            
         }
 
         public override View OnCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
@@ -63,6 +62,8 @@ namespace Cab360Driver.Fragments
             if (CheckIfEmpty() == false)
                 return;
 
+            FireAuth = AppDataHelper.GetFirebaseAuth();
+            FireDatabase = AppDataHelper.GetDatabase();
             FireAuth.SignInWithEmailAndPassword(EmailText.EditText.Text, PassText.EditText.Text)
                 .AddOnSuccessListener(this)
                 .AddOnFailureListener(this);
@@ -71,9 +72,6 @@ namespace Cab360Driver.Fragments
 
         public void OnSuccess(Java.Lang.Object result)
         {
-            //var driverData = FireDatabase.GetReference("Cab360Drivers").Child(FireAuth.CurrentUser.Uid);
-            //driverData.AddListenerForSingleValueEvent(this);
-
             var intent = new Intent(Application.Context, typeof(MainActivity));
             intent.SetFlags(ActivityFlags.ClearTask | ActivityFlags.ClearTop | ActivityFlags.NewTask);
             StartActivity(intent);

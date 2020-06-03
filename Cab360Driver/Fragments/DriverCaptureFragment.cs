@@ -16,9 +16,6 @@ using Plugin.Media;
 using Plugin.Media.Abstractions;
 using System;
 using System.IO;
-using System.Threading.Tasks;
-using CancellationToken = System.Threading.CancellationToken;
-using CancellationTokenSource = System.Threading.CancellationTokenSource;
 
 namespace Cab360Driver.Fragments
 {
@@ -29,8 +26,8 @@ namespace Cab360Driver.Fragments
         private TextView HeaderTxt1; 
         private TextView HeaderTxt2;
         private TextView HeaderTxt3;
-        FirebaseAuth FireAuth;
-        DatabaseReference driverRef;
+        private FirebaseAuth FireAuth;
+        private DatabaseReference driverRef;
         private TaskCompletionListeners TaskCompletionListener = new TaskCompletionListeners();
 
         public event EventHandler ProfileCaptured;
@@ -54,10 +51,6 @@ namespace Cab360Driver.Fragments
                     Manifest.Permission.Camera
                 }, RequestPermission);
             }
-            FireAuth = AppDataHelper.GetFirebaseAuth();
-            driverRef = AppDataHelper.GetParentReference().Child(FireAuth.CurrentUser.Uid);
-            FireStorage = FirebaseStorage.Instance;
-            StoreRef = FireStorage.GetReferenceFromUrl("gs://taxiproject-185a4.appspot.com");
         }
 
         public override View OnCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
@@ -74,6 +67,7 @@ namespace Cab360Driver.Fragments
 
             Card2 = view.FindViewById<CardView>(Resource.Id.req_c2);
             Card2.Click += Card2_Click;
+
             Card3 = view.FindViewById<CardView>(Resource.Id.req_c3);
             Card3.Click += Card3_Click;
 
@@ -91,7 +85,8 @@ namespace Cab360Driver.Fragments
 
         private void GreetUser(TextView welcomeTV)
         {
-            welcomeTV.Text = $"Welcome, {AppDataHelper.GetFirstName()}.";
+            string firstname = AppDataHelper.GetFirstName();
+            welcomeTV.Text = $"Welcome, {firstname}.";
         }
 
         private void Card3_Click(object sender, EventArgs e)
@@ -131,26 +126,18 @@ namespace Cab360Driver.Fragments
             CheckAndStartCamera();
         }
 
-        private async void CheckAndStartCamera()
+        private void CheckAndStartCamera()
         {
             if (ContextCompat.CheckSelfPermission(Activity, Manifest.Permission.Camera) == Android.Content.PM.Permission.Granted)
             {
-                CancellationTokenSource cts = new CancellationTokenSource();
                 try
                 {
-                    int bytecount = await TakePhotoAsync(cts.Token);
-                    if (bytecount != 0)
-                        cts.Cancel();
+                    TakePhotoAsync();
                 }
-                catch (System.OperationCanceledException oce)
-                {
-                    Toast.MakeText(Activity, oce.Message, ToastLength.Short).Show();
-                }
-                catch(System.Exception e)
+                catch(Exception e)
                 {
                     Toast.MakeText(Activity, e.Message, ToastLength.Short).Show();
                 }
-                cts = null;
             }
             else
             {
@@ -158,7 +145,7 @@ namespace Cab360Driver.Fragments
             }
         }
 
-        private async Task<int> TakePhotoAsync(CancellationToken ct)
+        private async void TakePhotoAsync()
         {
             await CrossMedia.Current.Initialize();
             var file = await CrossMedia.Current.TakePhotoAsync(new StoreCameraMediaOptions
@@ -167,17 +154,14 @@ namespace Cab360Driver.Fragments
                 CompressionQuality = 60,
                 Name = "myimage.jpg",
                 Directory = "sample",
-            }, ct);
+            });
 
             if (file != null)
             {
-                imageArray = await File.ReadAllBytesAsync(file.Path, ct);
+                imageArray = await File.ReadAllBytesAsync(file.Path);
                 var bitmapProfile = await BitmapFactory.DecodeByteArrayAsync(imageArray, 0, imageArray.Length);
                 DisplayPic(bitmapProfile);
-
-                return bitmapProfile.ByteCount;
             }
-            return 0;
         }  
 
         private void DisplayPic(Bitmap bitmap)
@@ -193,8 +177,11 @@ namespace Cab360Driver.Fragments
         {
             if(e.viewHasImage == true)
             {
-                var image = StoreRef.Child("driverProfilePics/" + AppDataHelper.GetCurrentUser().Uid);
-                UploadTask uploadTask = image.PutBytes(imageArray);
+                FireStorage = FirebaseStorage.Instance;
+                StoreRef = FireStorage.GetReferenceFromUrl("gs://taxiproject-185a4.appspot.com");
+
+                var imageRef = StoreRef.Child("driverProfilePics/" + AppDataHelper.GetCurrentUser().Uid);
+                UploadTask uploadTask = imageRef.PutBytes(imageArray);
                 uploadTask.AddOnSuccessListener(TaskCompletionListener);
                 TaskCompletionListener.Successful += TaskCompletionListener_Successful;
                 uploadTask.AddOnFailureListener(TaskCompletionListener);
@@ -213,12 +200,13 @@ namespace Cab360Driver.Fragments
 
         private void TaskCompletionListener_Successful(object sender, TaskCompletionListeners.ResultArgs e)
         {
+            FireAuth = AppDataHelper.GetFirebaseAuth();
+            driverRef = AppDataHelper.GetParentReference().Child(FireAuth.CurrentUser.Uid);
             driverRef.Child("stage_of_registration").SetValue(RegistrationStage.CarRegistering.ToString())
                .AddOnSuccessListener(TaskCompletionListener)
                .AddOnFailureListener(TaskCompletionListener);
             TaskCompletionListener.Successful += TaskCompletionListener_Successful1;
         }
-
 
         private void TaskCompletionListener_Successful1(object sender, TaskCompletionListeners.ResultArgs e)
         {

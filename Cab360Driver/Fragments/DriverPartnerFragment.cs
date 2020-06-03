@@ -38,8 +38,7 @@ namespace Cab360Driver.Fragments
         public override void OnCreate(Bundle savedInstanceState)
         {
             base.OnCreate(savedInstanceState);
-            FireAuth = AppDataHelper.GetFirebaseAuth();
-            driverRef = AppDataHelper.GetParentReference().Child(FireAuth.CurrentUser.Uid);
+            
         }
 
         public override View OnCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
@@ -82,6 +81,8 @@ namespace Cab360Driver.Fragments
 
         private void ContinueBtn_Click(object sender, EventArgs e)
         {
+            FireAuth = AppDataHelper.GetFirebaseAuth();
+            driverRef = AppDataHelper.GetParentReference().Child(FireAuth.CurrentUser.Uid);
             driverRef.Child("isPartner").SetValue(partner.ToString())
                 .AddOnSuccessListener(this)
                 .AddOnFailureListener(this);
