@@ -1,20 +1,76 @@
 <resources>
+  <!-- global-->
   <string name="app_name">Cab360Driver</string>
   <string name="action_settings">Settings</string>
-  <string name="drv_partner_header">Please how would you like to partner with us</string>
   <string name="continue_txt">Continue</string>
+  <string name="loading_txt">Loading...</string>
+  <string name="google_api_key">AIzaSyDHXqe3Yh9Nl3wsxFItOoz1IwKiBRP7fxk</string>
+  <string name="save">save</string>
+  <string name="retake">retake</string>
+
+  <!-- onboarding-->
+  <string name="driver_welcome">Welcome to the \ndriver app</string>
+  <string name="sign_up_txt">Sign up</string>
+  <string name="sign_in_txt">Sign in</string>
+
+  <!-- account-->
+  <string name="hint_email_txt">Email</string>
+  <string name="hint_pass_txt">Password</string>
+  <string name="hint_phone_txt">Phone</string>
+  <string name="hint_city_txt">Email</string>
+  <string name="hint_fname_txt">First name</string>
+  <string name="hint_lname_txt">Last name</string>
+  <string name="hint_code_txt">Invite code</string>
+
+  <!-- partnering-->
+  <string name="drv_partner_header">Please how would you like to partner with us</string>
   <string name="driving_desc_txt">You don\'t currently have access to a vehicle. You want to be emplyed by one of our partners and drive for them on this platform.</string>
   <string name="partner_desc_txt">You own or are planning to purchase a vehicle(s) and will drive yourself but might also employ others to drive vehicle(s).</string>
   <string name="partner_head_txt">Vehicle owner</string>
   <string name="driver_head_txt">Driving</string>
-  <string name="google_api_key">AIzaSyDHXqe3Yh9Nl3wsxFItOoz1IwKiBRP7fxk</string>
+  <string name="optional">Optional</string>
+
+  <!-- capturing-->
+  <string name="required_steps_txt">Required steps</string>
+  <string name="other_sub_txt">Here is what you need to do to set up your account</string>
+  <string name="rec_nxt_stp_txt">Recommended next step</string>
+  <string name="driver_photo_txt">Driver Photo</string>
+  <string name="drivers_licence_txt">Drivers License</string>
+  <string name="reverse_driver_lic_txt">Reverse side of Drivers License</string>
   <string name="string_attention_seekr">Needs your attention</string>
+  <string name="before_you_snap">Before you begin, please make sure:</string>
+  <string name="option1">1. Whole face and tops of shoulders is showing</string>
+  <string name="option2">2. You dont have sunglasses and hat on</string>
+  <string name="option3">3. Your environment is well-lit</string>
+  <string name="take_photo">take photo</string>
+  <string name="want_to_use_this_photo">Want to use this photo?</string>
+  <string name="by_tapping_save">By tapping SAVE, you agree that Cab360 may collect and process your photos with technology that allows us to verify your identity</string>
 
-  <string name="driver_welcome">Welcome to the \ndriver app</string>
+  <!-- car registering-->
+  <string name="car_brand">Car brand</string>
+  <string name="car_model">Model</string>
+  <string name="car_color">Color</string>
+  <string name="car_year">Year</string>
+  <string name="car_reg_no">Registration number</string>
+  <string name="car_owner">Current owner</string>
+  <string name="please_tick">Please tick the appropriate box</string>
+  <string name="front_of_car">Front of car</string>
+  <string name="back_of_car">Back of car</string>
 
-  <string name="text1">The museum is housed in the Louvre Palace, originally built as a fortress in the late 12th century…</string>
-  <string name="text2">Gwanghwamun is the main and largest gate of Gyeongbokgung Palace, in Jongno-gu, Seoul, South Korea.</string>
-  <string name="text3">Tower Bridge is a combined bascule and suspension bridge in London built in 1886–1894.</string>
-  <string name="text4">The Temple of Heaven is an imperial complex of religious buildings situated in the southeastern part…</string>
-  <string name="text5">The Aegean Islands are within the sea and some bound it on its southern periphery…</string>
+  <!-- ride reject rationale-->
+  <string name="text1">I have a problem with my car</string>
+  <string name="text2">Rider location too far from mine</string>
+  <string name="text3">I have an emergency to take care of now</string>
+  <string name="text4">I mistakenly tapped on the reject button</string>
+
+  <!-- no net strings-->
+  <string name="no_net_header1">No network \nconnection</string>
+  <string name="no_net_header2">trying \nto connect</string>
+  <string name="no_net_sub1">Please check your internet settings</string>
+  <string name="no_net_sub2">Please wait</string>
+  <string name="no_net_retry1">Retry</string>
+  <string name="no_net_retry2">Retrying...</string>
+  <string name="no_net_opn_sttngs">Open settings</string>
+
+
 </resources>

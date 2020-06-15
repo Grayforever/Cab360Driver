@@ -23,7 +23,8 @@
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:padding="16dp">
+            android:padding="16dp"
+            android:clipToPadding="false">
 
             <androidx.cardview.widget.CardView
                 android:layout_width="0dp"
@@ -40,7 +41,7 @@
 
                     <LinearLayout
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
+                        android:layout_height="52dp"
                         android:orientation="vertical"
                         android:layout_centerVertical="true"
                         android:layout_alignParentStart="true"
@@ -58,7 +59,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:textAppearance="?android:attr/textAppearanceLarge"
-                            android:text="¢56.00"
+                            android:text=""
                             android:maxLines="1"
                             android:textStyle="bold"
                             android:ellipsize="end"
@@ -69,11 +70,12 @@
 
                     <com.google.android.material.button.MaterialButton
                         android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
+                        android:layout_height="56dp"
                         android:id="@+id/earn_withdraw_btn"
                         android:layout_alignParentEnd="true"
                         android:layout_centerVertical="true"
                         android:text="Withdraw"
+                        android:textSize="16sp"
                         />
 
                 </RelativeLayout>
@@ -88,19 +90,24 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/earn_head_cv"
                 app:layout_constraintBottom_toTopOf="@+id/earn_cv2"
-                android:layout_marginBottom="16dp">
+                android:layout_marginBottom="16dp"
+                android:layout_marginTop="8dp">
 
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:padding="8dp">
+                    android:padding="8dp"
+                    android:clipToPadding="false">
 
                     <TextView
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:textAppearance="?android:attr/textAppearanceSmall"
+                        android:textAppearance="?attr/textAppearanceSubtitle1"
                         android:id="@+id/summ_txt"
                         android:text="Summary"
+                        android:textStyle="bold"
+                        android:padding="3dp"
+                        android:gravity="center_vertical"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toTopOf="parent"
                         app:layout_constraintEnd_toStartOf="@+id/chart_type_spinner"

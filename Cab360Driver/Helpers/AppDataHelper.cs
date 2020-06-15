@@ -1,17 +1,15 @@
 ﻿using Android.App;
 using Android.Content;
-using Cab360Driver.EnumsConstants;
 using Firebase;
 using Firebase.Auth;
 using Firebase.Database;
-using Firebase.Storage;
 
 namespace Cab360Driver.Helpers
 {
     public static class AppDataHelper
     {
-        private static ISharedPreferences pref = Application.Context.GetSharedPreferences("userinfo", FileCreationMode.Private);
-        private static ISharedPreferences prefs = Application.Context.GetSharedPreferences("appSession", FileCreationMode.Private);
+        private static ISharedPreferences _pref1 = Application.Context.GetSharedPreferences("userinfo", FileCreationMode.Private);
+        private static readonly ISharedPreferences _pref3 = Application.Context.GetSharedPreferences("earningsInfo", FileCreationMode.MultiProcess);
         private static FirebaseAuth FireAuth;
         private static FirebaseDatabase FireDb;
 
@@ -68,45 +66,43 @@ namespace Cab360Driver.Helpers
         public static FirebaseUser GetCurrentUser()
         {
             GetFirebaseAuth();
-            var mUser = FireAuth.CurrentUser;
-            return mUser;
+            return FireAuth?.CurrentUser;
         }
 
-        private static string firstname = pref?.GetString("firstname", "");
+        private static string firstname = _pref1?.GetString("firstname", "");
         public static string GetFirstName()
         {
             return firstname;
         }
 
-        private static string lastname = pref?.GetString("lastname", "");
+        private static string lastname = _pref1?.GetString("lastname", "");
         public static string GetLastName()
         {
             return lastname;
         }
 
-        private static string email = pref?.GetString("email", "");
+        private static string email = _pref1?.GetString("email", "");
         public static string GetEmail()
         {
-            
             return email;
         }
 
-        private static string phone = pref?.GetString("phone", "");
+        private static string phone = _pref1?.GetString("phone", "");
         public static string GetPhone()
         {
             return phone;
         }
 
-        private static string city = pref?.GetString("city", "");
+        private static string city = _pref1?.GetString("city", "");
         public static string GetCity()
         {
             return city;
         }
 
-        private static string stage = prefs?.GetString("stage_before_exit", "");
-        public static string GetStage()
+        private static string totEarnings = _pref3?.GetString("totalEarnings", "");
+        public static string GetTotEarnings()
         {
-            return stage;
+            return totEarnings;
         }
     }
 }

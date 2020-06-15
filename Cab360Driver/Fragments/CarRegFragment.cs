@@ -1,16 +1,12 @@
-﻿using Android.Gms.Tasks;
-using Android.Graphics;
+﻿using Android.Graphics;
 using Android.OS;
-using Android.Runtime;
 using Android.Text;
 using Android.Util;
 using Android.Views;
-using AndroidX.Annotations;
+using Android.Widget;
 using AndroidX.AppCompat.Widget;
 using Cab360Driver.Adapters;
-using Cab360Driver.DataModels;
 using Cab360Driver.EnumsConstants;
-using Cab360Driver.EventListeners;
 using Cab360Driver.Helpers;
 using Cab360Driver.IServices;
 using Firebase.Auth;
@@ -24,12 +20,11 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using static Android.Views.View;
 using static Android.Widget.AutoCompleteTextView;
 
 namespace Cab360Driver.Fragments
 {
-    public class CarRegFragment : AndroidX.Fragment.App.Fragment, ITextWatcher, IOnKeyListener, IOnSuccessListener, IOnFailureListener
+    public class CarRegFragment : AndroidX.Fragment.App.Fragment
     {
         private AppCompatAutoCompleteTextView CarBrandEt;
         private AppCompatAutoCompleteTextView CarModelEt;
@@ -39,19 +34,9 @@ namespace Cab360Driver.Fragments
         private TextInputLayout RegNoEt;
         private TextInputLayout CurrOwnEt;
         private MaterialButton ContinueBtn;
-
-        private string brand;
-        private string model;
-        private string color;
-        private string year;
-        private string condition;
-        private string currUser;
-        private string regNo;
         private ICarsApi CarsApi;
         public event EventHandler CarRegComplete;
-        FirebaseAuth FireAuth;
-        FirebaseDatabase FireDatabase;
-        private TaskCompletionListeners TaskCompletionListener = new TaskCompletionListeners();
+        private FirebaseDatabase FireDatabase;
 
         public override void OnCreate(Bundle savedInstanceState)
         {
@@ -78,8 +63,10 @@ namespace Cab360Driver.Fragments
             var _years = Years.Select(i => i.ToString()).ToArray();
             var yr_arrayAdapter = ArrayAdapterClass.CreateArrayAdapter(Activity, _years);
             CarYearEt.Adapter = yr_arrayAdapter;
-            CarYearEt.AddTextChangedListener(this);
-            CarYearEt.SetOnKeyListener(this);
+            CarYearEt.TextChanged += (s1, e1) =>
+            {
+
+            };
             CarYearEt.Validator = new Validator(CarYearEt);
 
             CarsApi = RestService.For<ICarsApi>(StringConstants.GetGateway());
@@ -100,8 +87,7 @@ namespace Cab360Driver.Fragments
                 foreach(var car in MyResult.Results)
                 {
                     model.Add(car.Model);
-                    var model2 = model.Distinct().ToList();
-                    var modelAdapter = ArrayAdapterClass.CreateArrayAdapter(Activity, model2);
+                    var modelAdapter = ArrayAdapterClass.CreateArrayAdapter(Activity, model);
                     CarModelEt.Adapter = modelAdapter;
                 }
                    
@@ -112,13 +98,11 @@ namespace Cab360Driver.Fragments
                 Log.Error("api error", e.Message);
             }
 
-            CarBrandEt.AddTextChangedListener(this);
-            CarBrandEt.SetOnKeyListener(this);
+            CarBrandEt.TextChanged += CarModelEt_TextChanged;
             CarBrandEt.Validator = new Validator(CarBrandEt);
 
             //will be set by volly httprequest 
-            CarModelEt.AddTextChangedListener(this);
-            CarModelEt.SetOnKeyListener(this);
+            CarModelEt.TextChanged += CarModelEt_TextChanged;
             CarModelEt.Validator = new Validator(CarModelEt);
 
             //all known colors
@@ -130,26 +114,27 @@ namespace Cab360Driver.Fragments
             }
             var coloradapter = ArrayAdapterClass.CreateArrayAdapter(Activity, LColors);
             CarColorEt.Adapter = coloradapter;
-            CarColorEt.AddTextChangedListener(this);
-            CarColorEt.SetOnKeyListener(this);
+            CarColorEt.TextChanged += CarModelEt_TextChanged;
             CarColorEt.Validator = new Validator(CarColorEt);
 
             //car condition
             var conditions = new string[] { "Slightly Used", "Used", "New" };
             var conditionsAdapter = ArrayAdapterClass.CreateArrayAdapter(Activity, conditions);
             ConditionEt.Adapter = conditionsAdapter;
-            ConditionEt.AddTextChangedListener(this);
-            ConditionEt.SetOnKeyListener(this);
+            ConditionEt.TextChanged += CarModelEt_TextChanged;
             ConditionEt.Validator = new Validator(ConditionEt);
 
             //write custom regex for car number
-            RegNoEt.EditText.AddTextChangedListener(this);
-            RegNoEt.EditText.SetOnKeyListener(this);
+            RegNoEt.EditText.TextChanged += CarModelEt_TextChanged;
 
             //nameText
-            CurrOwnEt.EditText.AddTextChangedListener(this);
-            CurrOwnEt.EditText.SetOnKeyListener(this);
+            CurrOwnEt.EditText.TextChanged += CarModelEt_TextChanged;
             
+        }
+
+        private void CarModelEt_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            CheckIfEmpty();
         }
 
         private void InitControls(View view)
@@ -167,66 +152,48 @@ namespace Cab360Driver.Fragments
 
         private void ContinueBtn_Click(object sender, EventArgs e)
         {
-            var carModel = new CarModel
-            {
-                Brand = brand,
-                Model = model,
-                Year = year,
-                Color = color,
-                Condition = condition,
-                CurrUser = currUser,
-                RegNo = regNo
-            };
-
-            HashCarDetails(carModel);
-        }
-
-        private void HashCarDetails(CarModel carModel)
-        {
             HashMap carMap = new HashMap();
-            carMap.Put("car_model", carModel.Model);
-            carMap.Put("car_brand", carModel.Brand);
-            carMap.Put("car_year", carModel.Year);
-            carMap.Put("car_color", carModel.Color);
-            carMap.Put("car_condition", carModel.Condition);
-            carMap.Put("curr_user", carModel.CurrUser);
-            carMap.Put("reg_no", carModel.RegNo);
+            carMap.Put("car_model", CarModelEt.Text);
+            carMap.Put("car_brand", CarBrandEt.Text);
+            carMap.Put("car_year", CarYearEt.Text);
+            carMap.Put("car_color", CarColorEt.Text);
+            carMap.Put("car_condition", ConditionEt.Text);
+            carMap.Put("curr_user", CurrOwnEt.EditText.Text);
+            carMap.Put("reg_no", RegNoEt.EditText.Text);
 
             SaveCarDetailsToDb(carMap);
         }
 
         private void SaveCarDetailsToDb(HashMap carMap)
         {
-            FireAuth = AppDataHelper.GetFirebaseAuth();
+            var currUser = AppDataHelper.GetCurrentUser();
             FireDatabase = AppDataHelper.GetDatabase();
-            var vehicleRef = FireDatabase.GetReference("RegUnVerifiedCars/" + FireAuth.CurrentUser.Uid);
-            vehicleRef.SetValue(carMap)
-                .AddOnSuccessListener(this)
-                .AddOnFailureListener(this);
-        }
+            if(currUser != null)
+            {
+                var vehicleRef = FireDatabase.GetReference("RegUnVerifiedCars").Child(currUser.Uid);
+                vehicleRef.SetValue(carMap)
+                    .AddOnSuccessListener(new OnSuccessListener(result =>
+                    {
+                        var driverRef = AppDataHelper.GetParentReference().Child(currUser.Uid);
+                        driverRef.Child("stage_of_registration").SetValue(RegistrationStage.CarCapturing.ToString())
+                            .AddOnSuccessListener(new OnSuccessListener(result2 =>
+                            {
+                                CarRegComplete.Invoke(this, new EventArgs());
+                            })).AddOnFailureListener(new OnFailureListener(e2 =>
+                            {
+                                Toast.MakeText(Activity, e2.Message, ToastLength.Short).Show();
+                            }));
 
-        public void OnSuccess(Java.Lang.Object result)
-        {
-            var driverRef = AppDataHelper.GetParentReference().Child(FireAuth.CurrentUser.Uid);
-            driverRef.Child("stage_of_registration").SetValue(RegistrationStage.CarCapturing.ToString())
-                    .AddOnSuccessListener(TaskCompletionListener)
-                    .AddOnFailureListener(TaskCompletionListener);
-            TaskCompletionListener.Successful += TaskCompletionListener_Successful;
-            TaskCompletionListener.Failure += TaskCompletionListener_Failure;
-        }
-
-        private void TaskCompletionListener_Failure(object sender, EventArgs e)
-        {
-            
-        }
-
-        private void TaskCompletionListener_Successful(object sender, TaskCompletionListeners.ResultArgs e)
-        {
-            CarRegComplete.Invoke(this, new EventArgs());
-        }
-
-        public void OnFailure(Java.Lang.Exception e)
-        {
+                    }))
+                    .AddOnFailureListener(new OnFailureListener(e1 =>
+                    {
+                        Toast.MakeText(Activity, e1.Message, ToastLength.Short).Show();
+                    }));
+            }
+            else
+            {
+                return;
+            }
             
         }
 
@@ -237,68 +204,36 @@ namespace Cab360Driver.Fragments
 
         private void CheckIfEmpty()
         {
-            brand = CarBrandEt.Text;
-            model = CarModelEt.Text;
-            color = CarColorEt.Text;
-            year = CarYearEt.Text;
-            condition = ConditionEt.Text;
-            currUser = CurrOwnEt.EditText.Text;
-            regNo = RegNoEt.EditText.Text;
+            ContinueBtn.Enabled = CarBrandEt.Text.Length >= 3 && CarModelEt.Text.Length >= 2 && CarColorEt.Text.Length >= 3 &&
+                CarYearEt.Text.Length == 4 && ConditionEt.Text.Length >= 3 && CurrOwnEt.EditText.Text.Length >= 3 && RegNoEt.EditText.Text.Length >= 5;
+        } 
+    }
 
-            ContinueBtn.Enabled = brand.Length >= 3 && model.Length >= 2 && color.Length >= 3 && 
-                year.Length == 4 && condition.Length >= 3 && currUser.Length >= 3 && regNo.Length >= 5;
+    public sealed class Validator : Java.Lang.Object, IValidator
+    {
+        private AppCompatAutoCompleteTextView _edittext;
 
+        public Validator(AppCompatAutoCompleteTextView edittext)
+        {
+            _edittext = edittext;
         }
 
-        public void BeforeTextChanged(ICharSequence s, int start, int count, int after)
+        public ICharSequence FixTextFormatted(ICharSequence invalidText)
         {
-            
+            return null;
         }
 
-        public void OnTextChanged(ICharSequence s, int start, int before, int count)
+        public bool IsValid(ICharSequence text)
         {
-            
-        }
-
-        public bool OnKey(View v, [GeneratedEnum] Keycode keyCode, KeyEvent e)
-        {
-            var action = e.Action;
-            if (action == KeyEventActions.Up)
+            var listAdapter = _edittext.Adapter;
+            for (int i = 0; i < listAdapter.Count; i++)
             {
-                CheckIfEmpty();
+                string temp = listAdapter.GetItem(i).ToString();
+                if (text.ToString().CompareTo(temp) != 0)
+                    continue;
+                return true;
             }
             return false;
-        }
-
-        
-
-        public class Validator : Java.Lang.Object, IValidator
-        {
-            private AppCompatAutoCompleteTextView _edittext;
-
-            public Validator(AppCompatAutoCompleteTextView edittext)
-            {
-                _edittext = edittext;
-            }
-
-            [Nullable]
-            public ICharSequence FixTextFormatted(ICharSequence invalidText)
-            {
-                return null;
-            }
-
-            public bool IsValid(ICharSequence text)
-            {
-                var listAdapter = _edittext.Adapter;
-                for (int i = 0; i < listAdapter.Count; i++)
-                {
-                    string temp = listAdapter.GetItem(i).ToString();
-                    if (text.ToString().CompareTo(temp) != 0)
-                        continue;
-                    return true;
-                }
-                return false;
-            }
         }
     }
 }

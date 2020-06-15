@@ -6,72 +6,86 @@ using System;
 
 namespace Cab360Driver.Utils
 {
-    public class DecodeBitmapTask : AsyncTask<Java.Lang.Object, Java.Lang.Object, Bitmap>
+    public sealed class DecodeBitmapTask : AsyncTask<object, object, Bitmap>
     {
-        private BackgroundBitmapCache cache;
-        private Resources resources;
-        private int bitmapResId;
-        private int reqWidth;
-        private int reqHeight;
-        private WeakReference<IListener> refListener;
+        private readonly BackgroundBitmapCache _cache;
+        private readonly Resources _resources;
+        private readonly int _bitmapResId, _reqWidth, _reqHeight;
+
+        private readonly WeakReference<IListener> _refListener;
 
         public interface IListener
         {
             void OnPostExecuted(Bitmap bitmap);
         }
 
-        public DecodeBitmapTask(Resources resources, [DrawableRes]int bitmapResId, int reqWidth, int reqHeight, [NonNull]IListener listener)
+        public sealed class Listener : IListener
         {
-            this.cache = BackgroundBitmapCache.GetInstance();
-            this.resources = resources;
-            this.bitmapResId = bitmapResId;
-            this.reqWidth = reqWidth;
-            this.reqHeight = reqHeight;
-            refListener = new WeakReference<IListener>(listener);
+            private readonly Action<Bitmap> _onPostExecuted;
 
+            public Listener(Action<Bitmap> onPostExecuted)
+            {
+                _onPostExecuted = onPostExecuted;
+            }
+
+            public void OnPostExecuted(Bitmap bitmap)
+            {
+                _onPostExecuted?.Invoke(bitmap);
+            }
         }
 
-        
-        protected override Bitmap RunInBackground(params Java.Lang.Object[] @params)
+        public DecodeBitmapTask(Resources resources, [DrawableRes] int bitmapResId,
+            int reqWidth, int reqHeight,
+            [NonNull] IListener listener)
         {
-            Bitmap cachedBitmap = cache.GetBitmapFromBgMemCache(bitmapResId);
+            _cache = BackgroundBitmapCache.GetInstance();
+            _resources = resources;
+            _bitmapResId = bitmapResId;
+            _reqWidth = reqWidth;
+            _reqHeight = reqHeight;
+            _refListener = new WeakReference<IListener>(listener);
+        }
+
+        protected override Bitmap RunInBackground(params object[] @params)
+        {
+            var cachedBitmap = _cache.GetBitmapFromBgMemCache(_bitmapResId);
             if (cachedBitmap != null)
-            {
                 return cachedBitmap;
-            }
-            BitmapFactory.Options options = new BitmapFactory.Options();
-            options.InJustDecodeBounds = true;
-            BitmapFactory.DecodeResource(resources, bitmapResId, options);
-            int width = options.OutWidth;
-            int height = options.OutHeight;
 
-            int inSampleSize = 1;
-            if (height > reqHeight || width > reqWidth)
+            var options = new BitmapFactory.Options { InJustDecodeBounds = true };
+            BitmapFactory.DecodeResource(_resources, _bitmapResId, options);
+
+            var width = options.OutWidth;
+            var height = options.OutHeight;
+
+            var inSampleSize = 1;
+            if (height > _reqHeight || width > _reqWidth)
             {
-                int halfWidth = width / 2;
-                int halfHeight = height / 2;
+                var halfWidth = width / 2;
+                var halfHeight = height / 2;
 
-                while ((halfHeight / inSampleSize) >= reqHeight && (halfWidth / inSampleSize) >= reqWidth && !IsCancelled)
+                while (halfHeight / inSampleSize >= _reqHeight && halfWidth / inSampleSize >= _reqWidth
+                                                               && !IsCancelled)
                 {
                     inSampleSize *= 2;
                 }
             }
 
             if (IsCancelled)
-            {
                 return null;
-            }
 
             options.InSampleSize = inSampleSize;
             options.InJustDecodeBounds = false;
             options.InPreferredConfig = Bitmap.Config.Argb8888;
 
-            Bitmap decodedBitmap = BitmapFactory.DecodeResource(resources, bitmapResId, options);
+            var decodedBitmap = BitmapFactory.DecodeResource(_resources, _bitmapResId, options);
 
             Bitmap result;
             if (Build.VERSION.SdkInt < BuildVersionCodes.Lollipop)
             {
-                result = GetRoundedCornerBitmap(decodedBitmap, resources.GetDimension(Resource.Dimension.card_corner_radius), reqWidth, reqHeight);
+                result = GetRoundedCornerBitmap(
+                    decodedBitmap, _resources.GetDimension(Resource.Dimension.card_corner_radius), _reqWidth, _reqHeight
+                );
                 decodedBitmap.Recycle();
             }
             else
@@ -79,47 +93,47 @@ namespace Cab360Driver.Utils
                 result = decodedBitmap;
             }
 
-            cache.AddBitmapToBgMemoryCache(bitmapResId, result);
+            _cache.AddBitmapToBgMemoryCache(_bitmapResId, result);
             return result;
         }
 
         protected override void OnPostExecute(Bitmap result)
         {
-            //base.OnPostExecute(result);
-            if(refListener.TryGetTarget(out var listener))
-            {
-                listener.OnPostExecuted(result);
-            }
+            _refListener.TryGetTarget(out var listener);
+
+            listener?.OnPostExecuted(result);
         }
 
         public static Bitmap GetRoundedCornerBitmap(Bitmap bitmap, float pixels, int width, int height)
         {
+            var output = Bitmap.CreateBitmap(width, height, Bitmap.Config.Argb8888);
+            var canvas = new Canvas(output);
+            var sourceWidth = bitmap.Width;
+            var sourceHeight = bitmap.Height;
 
-            Bitmap output = Bitmap.CreateBitmap(width, height, Bitmap.Config.Argb8888);
-            Canvas canvas = new Canvas(output);
+            var xScale = (float)width / bitmap.Width;
+            var yScale = (float)height / bitmap.Height;
+            var scale = Math.Max(xScale, yScale);
 
-            int sourceWidth = bitmap.Width;
-            int sourceHeight = bitmap.Height;
+            var scaledWidth = scale * sourceWidth;
+            var scaledHeight = scale * sourceHeight;
 
-            float xScale = (float)width / bitmap.Width;
-            float yScale = (float)height / bitmap.Height;
-            float scale = Math.Max(xScale, yScale);
+            var left = (width - scaledWidth) / 2;
+            var top = (height - scaledHeight) / 2;
 
-            float scaledWidth = scale * sourceWidth;
-            float scaledHeight = scale * sourceHeight;
+            const int color = unchecked((int)0xff424242);
 
-            float left = (width - scaledWidth) / 2;
-            float top = (height - scaledHeight) / 2;
+            var rect = new Rect(0, 0, width, height);
+            var rectF = new RectF(rect);
 
-            Paint paint = new Paint();
-            Rect rect = new Rect(0, 0, width, height);
-            RectF rectF = new RectF(rect);
+            var targetRect = new RectF(left, top, left + scaledWidth, top + scaledHeight);
+            var paint = new Paint
+            {
+                AntiAlias = true,
+                Color = new Color(color)
+            };
 
-            RectF targetRect = new RectF(left, top, left + scaledWidth, top + scaledHeight);
-
-            paint.AntiAlias = true;
             canvas.DrawARGB(0, 0, 0, 0);
-            paint.Color = Color.Blue;
             canvas.DrawRoundRect(rectF, pixels, pixels, paint);
 
             paint.SetXfermode(new PorterDuffXfermode(PorterDuff.Mode.SrcIn));

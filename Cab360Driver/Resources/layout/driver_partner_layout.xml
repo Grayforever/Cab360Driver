@@ -21,7 +21,8 @@
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:padding="16dp">
+            android:padding="16dp"
+            android:clipToPadding="false">
 
             <TextView
                 android:layout_width="0dp"
@@ -68,6 +69,7 @@
                 android:layout_height="0dp"
                 android:id="@+id/drv_part_cv1"
                 android:stateListAnimator="@animator/lift_on_touch"
+                android:layout_marginBottom="16dp"
                 app:cardPreventCornerOverlap="true"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -108,9 +110,10 @@
 
             <com.google.android.material.button.MaterialButton
                 android:layout_width="0dp"
-                android:layout_height="wrap_content"
+                android:layout_height="56dp"
                 android:text="@string/continue_txt"
                 android:id="@+id/drv_part_cnt_btn"
+                android:textSize="16sp"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintBottom_toBottomOf="parent"

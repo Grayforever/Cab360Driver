@@ -1,72 +1,219 @@
 ﻿using Android.Animation;
 using Android.Content;
 using Android.Graphics;
+using Android.Graphics.Drawables;
 using Android.OS;
+using Android.Runtime;
+using Android.Util;
 using Android.Views;
 using Android.Widget;
-
 using AndroidX.Annotations;
-using AndroidX.CardView.Widget;
-using AndroidX.Core.View;
+using AndroidX.Interpolator.View.Animation;
 using AndroidX.RecyclerView.Widget;
-
-using Cab360Driver.Activities;
 using Cab360Driver.Adapters;
+using Cab360Driver.EventListeners;
 using Cab360Driver.Utils;
-using Java.Lang;
+using Google.Android.Material.AppBar;
 using Ramotion.CardSliderLib;
 using System;
-using System.Windows.Markup;
-using static Android.Views.ViewTreeObserver;
-using static Cab360Driver.Fragments.AccountFragment.OnCardClickListener;
-using static Cab360Driver.Utils.DecodeBitmapTask;
+using Toolbar = AndroidX.AppCompat.Widget.Toolbar;
 
 namespace Cab360Driver.Fragments
 {
-    public class AccountFragment : BaseFragment, IOnGlobalLayoutListener, IListener
+    [Register("id.Cab360Driver.Fragments.AccountFragment")]
+    public class AccountFragment : AndroidX.Fragment.App.Fragment
     {
-        private int[,] dotCoords = new int[5,2];
-        private static int[] pics = { Resource.Drawable.p1, Resource.Drawable.p2, Resource.Drawable.p3, Resource.Drawable.p4, Resource.Drawable.p5 };
-        private int[] maps = { Resource.Drawable.map_paris, Resource.Drawable.map_seoul, Resource.Drawable.map_london, Resource.Drawable.map_beijing, Resource.Drawable.map_greece };
-        private int[] descriptions = { Resource.String.text1, Resource.String.text2, Resource.String.text3, Resource.String.text4, Resource.String.text5 };
-        private string[] countries = { "PARIS", "SEOUL", "LONDON", "BEIJING", "THIRA" };
-        private string[] places = { "The Louvre", "Gwanghwamun", "Tower Bridge", "Temple of Heaven", "Aegeana Sea" };
-        private static string[] temperatures = { "21°C", "19°C", "17°C", "23°C", "20°C" };
-        private static string[] times = { "Aug 1 - Dec 15    7:00-18:00", "Sep 5 - Nov 10    8:00-16:00", "Mar 8 - May 21    7:00-18:00" };
-        private SliderAdapter sliderAdapter;
+        private readonly int[] pics = { Resource.Drawable.cool_car, Resource.Drawable.cool_car, Resource.Drawable.made_me_laugh, Resource.Drawable.cool_car, Resource.Drawable.cool_car };
+        
+        private readonly string[] compliments = { "Awesome music", "Cool car", "Made me laugh", "Neat and tidy", "Expert navigation" };
+        
+        private SliderAdapter sliderAdapter => new SliderAdapter(pics, 20, OnCardClickListener);
 
         private CardSliderLayoutManager layoutManger;
-        private static RecyclerView recyclerView;
-        private ImageSwitcher mapSwitcher;
-        private static TextSwitcher temperatureSwitcher;
-        private static TextSwitcher placeSwitcher;
-        private static TextSwitcher clockSwitcher;
-        private static TextSwitcher descriptionsSwitcher;
-        private View greenDot;
+        private RecyclerView recyclerView;
+        private TextSwitcher complimentsSwitcher;
+        private AppBarLayout appbar;
+        private Toolbar toolbar;
+        private ProfileHeaderBitmap headerBitmap;
+        private LinearLayout titleContainer;
+        private FrameLayout mHeaderLayout;
+        private Bitmap defaultBlurProfileBitmap;
+        private TextView profile_title_user;
+        private TextView profileTitleCount;
 
-        private TextView country1TextView;
-        private TextView country2TextView;
-        private int countryOffset1;
-        private int countryOffset2;
-        private long countryAnimDuration;
+        private bool collapsed = false;
+        private bool titleShow = false;
+        private ValueAnimator valueAnimator = null;
+
         private int currentPosition;
 
-        private DecodeBitmapTask decodeMapBitmapTask;
-
-        public override BaseFragment ProvideYourfragment()
+        public override void OnCreate(Bundle savedInstanceState)
         {
-            return new AccountFragment();
+            base.OnCreate(savedInstanceState);
         }
 
-        public override View ProvideYourFragmentView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
+        public override View OnCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
         {
             var view = inflater.Inflate(Resource.Layout.account, container, false);
-            sliderAdapter = new SliderAdapter(pics, 20, new OnCardClickListener(this));
+            appbar = view.FindViewById<AppBarLayout>(Resource.Id.appbar_account);
+            toolbar = view.FindViewById<Toolbar>(Resource.Id.toolbar_account);
+            headerBitmap = view.FindViewById<ProfileHeaderBitmap>(Resource.Id.profile_header_bg);
+            titleContainer = view.FindViewById<LinearLayout>(Resource.Id.profile_title_container);
+            titleContainer.Visibility = ViewStates.Invisible;
+            mHeaderLayout = view.FindViewById<FrameLayout>(Resource.Id.header_layout);
+            profile_title_user = view.FindViewById<TextView>(Resource.Id.profile_title_user);
+            profileTitleCount = view.FindViewById<TextView>(Resource.Id.profile_title_count);
+            SetDefaultProfileBg(Resource.Drawable.ic_bg);
+            InitListener();
             InitRecyclerView(view);
-            InitCountryText(view);
             InitSwitchers(view);
-            InitGreenDot(view);
             return view;
+        }
+
+        private void InitListener()
+        {
+            float parallaxMultiplier = ((CollapsingToolbarLayout.LayoutParams)headerBitmap.LayoutParameters).ParallaxMultiplier;
+
+            appbar.OffsetChanged += (s1, e1) =>
+            {
+                int totalScrollRange = e1.AppBarLayout.TotalScrollRange;
+                AnimalOnTitle(e1.VerticalOffset, totalScrollRange);
+                AnimalOnAvatar(e1.VerticalOffset, totalScrollRange, parallaxMultiplier);
+                AnimalOnBg(e1.VerticalOffset, totalScrollRange);
+            };
+        }
+
+        private void AnimalOnBg(int verticalOffset, int totalScrollRange)
+        {
+            float abs = Math.Abs(verticalOffset) / totalScrollRange;
+            headerBitmap.Post(() => 
+            {
+                headerBitmap.SetForegroundAlpha(abs);
+            });
+        }
+
+        private void AnimalOnAvatar(int i, int i2, float parallaxMultiplier)
+        {
+            float f = i2;
+            if (((int)(parallaxMultiplier * f)) + i <= 0 && !collapsed)
+            {
+                collapsed = true;
+                mHeaderLayout.Animate().Cancel();
+                mHeaderLayout
+                    .Animate()
+                    .ScaleX(0.0f)
+                    .ScaleY(0.0f)
+                    .Alpha(0.0f)
+                    .SetDuration(200)
+                    .SetInterpolator(new FastOutLinearInInterpolator())
+                    .SetListener(new AnimatorListener(animation =>
+                    {
+                        if (collapsed)
+                        {
+                            mHeaderLayout.Visibility = ViewStates.Invisible;
+                        }
+                    }, null, null, null)).Start();
+            }
+            else if (((int)(f * parallaxMultiplier)) + i >= 0 && collapsed)
+            {
+                collapsed = false;
+                mHeaderLayout.Visibility = ViewStates.Visible;
+                mHeaderLayout
+                    .Animate()
+                    .ScaleX(1.0f)
+                    .ScaleY(1.0f)
+                    .Alpha(1.0f)
+                    .SetDuration(200)
+                    .SetInterpolator(new LinearOutSlowInInterpolator())
+                    .SetListener(new AnimatorListener(null, null, null, null))
+                    .Start();
+            }
+        }
+    
+        private void AnimalOnTitle(int i, int i2)
+        {
+            if (valueAnimator == null)
+            {
+                valueAnimator = (ValueAnimator)ValueAnimator.OfFloat(1.0f, 0.0f).SetDuration(600);
+                valueAnimator.AddUpdateListener(new AnimatorUpdateListener
+                    (valueAnimator =>
+                    {
+                        float floatValue = (float)valueAnimator.AnimatedValue;
+                        profile_title_user.TranslationY = profile_title_user.Height * floatValue;
+                        profileTitleCount.TranslationY = profile_title_user.Height * floatValue;
+                        float f = 1.0f - (floatValue * 0.2f);
+                        profile_title_user.Alpha = f;
+                        profileTitleCount.Alpha = f;
+                    }));
+            }
+
+            if (i2 + i == 0)
+            {
+                if (!titleShow)
+                {
+                    titleShow = true;
+                    valueAnimator.Cancel();
+                    valueAnimator.RemoveAllListeners();
+                    valueAnimator.AddListener(new AnimatorListener(
+                        anim1 =>
+                        {
+                            titleContainer.Visibility = ViewStates.Visible;
+                        }, null, null, 
+                        anim2=>
+                        {
+                            profile_title_user.TranslationY = (profile_title_user.Height / 2);
+                            profile_title_user.Alpha = 0.2f;
+                            profileTitleCount.TranslationY = (profile_title_user.Height / 2);
+                            profileTitleCount.Alpha = 0.2f;
+                            titleContainer.Visibility = ViewStates.Visible;
+                        }));
+                    valueAnimator.Start();
+                }
+            }
+            else if (titleShow)
+            {
+                titleShow = false;
+                valueAnimator.Cancel();
+                valueAnimator.RemoveAllListeners();
+                valueAnimator.AddListener(new AnimatorListener(
+                    anim1 =>
+                    {
+                        titleContainer.Visibility = ViewStates.Gone;
+                    }, null, null,
+                    anim2=> 
+                    {
+                        titleContainer.Visibility = ViewStates.Visible;
+                    }));
+                valueAnimator.Reverse();
+            }
+        }
+                
+        public int Dip2px(float f)
+        {
+            return (int)(Resources.DisplayMetrics.Density * f);
+        }
+
+        private void SetDefaultProfileBg(int i)
+        {
+            try
+            {
+                headerBitmap.SetImageResource(i);
+                if (defaultBlurProfileBitmap == null)
+                {
+                    int width = Resources.DisplayMetrics.WidthPixels;
+                    defaultBlurProfileBitmap = Blur.GausianBlur(Activity, Bitmap.CreateScaledBitmap(BitmapFactory.DecodeResource(Resources, i),
+                            width / 15, Dip2px(275.0f) / 15, false), 25);
+                }
+                if (defaultBlurProfileBitmap != null)
+                {
+                    headerBitmap.SetForeground(new BitmapDrawable(defaultBlurProfileBitmap));
+                    headerBitmap.SetForegroundAlpha(0.0f);
+                }
+            }
+            catch (Exception e)
+            {
+                Log.Debug("error", e.Message);
+            }
         }
 
         private void InitRecyclerView(View view)
@@ -74,11 +221,17 @@ namespace Cab360Driver.Fragments
             recyclerView = (RecyclerView)view.FindViewById(Resource.Id.recycler_view);
             recyclerView.SetAdapter(sliderAdapter);
             recyclerView.HasFixedSize = true;
-            recyclerView.AddOnScrollListener(new OnScrollListener(this));
+            recyclerView.AddOnScrollListener(
+                new MyRvOnScrollListener(
+                    null,
+                    (rv, newState)=> {
+                        if (newState == RecyclerView.ScrollStateIdle)
+                            OnActiveCardChange();
+                    })
+                );
             layoutManger = (CardSliderLayoutManager)recyclerView.GetLayoutManager();
             recyclerView.SetLayoutManager(layoutManger);
-            CardSnapHelper cardSnapHelper = new CardSnapHelper();
-            cardSnapHelper.AttachToRecyclerView(recyclerView);
+            new CardSnapHelper().AttachToRecyclerView(recyclerView);
         }
 
         public void OnActiveCardChange()
@@ -107,154 +260,19 @@ namespace Cab360Driver.Fragments
                 animV[1] = Resource.Animation.slide_out_top;
             }
 
-            SetCountryText(countries[pos % countries.Length], left2right);
-
-            temperatureSwitcher.SetInAnimation(Activity, animH[0]);
-            temperatureSwitcher.SetOutAnimation(Activity, animH[1]);
-            temperatureSwitcher.SetText(temperatures[pos % temperatures.Length]);
-
-            placeSwitcher.SetInAnimation(Activity, animV[0]);
-            placeSwitcher.SetOutAnimation(Activity, animV[1]);
-            placeSwitcher.SetText(places[pos % places.Length]);
-
-            clockSwitcher.SetInAnimation(Activity, animV[0]);
-            clockSwitcher.SetOutAnimation(Activity, animV[1]);
-            clockSwitcher.SetText(times[pos % times.Length]);
-
-            descriptionsSwitcher.SetText(GetString(descriptions[pos % descriptions.Length]));
-
-            ShowMap(maps[pos % maps.Length]);
-
-            ViewCompat.Animate(greenDot)
-                .TranslationX(dotCoords[pos % dotCoords.Length, 0])
-                .TranslationY(dotCoords[pos % dotCoords.Length, 1])
-                .Start();
+            complimentsSwitcher.SetInAnimation(Activity, animV[0]);
+            complimentsSwitcher.SetOutAnimation(Activity, animV[1]);
+            complimentsSwitcher.SetText(compliments[pos % compliments.Length]);
 
             currentPosition = pos;
         }
 
-        private void ShowMap([DrawableRes]int resId)
-        {
-            if (decodeMapBitmapTask != null)
-            {
-                decodeMapBitmapTask.Cancel(true);
-            }
-
-            int w = mapSwitcher.Width;
-            int h = mapSwitcher.Height;
-
-            decodeMapBitmapTask = new DecodeBitmapTask(Resources, resId, w, h, this);
-            decodeMapBitmapTask.Execute();
-        }
-
-        private void SetCountryText(string text, bool left2right)
-        {
-            TextView invisibleText;
-            TextView visibleText;
-            if (country1TextView.Alpha > country2TextView.Alpha)
-            {
-                visibleText = country1TextView;
-                invisibleText = country2TextView;
-            }
-            else
-            {
-                visibleText = country2TextView;
-                invisibleText = country1TextView;
-            }
-
-            int vOffset;
-            if (left2right)
-            {
-                invisibleText.SetX(0);
-                vOffset = countryOffset2;
-            }
-            else
-            {
-                invisibleText.SetX(countryOffset2);
-                vOffset = 0;
-            }
-
-            invisibleText.Text = text;
-
-            ObjectAnimator iAlpha = ObjectAnimator.OfFloat(invisibleText, "alpha", 1f);
-            ObjectAnimator vAlpha = ObjectAnimator.OfFloat(visibleText, "alpha", 0f);
-            ObjectAnimator iX = ObjectAnimator.OfFloat(invisibleText, "x", countryOffset1);
-            ObjectAnimator vX = ObjectAnimator.OfFloat(visibleText, "x", vOffset);
-
-            AnimatorSet animSet = new AnimatorSet();
-            animSet.PlayTogether(iAlpha, vAlpha, iX, vX);
-            animSet.SetDuration(countryAnimDuration);
-            animSet.Start();
-        }
-
-        private void InitCountryText(View view)
-        {
-            countryAnimDuration = Resources.GetInteger(Resource.Integer.labels_animation_duration);
-            countryOffset1 = Resources.GetDimensionPixelSize(Resource.Dimension.left_offset);
-            countryOffset2 = Resources.GetDimensionPixelSize(Resource.Dimension.card_width);
-            country1TextView = (TextView)view.FindViewById(Resource.Id.tv_country_1);
-            country2TextView = (TextView)view.FindViewById(Resource.Id.tv_country_2);
-
-            country1TextView.SetX(countryOffset1);
-            country2TextView.SetX(countryOffset2);
-            country1TextView.Text = countries[0];
-            country2TextView.Alpha = 0f;
-
-            country1TextView.Typeface = Typeface.CreateFromAsset(Activity.Assets, "open-sans-extrabold.ttf");
-            country2TextView.Typeface = Typeface.CreateFromAsset(Activity.Assets, "open-sans-extrabold.ttf");
-        }
-
         private void InitSwitchers(View view)
         {
-            temperatureSwitcher = (TextSwitcher)view.FindViewById(Resource.Id.ts_temperature);
-            temperatureSwitcher.SetFactory(new TextViewFactoy(Resource.Style.TemperatureTextView, true, Activity));
-            temperatureSwitcher.SetCurrentText(temperatures[0]);
+            complimentsSwitcher = (TextSwitcher)view.FindViewById(Resource.Id.ts_compliments);
+            complimentsSwitcher.SetFactory(new TextViewFactoy(Resource.Style.ComplimentsTextView, false, Activity));
+            complimentsSwitcher.SetCurrentText(compliments[0]);
 
-            placeSwitcher = (TextSwitcher)view.FindViewById(Resource.Id.ts_place);
-            placeSwitcher.SetFactory(new TextViewFactoy(Resource.Style.PlaceTextView, false, Activity));
-            placeSwitcher.SetCurrentText(places[0]);
-
-            clockSwitcher = (TextSwitcher)view.FindViewById(Resource.Id.ts_clock);
-            clockSwitcher.SetFactory(new TextViewFactoy(Resource.Style.ClockTextView, false, Activity));
-            clockSwitcher.SetCurrentText(times[0]);
-
-            descriptionsSwitcher = (TextSwitcher)view.FindViewById(Resource.Id.ts_description);
-            descriptionsSwitcher.SetInAnimation(Activity, Android.Resource.Animation.FadeIn);
-            descriptionsSwitcher.SetOutAnimation(Activity, Android.Resource.Animation.FadeOut);
-            descriptionsSwitcher.SetFactory(new TextViewFactoy(Resource.Style.DescriptionTextView, false, Activity));
-            descriptionsSwitcher.SetCurrentText(GetString(descriptions[0]));
-
-            mapSwitcher = (ImageSwitcher)view.FindViewById(Resource.Id.ts_map);
-            mapSwitcher.SetInAnimation(Activity, Resource.Animation.fade_in);
-            mapSwitcher.SetOutAnimation(Activity, Resource.Animation.fade_out);
-            mapSwitcher.SetFactory(new ImageViewFactory(Activity));
-            mapSwitcher.SetImageResource(maps[0]);
-        }
-
-        public void OnPostExecuted(Bitmap bitmap)
-        {
-            ((ImageView)mapSwitcher.NextView).SetImageBitmap(bitmap);
-            mapSwitcher.ShowNext();
-        }
-
-        public class ImageViewFactory : Java.Lang.Object, ViewSwitcher.IViewFactory
-        {
-            Context context;
-            public ImageViewFactory(Context context)
-            {
-                this.context = context;
-            }
-
-            public View MakeView()
-            {
-                ImageView imageView = new ImageView(context);
-                imageView.SetScaleType(ImageView.ScaleType.CenterCrop);
-
-                ViewGroup.LayoutParams lp = new ImageSwitcher.LayoutParams(ViewGroup.LayoutParams.MatchParent, ViewGroup.LayoutParams.MatchParent);
-                imageView.LayoutParameters = lp;
-
-                return imageView;
-            }
         }
 
         public class TextViewFactoy : Java.Lang.Object, ViewSwitcher.IViewFactory
@@ -285,88 +303,32 @@ namespace Cab360Driver.Fragments
             }
         }
 
-        private void InitGreenDot(View view)
-        {
-            greenDot = view.FindViewById(Resource.Id.green_dot);
-            mapSwitcher.ViewTreeObserver.AddOnGlobalLayoutListener(this);
-        }
 
-        public void OnGlobalLayout()
-        {
-            mapSwitcher.ViewTreeObserver.RemoveOnGlobalLayoutListener(this);
-
-            int viewLeft = mapSwitcher.Left;
-            int viewTop = mapSwitcher.Top + mapSwitcher.Height / 3;
-
-            int border = 100;
-            int xRange = System.Math.Max(1, mapSwitcher.Width - border * 2);
-            int yRange = System.Math.Max(1, (mapSwitcher.Height / 3) * 2 - border * 2);
-
-            Random rnd = new Random();
-
-            for (int i = 0, cnt = dotCoords.Length; i < cnt; i++)
+        private View.IOnClickListener OnCardClickListener => new MyViewOnClickListener(
+            v =>
             {
-                dotCoords[i, 0] = viewLeft + border + rnd.Next(xRange);
-                dotCoords[i, 1] = viewTop + border + rnd.Next(yRange);
-            }
-            greenDot.SetX(dotCoords[0, 0]);
-            greenDot.SetY(dotCoords[0,1]);
-        }
-
-        internal class OnCardClickListener : Java.Lang.Object, View.IOnClickListener
-        {
-            AccountFragment fragment;
-            public OnCardClickListener(AccountFragment fragment)
-            {
-                this.fragment = fragment;
-            }
-            public void OnClick(View v)
-            {
-                CardSliderLayoutManager lm = (CardSliderLayoutManager)recyclerView.GetLayoutManager();
+                var lm = (CardSliderLayoutManager)recyclerView.GetLayoutManager();
 
                 if (lm.IsSmoothScrolling)
-                {
                     return;
-                }
 
-                int activeCardPosition = lm.ActiveCardPosition;
+                var activeCardPosition = lm.ActiveCardPosition;
                 if (activeCardPosition == RecyclerView.NoPosition)
-                {
                     return;
-                }
 
-                int clickedPosition = recyclerView.GetChildAdapterPosition(v);
+                var clickedPosition = recyclerView.GetChildAdapterPosition(v);
                 if (clickedPosition == activeCardPosition)
                 {
-                    Intent intent = new Intent(fragment.Activity, typeof(OnboardingActivity));
-                    intent.PutExtra(Class.SimpleName, pics[activeCardPosition % pics.Length]);
-
-                    CardView cardView = (CardView)v;
-                    View sharedView = cardView.GetChildAt(cardView.ChildCount - 1);
+                    
                 }
                 else if (clickedPosition > activeCardPosition)
                 {
                     recyclerView.SmoothScrollToPosition(clickedPosition);
-                    fragment.OnActiveCardChange(clickedPosition);
+                    OnActiveCardChange(clickedPosition);
                 }
             }
+        );
 
-            internal class OnScrollListener : RecyclerView.OnScrollListener
-            {
-                AccountFragment context;
-                public OnScrollListener(AccountFragment context)
-                {
-                    this.context = context;
-                }
-                public override void OnScrollStateChanged(RecyclerView recyclerView, int newState)
-                {
-                    base.OnScrollStateChanged(recyclerView, newState);
-                    if (newState == RecyclerView.ScrollStateIdle)
-                    {
-                        context.OnActiveCardChange();
-                    }
-                }
-            }
-        }
+        
     }
 }

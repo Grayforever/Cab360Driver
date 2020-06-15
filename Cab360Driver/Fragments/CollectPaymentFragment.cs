@@ -1,31 +1,32 @@
-﻿
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
-using Android.App;
-using Android.Content;
-using Android.OS;
-using Android.Runtime;
-using Android.Util;
+﻿using Android.OS;
 using Android.Views;
 using Android.Widget;
+using Cab360Driver.Helpers;
+using Firebase.Database;
+using Java.Util;
+using System;
 
 namespace Cab360Driver.Fragments
 {
     public class CollectPaymentFragment : AndroidX.Fragment.App.DialogFragment
     {
-        readonly double mfares;
+        private readonly double _fares;
+        private readonly double _distance;
+        private readonly string _from;
+        private readonly string _to;
 
-        TextView totalfaresText;
-        Button collectPayButton;
-
-        public event EventHandler PaymentCollected;
-
-        public CollectPaymentFragment(double fares)
+        public event EventHandler<PaymentCollectedEventArgs> PaymentCollected;
+        public class PaymentCollectedEventArgs : EventArgs
         {
-            mfares = fares;
+            public DatabaseReference DataRef { get; set; }
+        }
+
+        public CollectPaymentFragment(double fares, double distance, string from, string to)
+        {
+            _fares = fares;
+            _distance = distance;
+            _from = from;
+            _to = to;
         }
 
         public override void OnCreate(Bundle savedInstanceState)
@@ -48,16 +49,43 @@ namespace Cab360Driver.Fragments
 
         private void GetControls(View view)
         {
-            totalfaresText = (TextView)view.FindViewById(Resource.Id.totalfaresText);
-            collectPayButton = (Button)view.FindViewById(Resource.Id.collectPayButton);
+            var totalfaresText = (TextView)view.FindViewById(Resource.Id.totalfaresText);
+            var totalDistance = (TextView)view.FindViewById(Resource.Id.totalDistanceText);
+            var fromText = (TextView)view.FindViewById(Resource.Id.fare_frm_txt);
+            var toText = (TextView)view.FindViewById(Resource.Id.fare_to_txt);
+            var collectPayButton = (Button)view.FindViewById(Resource.Id.collectPayButton);
 
-            totalfaresText.Text = "$" + mfares.ToString();
-            collectPayButton.Click += CollectPayButton_Click;
+            totalfaresText.Text = $"¢{_fares}";
+            totalDistance.Text = $"{_distance}km";
+            fromText.Text = _from;
+            toText.Text = _to;
+
+            collectPayButton.Click += (s1, e1) =>
+            {
+                var mAuth = AppDataHelper.GetFirebaseAuth();
+                var dataObject = HashEarnings();
+                var mEarningsRef = AppDataHelper.GetParentReference().Child("earnings").Child(mAuth.CurrentUser.Uid);
+                mEarningsRef.SetValue(dataObject)
+                    .AddOnSuccessListener(new OnSuccessListener(result =>
+                    {
+                        PaymentCollected?.Invoke(this, new PaymentCollectedEventArgs { DataRef = mEarningsRef });
+                    }))
+                    .AddOnFailureListener(new OnFailureListener(e =>
+                    {
+                        Toast.MakeText(Activity, e.Message, ToastLength.Short).Show();
+                    }));
+            };
         }
 
-        void CollectPayButton_Click(object sender, EventArgs e)
+        private HashMap HashEarnings()
         {
-            PaymentCollected.Invoke(this, new EventArgs());
+            HashMap earnMap = new HashMap();
+            earnMap.Put("totalDistance", _distance);
+            earnMap.Put("rideFare", _fares);
+            earnMap.Put("from", _from);
+            earnMap.Put("to", _to);
+            earnMap.Put("currentDate", $"{DateTime.UtcNow}");
+            return earnMap;
         }
 
     }

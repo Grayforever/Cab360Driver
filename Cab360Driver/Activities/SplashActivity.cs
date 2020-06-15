@@ -1,26 +1,21 @@
 ﻿using Android.App;
 using Android.Content;
 using Android.OS;
-using Android.Util;
+using Android.Widget;
 using AndroidX.AppCompat.App;
 using Cab360Driver.EnumsConstants;
+using Cab360Driver.EventListeners;
 using Cab360Driver.Helpers;
 using Firebase.Auth;
-using Firebase.Database;
 
 namespace Cab360Driver.Activities
 {
     [Activity(MainLauncher = true, ScreenOrientation = Android.Content.PM.ScreenOrientation.Portrait)]
-    public class SplashActivity : AppCompatActivity, IValueEventListener
+    public class SplashActivity : AppCompatActivity
     {
-        private ISharedPreferences preferences = Application.Context.GetSharedPreferences("appSession", FileCreationMode.Private);
-        private ISharedPreferencesEditor editor;
-
         protected override void OnCreate(Bundle savedInstanceState)
         {
             base.OnCreate(savedInstanceState);
-            editor = preferences.Edit();
-
         }
 
         protected override void OnResume()
@@ -35,6 +30,7 @@ namespace Cab360Driver.Activities
             {
                 var intent2 = new Intent(this, typeof(OnboardingActivity));
                 intent2.AddFlags(ActivityFlags.ClearTask | ActivityFlags.ClearTop | ActivityFlags.NewTask);
+                //intent2.PutExtra("stage", RegistrationStage.CarCapturing.ToString());
                 StartActivity(intent2);
             }
             else
@@ -46,49 +42,25 @@ namespace Cab360Driver.Activities
         private void CheckStatus(string uid)
         {
             var fireDataRef = AppDataHelper.GetParentReference().Child(uid);
-            fireDataRef.OrderByChild("stage_of_registration")
-                .AddListenerForSingleValueEvent(this);
-        }
-
-        public void OnCancelled(DatabaseError error)
-        {
-            Log.Error("FireDataError", error.Message);
-        }
-
-        public void OnDataChange(DataSnapshot snapshot)
-        {
-            try
-            {
-                if (!snapshot.Exists())
-                    return;
-
-                var stage = snapshot.Child("stage_of_registration").Value.ToString();
-                StartWhichActivity(stage);
-
-            }
-            catch (DatabaseException e)
-            {
-                Log.Debug("database exception: ", e.Message);
-            }
-        }
-
-        private void StartWhichActivity(string stage)
-        {
-            Log.Info("stage before exit: ", stage);
-            if (stage == RegistrationStage.RegistrationDone.ToString())
-            {
-                var intent3 = new Intent(this, typeof(MainActivity));
-                intent3.AddFlags(ActivityFlags.ClearTask | ActivityFlags.ClearTop | ActivityFlags.NewTask);
-                StartActivity(intent3);
-            }
-            else
-            {
-                var intent1 = new Intent(this, typeof(OnboardingActivity));
-                intent1.AddFlags(ActivityFlags.ClearTask | ActivityFlags.ClearTop | ActivityFlags.NewTask);
-                StartActivity(intent1);
-            }
-            editor.PutString("stage_before_exit", stage);
-            editor.Apply();
+            fireDataRef.OrderByChild("stage_of_registration").EqualTo(RegistrationStage.RegistrationDone.ToString())
+                .AddListenerForSingleValueEvent(new SingleValueListener(snapshot=> {
+                    if (!snapshot.Exists())
+                    {
+                        var intent1 = new Intent(this, typeof(OnboardingActivity));
+                        intent1.AddFlags(ActivityFlags.ClearTask | ActivityFlags.ClearTop | ActivityFlags.NewTask);
+                        intent1.PutExtra("stage", snapshot.Value.ToString());
+                        StartActivity(intent1);
+                    }
+                    else
+                    {
+                        var intent3 = new Intent(this, typeof(MainActivity));
+                        intent3.AddFlags(ActivityFlags.ClearTask | ActivityFlags.ClearTop | ActivityFlags.NewTask);
+                        StartActivity(intent3);
+                    }
+                }, error=> 
+                {
+                    Toast.MakeText(this, error.Message, ToastLength.Short).Show();
+                }));
         }
     }
 }

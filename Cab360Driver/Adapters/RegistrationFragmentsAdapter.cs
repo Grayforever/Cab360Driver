@@ -16,17 +16,12 @@ namespace Cab360Driver.Adapters
             fragments.Add(fragment);
         }
 
-        public override int ItemCount
-        {
-            get
-            {
-                return fragments.Count;
-            }
-        }
+        public override int ItemCount => fragments.Count;
+        
 
         public override AndroidX.Fragment.App.Fragment CreateFragment(int p0)
         {
-            return fragments[p0];
+            return fragments[p0]; 
         }
     }
 }

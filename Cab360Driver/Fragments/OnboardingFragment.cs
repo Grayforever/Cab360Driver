@@ -12,8 +12,17 @@ namespace Cab360Driver.Fragments
         private MaterialButton SignInBtn;
         private MaterialButton SignUpBtn;
         private ImageView Iview;
-        public event EventHandler SignIn;
-        public event EventHandler SignUp;
+
+        private int driverAnim = Resource.Drawable.driver_2;
+
+        public readonly Action<EventArgs> _onSignUp;
+        public readonly Action<EventArgs> _onSignIn;
+
+        public OnboardingFragment(Action<EventArgs> onSignUp, Action<EventArgs> onSignIn)
+        {
+            _onSignUp = onSignUp;
+            _onSignIn = onSignIn;
+        }
 
         public override void OnCreate(Bundle savedInstanceState)
         {
@@ -28,31 +37,24 @@ namespace Cab360Driver.Fragments
             SignInBtn = view.FindViewById<MaterialButton>(Resource.Id.onbd_signin_btn);
             SignUpBtn = view.FindViewById<MaterialButton>(Resource.Id.onbd_signup_btn);
             Iview = view.FindViewById<ImageView>(Resource.Id.oboarding_gif);
-            SignInBtn.Click += SignInBtn_Click; SignUpBtn.Click += SignUpBtn_Click;
+
+            Glide.With(this)
+                .Load(driverAnim)
+                .Into(Iview)
+                .ClearOnDetach();
+            SignInBtn.Click += SignInBtn_Click; 
+            SignUpBtn.Click += SignUpBtn_Click;
             return view;
-        }
-
-        public override void OnViewCreated(View view, Bundle savedInstanceState)
-        {
-            base.OnViewCreated(view, savedInstanceState);
-            SetIntroBanner();
-        }
-
-        private void SetIntroBanner()
-        {
-            Glide.With(Activity)
-                .Load(Resource.Drawable.driver_2)
-                .Into(Iview);
         }
 
         private void SignUpBtn_Click(object sender, EventArgs e)
         {
-            SignUp?.Invoke(this, new EventArgs());
+            _onSignUp.Invoke(e);
         }
 
         private void SignInBtn_Click(object sender, EventArgs e)
         {
-            SignIn?.Invoke(this, new EventArgs());
+            _onSignIn.Invoke(e);
         }
     }
 }

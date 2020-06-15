@@ -4,7 +4,7 @@ using static Android.Views.View;
 
 namespace Cab360Driver.Adapters
 {
-    public class SliderAdapter : RecyclerView.Adapter, IOnClickListener
+    public class SliderAdapter : RecyclerView.Adapter
     {
         private int count;
         private int[] content;
@@ -16,40 +16,26 @@ namespace Cab360Driver.Adapters
             this.count = count;
             this.listener = listener;
         }
-        public override int ItemCount
-        {
-            get { return count; }
-        }
-
+        public override int ItemCount 
+            => count;
+        
         public override void OnBindViewHolder(RecyclerView.ViewHolder holder, int position)
-        {
-            SliderCard.SliderCard sliderViewHolder = holder as SliderCard.SliderCard;
-            sliderViewHolder.SetContent(content[position % content.Length]);
-        }
+            => (holder as SliderCard.SliderCard)?.SetContent(content[position % content.Length]);
 
         public override RecyclerView.ViewHolder OnCreateViewHolder(ViewGroup parent, int viewType)
         {
-            View view = LayoutInflater.From(parent.Context).Inflate(Resource.Layout.layout_slider_card, parent, false);
+            var view = LayoutInflater.From(parent.Context)
+                .Inflate(Resource.Layout.layout_slider_card, parent, false);
 
             if (listener != null)
             {
-                view.SetOnClickListener(this); 
+                view.Click+=(s1, e1)=> { listener?.OnClick(view); }; 
             }
-            SliderCard.SliderCard sliderCard = new SliderCard.SliderCard(view);
-            return sliderCard;
+            return new SliderCard.SliderCard(view);
         }
 
         public override void OnViewRecycled(Java.Lang.Object holder)
-        {
-            //base.OnViewRecycled(holder);
-            var vHolder = holder as SliderCard.SliderCard;
-            vHolder.ClearContent();
-        }
-
-        public void OnClick(View v)
-        {
-            listener.OnClick(v);
-        }  
+            => (holder as SliderCard.SliderCard)?.ClearContent();
     }
     
 }

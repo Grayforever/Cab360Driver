@@ -39,25 +39,41 @@ namespace Cab360Driver.EventListeners
         
         public void Create (Android.Locations.Location myLocation)
         {
-            availablityRef = AppDataHelper.GetAvailDrivRef().Child(AppDataHelper.GetCurrentUser().Uid);
+            var currUser = AppDataHelper.GetCurrentUser();
+            if(currUser != null)
+            {
+                availablityRef = AppDataHelper.GetAvailDrivRef().Child(currUser.Uid);
 
-            HashMap location = new HashMap();
-            location.Put("latitude", myLocation.Latitude);
-            location.Put("longitude", myLocation.Longitude);
+                HashMap location = new HashMap();
+                location.Put("latitude", myLocation.Latitude);
+                location.Put("longitude", myLocation.Longitude);
 
-            HashMap driverInfo = new HashMap();
-            driverInfo.Put("location", location);
-            driverInfo.Put("ride_id", "waiting");
+                HashMap driverInfo = new HashMap();
+                driverInfo.Put("location", location);
+                driverInfo.Put("ride_id", "waiting");
 
-            availablityRef.AddValueEventListener(this);
-            availablityRef.SetValue(driverInfo);
+                availablityRef.AddValueEventListener(this);
+                availablityRef.SetValue(driverInfo);
+            }
+            else
+            {
+                return;
+            }
         }
 
         public void RemoveListener()
         {
-            availablityRef.RemoveValue();
-            availablityRef.RemoveEventListener(this);
-            availablityRef = null;
+            if(availablityRef != null)
+            {
+                availablityRef.RemoveValue();
+                availablityRef.RemoveEventListener(this);
+                availablityRef = null;
+            }
+            else
+            {
+                return;
+            }
+            
         }
 
 

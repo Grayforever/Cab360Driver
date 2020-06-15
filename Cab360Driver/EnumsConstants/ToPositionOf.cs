@@ -10,10 +10,12 @@ using Android.Runtime;
 using Android.Views;
 using Android.Widget;
 
-namespace Cab360Driver.Utils
+namespace Cab360Driver.EnumsConstants
 {
-    public class CameraUtils
+    public enum ToPositionOf
     {
-
+        Rider,
+        Driver,
+        Destination
     }
 }

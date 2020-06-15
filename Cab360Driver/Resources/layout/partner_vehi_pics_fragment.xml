@@ -163,9 +163,10 @@
 
             <com.google.android.material.button.MaterialButton
                 android:layout_width="0dp"
-                android:layout_height="wrap_content"
+                android:layout_height="56dp"
+                android:textSize="16sp"
                 android:id="@+id/vehi_pics_cnt_btn"
-                android:text="Continue"
+                android:text="@string/continue_txt"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"

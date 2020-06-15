@@ -1,51 +1,59 @@
 ﻿using Android.Graphics;
-using Android.Runtime;
 using Android.Util;
-using Java.Lang;
 using System;
+using Number = Java.Lang.Number;
+using Object = Java.Lang.Object;
 
 namespace Cab360Driver.Utils
 {
-    public class BackgroundBitmapCache : LruCache
+    public class BackgroundBitmapCache
     {
-        public BackgroundBitmapCache(int size): base(size) { }
+        private LruCache _backgroundsCache; // LruCache<int, Bitmap>
 
-        private static BackgroundBitmapCache Instance;
+        private static BackgroundBitmapCache _instance;
 
         public static BackgroundBitmapCache GetInstance()
         {
-            if (Instance == null)
-            {
-                var maxMemory = (int)(Runtime.GetRuntime().MaxMemory() / 1024);
-                int cacheSize = maxMemory / 5;
-                Instance = new BackgroundBitmapCache(cacheSize);
-            }
-            return Instance;
+            if (_instance != null) return _instance;
+
+            _instance = new BackgroundBitmapCache();
+            _instance.Init();
+            return _instance;
         }
 
-        protected override int SizeOf(Java.Lang.Object key, Java.Lang.Object value)
-		{
-			// android.graphics.Bitmap.getByteCount() method isn't currently implemented in Xamarin. Invoke Java method.
-			IntPtr classRef = JNIEnv.FindClass("android/graphics/Bitmap");
-			var getBytesMethodHandle = JNIEnv.GetMethodID(classRef, "getByteCount", "()I");
-			var byteCount = JNIEnv.CallIntMethod(value.Handle, getBytesMethodHandle);
-           
-			return byteCount / 1024;
-		}
+        private void Init()
+        {
+            var maxMemory = (int)(Java.Lang.Runtime.GetRuntime().MaxMemory() / 1024);
+            var cacheSize = maxMemory / 5;
+
+            _backgroundsCache = new MyLruCache<Bitmap>(
+                cacheSize,
+                // The cache size will be measured in kilobytes rather than number of items.
+                (key, bitmap) => bitmap.ByteCount / 1024
+            );
+        }
 
         public void AddBitmapToBgMemoryCache(int key, Bitmap bitmap)
         {
             if (GetBitmapFromBgMemCache(key) == null)
-            {
-                Instance.Put(key, bitmap);
-            }
+                _backgroundsCache.Put(key, bitmap);
         }
 
         public Bitmap GetBitmapFromBgMemCache(int key)
+            => (Bitmap)_backgroundsCache.Get(key);
+
+        private sealed class MyLruCache<T> : LruCache where T : Object
         {
-            var bit = Instance.Get(key);
-            var bitmap = bit.JavaCast<Bitmap>();
-            return bitmap;
+            private readonly Func<int, T, int> _sizeOf;
+
+            public MyLruCache(int maxSize, Func<int, T, int> sizeOf) : base(maxSize)
+            {
+                _sizeOf = sizeOf;
+            }
+
+            // You can cast `key` to int directly
+            protected override int SizeOf(Object key, Object value)
+                => _sizeOf((key as Number)?.IntValue() ?? 0, (T)value);
         }
     }
 }

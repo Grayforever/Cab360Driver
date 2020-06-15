@@ -9,7 +9,7 @@ namespace Cab360Driver.Fragments
     {
         public event EventHandler OnSkip;
         public event EventHandler OnVisit;
-
+        NoNetBottomSheet noNetBottomSheet = new NoNetBottomSheet();
         public override void OnCreate(Bundle savedInstanceState)
         {
             base.OnCreate(savedInstanceState);
@@ -33,12 +33,14 @@ namespace Cab360Driver.Fragments
             var skip_btn = view.FindViewById<MaterialButton>(Resource.Id.skip_btn);
             skip_btn.Click += (s1, e1) =>
               {
-                  OnSkip.Invoke(this, new EventArgs());
+                  OnSkip?.Invoke(this, new EventArgs());
               };
 
             visit_btn.Click += (s2, e2) =>
               {
-                  OnVisit.Invoke(this, new EventArgs());
+                  //OnVisit?.Invoke(this, new EventArgs());
+                  noNetBottomSheet.Cancelable = false;
+                  noNetBottomSheet.Show(Activity.SupportFragmentManager, "nonet");
               };
         }
     }

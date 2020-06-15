@@ -55,9 +55,15 @@ namespace Cab360Driver.EventListeners
             FirebaseDatabase database = AppDataHelper.GetDatabase();
 
             var currentUser = AppDataHelper.GetCurrentUser();
-
-            DatabaseReference driverRef = database.GetReference("Cab360Drivers/" + currentUser.Uid);
-            driverRef.AddValueEventListener(this);
+            if(currentUser != null)
+            {
+                DatabaseReference driverRef = database.GetReference("Cab360Drivers/" + currentUser.Uid);
+                driverRef.AddValueEventListener(this);
+            }
+            else
+            {
+                return;
+            }
 
         }
 

@@ -5,12 +5,14 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:id="@+id/drv_signup_root"
-    tools:ignore="HardcodedText">
+    tools:ignore="HardcodedText"
+    android:background="@android:color/white">
 
     <include
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         layout="@layout/appbar_main"
+        android:id="@+id/signup_appbar"
         />
 
     <androidx.core.widget.NestedScrollView
@@ -22,7 +24,8 @@
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:padding="16dp">
+            android:padding="16dp"
+            android:clipToPadding="false">
 
             <com.google.android.material.textfield.TextInputLayout
                 android:layout_width="0dp"
@@ -33,6 +36,7 @@
                 android:layout_marginEnd="4dp"
                 app:layout_constraintEnd_toStartOf="@+id/drv_signup_lname_et"
                 android:hint="Firstname"
+                app:boxStrokeWidthFocused="2dp"
                 >
 
                 <com.google.android.material.textfield.TextInputEditText
@@ -55,6 +59,7 @@
                 android:layout_marginStart="4dp"
                 android:hint="Lastname"
                 android:id="@+id/drv_signup_lname_et"
+                app:boxStrokeWidthFocused="2dp"
                 >
 
                 <com.google.android.material.textfield.TextInputEditText
@@ -76,6 +81,7 @@
                 app:layout_constraintBottom_toTopOf="@+id/drv_signup_phone_et"
                 app:layout_constraintTop_toBottomOf="@+id/drv_signup_fname_et"
                 android:hint="Email"
+                app:boxStrokeWidthFocused="2dp"
                 >
 
                 <com.google.android.material.textfield.TextInputEditText
@@ -96,6 +102,7 @@
                 app:layout_constraintBottom_toTopOf="@+id/drv_signup_pass_et"
                 app:layout_constraintTop_toBottomOf="@+id/drv_signup_email_et"
                 android:hint="Phone number"
+                app:boxStrokeWidthFocused="2dp"
                 >
 
                 <com.google.android.material.textfield.TextInputEditText
@@ -117,6 +124,7 @@
                 app:layout_constraintTop_toBottomOf="@+id/drv_signup_phone_et"
                 android:hint="Password"
                 app:endIconMode="password_toggle"
+                app:boxStrokeWidthFocused="2dp"
                 >
 
                 <com.google.android.material.textfield.TextInputEditText
@@ -137,7 +145,8 @@
                 android:layout_marginTop="8dp"
                 app:layout_constraintBottom_toTopOf="@+id/drv_signup_code_et"
                 app:layout_constraintTop_toBottomOf="@+id/drv_signup_pass_et"
-                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu">
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
+                app:boxStrokeWidthFocused="2dp">
 
                 <androidx.appcompat.widget.AppCompatAutoCompleteTextView
                     android:layout_width="match_parent"
@@ -161,6 +170,7 @@
                 app:layout_constraintBottom_toTopOf="@+id/drv_signup_sbmtbtn"
                 app:layout_constraintTop_toBottomOf="@+id/drv_signup_city_et"
                 app:helperText="Optional"
+                app:boxStrokeWidthFocused="2dp"
                 >
 
                 <com.google.android.material.textfield.TextInputEditText
@@ -176,9 +186,10 @@
  
             <com.google.android.material.button.MaterialButton
                 android:layout_width="0dp"
-                android:layout_height="wrap_content"
+                android:layout_height="56dp"
                 android:id="@+id/drv_signup_sbmtbtn"
                 android:text="Continue"
+                android:textSize="16sp"
                 android:layout_marginTop="8dp"
                 android:enabled="false"
                 app:layout_constraintStart_toStartOf="parent"

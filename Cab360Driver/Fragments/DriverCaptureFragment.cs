@@ -7,7 +7,6 @@ using Android.Widget;
 using AndroidX.CardView.Widget;
 using AndroidX.Core.Content;
 using Cab360Driver.EnumsConstants;
-using Cab360Driver.EventListeners;
 using Cab360Driver.Helpers;
 using Firebase.Auth;
 using Firebase.Database;
@@ -28,7 +27,6 @@ namespace Cab360Driver.Fragments
         private TextView HeaderTxt3;
         private FirebaseAuth FireAuth;
         private DatabaseReference driverRef;
-        private TaskCompletionListeners TaskCompletionListener = new TaskCompletionListeners();
 
         public event EventHandler ProfileCaptured;
 
@@ -106,18 +104,16 @@ namespace Cab360Driver.Fragments
 
         private void BeginCameraInvoke(CaptureType captureType)
         {
-            if(captureType == CaptureType.ProfilePic)
+            switch (captureType)
             {
-                CameraIntroDialog.Show(Activity.SupportFragmentManager, "ProfileCapture");
-                CameraIntroDialog.StartCameraAsync += CameraIntroDialog_StartCameraAsync;
-            }
-            else if(captureType == CaptureType.FrontOfLicense)
-            {
-
-            }
-            else if(captureType == CaptureType.BackOfLicense)
-            {
-
+                case CaptureType.ProfilePic:
+                    CameraIntroDialog.Show(Activity.SupportFragmentManager, "ProfileCapture");
+                    CameraIntroDialog.StartCameraAsync += CameraIntroDialog_StartCameraAsync;
+                    break;
+                case CaptureType.FrontOfLicense:
+                    break;
+                case CaptureType.BackOfLicense:
+                    break;
             }
         }
 
@@ -179,41 +175,43 @@ namespace Cab360Driver.Fragments
             {
                 FireStorage = FirebaseStorage.Instance;
                 StoreRef = FireStorage.GetReferenceFromUrl("gs://taxiproject-185a4.appspot.com");
-
-                var imageRef = StoreRef.Child("driverProfilePics/" + AppDataHelper.GetCurrentUser().Uid);
-                UploadTask uploadTask = imageRef.PutBytes(imageArray);
-                uploadTask.AddOnSuccessListener(TaskCompletionListener);
-                TaskCompletionListener.Successful += TaskCompletionListener_Successful;
-                uploadTask.AddOnFailureListener(TaskCompletionListener);
-                TaskCompletionListener.Failure += TaskCompletionListener_Failure;
+                var currUser = AppDataHelper.GetCurrentUser();
+                if(currUser != null)
+                {
+                    var imageRef = StoreRef.Child("driverProfilePics/" + currUser.Uid);
+                    UploadTask uploadTask = imageRef.PutBytes(imageArray);
+                    uploadTask.AddOnSuccessListener(new OnSuccessListener(r1 =>
+                    {
+                        FireAuth = AppDataHelper.GetFirebaseAuth();
+                        driverRef = AppDataHelper.GetParentReference().Child(FireAuth.CurrentUser.Uid);
+                        driverRef.Child("stage_of_registration").SetValue(RegistrationStage.CarRegistering.ToString())
+                            .AddOnSuccessListener(new OnSuccessListener(r2 =>
+                            {
+                                ProfileCaptured.Invoke(this, new EventArgs());
+                                UpdateUiOnCpture(CaptureType.ProfilePic);
+                            }))
+                            .AddOnFailureListener(new OnFailureListener(e2 =>
+                            {
+                                UpdateUiOnError(CaptureType.ProfilePic);
+                                Toast.MakeText(Activity, e2.Message, ToastLength.Short).Show();
+                            }));
+                    }));
+                    uploadTask.AddOnFailureListener(new OnFailureListener(e1 =>
+                    {
+                        Toast.MakeText(Activity, e1.Message, ToastLength.Short).Show();
+                    }));
+                }
+                else
+                {
+                    return;
+                }
+                
             }
             else
             {
                 Toast.MakeText(Activity, "no image to save", ToastLength.Short).Show();
             }
         }
-
-        private void TaskCompletionListener_Failure(object sender, EventArgs e)
-        {
-            UpdateUiOnError(CaptureType.ProfilePic);
-        }
-
-        private void TaskCompletionListener_Successful(object sender, TaskCompletionListeners.ResultArgs e)
-        {
-            FireAuth = AppDataHelper.GetFirebaseAuth();
-            driverRef = AppDataHelper.GetParentReference().Child(FireAuth.CurrentUser.Uid);
-            driverRef.Child("stage_of_registration").SetValue(RegistrationStage.CarRegistering.ToString())
-               .AddOnSuccessListener(TaskCompletionListener)
-               .AddOnFailureListener(TaskCompletionListener);
-            TaskCompletionListener.Successful += TaskCompletionListener_Successful1;
-        }
-
-        private void TaskCompletionListener_Successful1(object sender, TaskCompletionListeners.ResultArgs e)
-        {
-            ProfileCaptured.Invoke(this, new EventArgs());
-            UpdateUiOnCpture(CaptureType.ProfilePic);
-        }
-
 
         private void PicDisplayFragment_RetakePic(object sender, EventArgs e)
         {
@@ -222,42 +220,42 @@ namespace Cab360Driver.Fragments
 
         private void UpdateUiOnCpture(CaptureType captureType)
         {
-            if (captureType == CaptureType.ProfilePic)
+            switch (captureType)
             {
-                Card1.CardBackgroundColor = ColorStateList.ValueOf(Color.LightSkyBlue);
-                NxtImg1.ImageTintList = ColorStateList.ValueOf(Color.Blue);
-            }
-            else if (captureType == CaptureType.FrontOfLicense)
-            {
-                Card2.CardBackgroundColor = ColorStateList.ValueOf(Color.LightSkyBlue);
-                NxtImg2.ImageTintList = ColorStateList.ValueOf(Color.Blue);
-            }
-            else if (captureType == CaptureType.BackOfLicense)
-            {
-                Card3.CardBackgroundColor = ColorStateList.ValueOf(Color.LightSkyBlue);
-                NxtImg3.ImageTintList = ColorStateList.ValueOf(Color.Blue);
+                case CaptureType.ProfilePic:
+                    Card1.CardBackgroundColor = ColorStateList.ValueOf(Color.LightSkyBlue);
+                    NxtImg1.ImageTintList = ColorStateList.ValueOf(Color.Blue);
+                    break;
+                case CaptureType.FrontOfLicense:
+                    Card2.CardBackgroundColor = ColorStateList.ValueOf(Color.LightSkyBlue);
+                    NxtImg2.ImageTintList = ColorStateList.ValueOf(Color.Blue);
+                    break;
+                case CaptureType.BackOfLicense:
+                    Card3.CardBackgroundColor = ColorStateList.ValueOf(Color.LightSkyBlue);
+                    NxtImg3.ImageTintList = ColorStateList.ValueOf(Color.Blue);
+                    break;
             }
         }
 
         private void UpdateUiOnError(CaptureType captureType)
         {
-            if (captureType == CaptureType.ProfilePic)
+            switch (captureType)
             {
-                Card1.CardBackgroundColor = ColorStateList.ValueOf(Color.PapayaWhip);
-                NxtImg1.SetImageResource(Resource.Drawable.ic_error);
-                HeaderTxt1.SetText(Resource.String.string_attention_seekr);
-            }
-            else if (captureType == CaptureType.FrontOfLicense)
-            {
-                Card2.CardBackgroundColor = ColorStateList.ValueOf(Color.PapayaWhip);
-                NxtImg2.SetImageResource(Resource.Drawable.ic_error);
-                HeaderTxt2.SetText(Resource.String.string_attention_seekr);
-            }
-            else if (captureType == CaptureType.BackOfLicense)
-            {
-                Card3.CardBackgroundColor = ColorStateList.ValueOf(Color.PapayaWhip);
-                NxtImg3.SetImageResource(Resource.Drawable.ic_error);
-                HeaderTxt3.SetText(Resource.String.string_attention_seekr);
+                case CaptureType.ProfilePic:
+                    Card1.CardBackgroundColor = ColorStateList.ValueOf(Color.PapayaWhip);
+                    NxtImg1.SetImageResource(Resource.Drawable.ic_error);
+                    HeaderTxt1.SetText(Resource.String.string_attention_seekr);
+                    break;
+                case CaptureType.FrontOfLicense:
+                    Card2.CardBackgroundColor = ColorStateList.ValueOf(Color.PapayaWhip);
+                    NxtImg2.SetImageResource(Resource.Drawable.ic_error);
+                    HeaderTxt2.SetText(Resource.String.string_attention_seekr);
+                    break;
+                case CaptureType.BackOfLicense:
+                    Card3.CardBackgroundColor = ColorStateList.ValueOf(Color.PapayaWhip);
+                    NxtImg3.SetImageResource(Resource.Drawable.ic_error);
+                    HeaderTxt3.SetText(Resource.String.string_attention_seekr);
+                    break;
             }
         }
     }

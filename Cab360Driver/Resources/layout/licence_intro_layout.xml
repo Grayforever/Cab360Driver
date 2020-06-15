@@ -1,92 +1,73 @@
 
-<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:paddingStart="16dp"
+    android:paddingEnd="16dp"
+    android:paddingBottom="16dp"
+    android:paddingTop="?android:attr/actionBarSize"
     tools:ignore="HardcodedText">
 
-    <include
+    <TextView
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:id="@+id/take_ya_flp_txt"
+        android:text="Take a photo of your Ghana Driver's License"
+        android:textAppearance="?attr/textAppearanceHeadline6"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+    />
+
+    <TextView
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:id="@+id/take_ya_flp_txt1"
+        android:layout_below="@+id/take_ya_flp_txt"
+        android:text="Please make sure the details appear readable"
+        android:textAppearance="?attr/textAppearanceSubtitle1"
+        app:layout_constraintTop_toBottomOf="@+id/take_ya_flp_txt"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+    />
+
+    <ImageView
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:id="@+id/license_prev_iv"
+        android:scaleType="centerCrop"
+        app:layout_constraintTop_toBottomOf="@+id/take_ya_flp_txt1"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/zoom_chip"
+        android:layout_marginTop="32dp"
+    />
+
+    <com.google.android.material.chip.Chip
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Zoom"
+        android:id="@+id/zoom_chip"
+        android:clickable="true"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/license_prev_iv"
+        app:layout_constraintBottom_toTopOf="@+id/intro_takelicense_btn1"
+        android:layout_marginTop="16dp"
+    />
+
+    <com.google.android.material.button.MaterialButton
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        layout="@layout/appbar_main"
-        />
+        android:text="take photo"
+        android:id="@+id/intro_takelicense_btn1"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/zoom_chip"
+        android:layout_marginTop="32dp"
+    />
 
-    <androidx.core.widget.NestedScrollView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:fillViewport="true"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior">
-
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:padding="16dp">
-
-            <TextView
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:id="@+id/take_ya_flp_txt"
-                android:text="Take a photo of your Ghana Driver's License"
-                android:textAppearance="?attr/textAppearanceHeadline6"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-            />
-
-            <TextView
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:id="@+id/take_ya_flp_txt1"
-                android:layout_below="@+id/take_ya_flp_txt"
-                android:text="Please make sure the details appear readable"
-                android:textAppearance="?attr/textAppearanceSubtitle1"
-                app:layout_constraintTop_toBottomOf="@+id/take_ya_flp_txt"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-            />
-
-            <ImageView
-                android:layout_width="0dp"
-                android:layout_height="0dp"
-                android:id="@+id/license_prev_iv"
-                android:scaleType="centerCrop"
-                app:layout_constraintTop_toBottomOf="@+id/take_ya_flp_txt1"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintBottom_toTopOf="@+id/zoom_chip"
-                android:layout_marginTop="32dp"
-            />
-
-            <com.google.android.material.chip.Chip
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Zoom"
-                android:id="@+id/zoom_chip"
-                android:clickable="true"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/license_prev_iv"
-                app:layout_constraintBottom_toTopOf="@+id/intro_takelicense_btn1"
-                android:layout_marginTop="16dp"
-            />
-
-            <com.google.android.material.button.MaterialButton
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="take photo"
-                app:backgroundTint="@color/colorAccent"
-                android:id="@+id/intro_takelicense_btn1"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/zoom_chip"
-                android:layout_marginTop="32dp"
-            />
-
-        </androidx.constraintlayout.widget.ConstraintLayout>
-
-    </androidx.core.widget.NestedScrollView>
-
-</androidx.coordinatorlayout.widget.CoordinatorLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

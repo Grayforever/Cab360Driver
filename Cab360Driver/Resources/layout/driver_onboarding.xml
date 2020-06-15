@@ -5,7 +5,6 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:id="@+id/driver_onboarding_root"
-    tools:ignore="HardcodedText"
     android:paddingBottom="16dp">
 
     <ImageView
@@ -38,9 +37,10 @@
 
     <com.google.android.material.button.MaterialButton
         android:layout_width="0dp"
-        android:layout_height="wrap_content"
+        android:layout_height="56dp"
         android:id="@+id/onbd_signin_btn"
-        android:text="sign in"
+        android:text="@string/sign_in_txt"
+        android:textSize="16sp"
         android:layout_marginStart="16dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -52,13 +52,15 @@
 
     <com.google.android.material.button.MaterialButton
         android:layout_width="0dp"
-        android:layout_height="wrap_content"
+        android:layout_height="56dp"
         android:id="@+id/onbd_signup_btn"
-        android:text="Sign up"
+        android:text="@string/sign_up_txt"
+        android:textSize="16sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toEndOf="@+id/onbd_signin_btn"
         android:layout_marginStart="4dp"
-        android:layout_marginEnd="16dp"           
+        android:layout_marginEnd="16dp" 
+        
     />
 </androidx.constraintlayout.widget.ConstraintLayout>

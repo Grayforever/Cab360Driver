@@ -1,7 +1,6 @@
 ﻿using Android.OS;
 using Android.Views;
 using Cab360Driver.EnumsConstants;
-using Cab360Driver.EventListeners;
 using Google.Android.Material.Button;
 using System;
 
@@ -10,7 +9,6 @@ namespace Cab360Driver.Fragments
     public class CarPicsFragment : AndroidX.Fragment.App.Fragment
     {
         public event EventHandler CarCaptureComplete;
-        private TaskCompletionListeners TaskCompletionListener = new TaskCompletionListeners();
 
         public override void OnCreate(Bundle savedInstanceState)
         {

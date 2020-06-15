@@ -5,7 +5,6 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:ignore="HardcodedText">
-
     
     <include
         android:layout_width="match_parent"
@@ -23,14 +22,15 @@
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:padding="16dp">
+            android:padding="16dp"
+            android:clipToPadding="false">
 
             <TextView
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:id="@+id/drv_capt_welc_tv"
                 android:text="Welcome, Daniel"
-                android:textAppearance="?attr/textAppearanceHeadline5"
+                android:textAppearance="?attr/textAppearanceHeadline4"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -41,7 +41,8 @@
                 android:layout_height="wrap_content"
                 android:id="@+id/drv_capt_req_tv"
                 android:text="Required steps"
-                android:textAppearance="?attr/textAppearanceBody1"
+                android:textAppearance="?attr/textAppearanceSubtitle1"
+                android:layout_marginTop="8dp"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/drv_capt_welc_tv"
@@ -52,7 +53,8 @@
                 android:layout_height="wrap_content"
                 android:id="@+id/drv_capt_head_tv"
                 android:text="Here is what you need to do to set up your account"
-                android:textAppearance="?attr/textAppearanceBody1"
+                android:textAppearance="?attr/textAppearanceSubtitle2"
+                android:layout_marginTop="8dp"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/drv_capt_req_tv"
@@ -78,7 +80,6 @@
                     app:cardCornerRadius="5dp"
                     android:stateListAnimator="@animator/lift_on_touch"
                     android:layout_weight="1"
-                    android:layout_margin="8dp"
                     android:clickable="true"
                     android:foreground="?android:attr/selectableItemBackground">
 
@@ -127,8 +128,8 @@
                     app:cardCornerRadius="5dp"
                     android:stateListAnimator="@animator/lift_on_touch"
                     android:layout_weight="1"
-                    android:layout_margin="8dp"
                     android:clickable="true"
+                    android:layout_marginTop="16dp"
                     android:foreground="?android:attr/selectableItemBackground">
 
                     <RelativeLayout
@@ -177,9 +178,7 @@
                     app:cardCornerRadius="5dp"
                     android:stateListAnimator="@animator/lift_on_touch"
                     android:layout_weight="1"
-                    android:layout_marginTop="8dp"
-                    android:layout_marginStart="8dp"
-                    android:layout_marginEnd="8dp"
+                    android:layout_marginTop="16dp"
                     android:clickable="true"
                     android:layout_marginBottom="24dp"
                     android:foreground="?android:attr/selectableItemBackground">

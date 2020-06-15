@@ -51,9 +51,10 @@
 
     <com.google.android.material.button.MaterialButton
         android:layout_width="0dp"
-        android:layout_height="wrap_content"
+        android:layout_height="56dp"
         android:id="@+id/prev_retake_btn"
         android:text="retake"
+        android:textSize="16sp"
         app:strokeWidth="2dp"
         style="@style/Widget.MaterialComponents.Button.OutlinedButton"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -64,9 +65,10 @@
 
     <com.google.android.material.button.MaterialButton
         android:layout_width="0dp"
-        android:layout_height="wrap_content"
+        android:layout_height="56dp"
         android:id="@+id/prev_save_btn"
         android:text="save"
+        android:textSize="16sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/prev_retake_btn"

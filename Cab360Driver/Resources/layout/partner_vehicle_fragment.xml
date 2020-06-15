@@ -306,11 +306,10 @@
 
             <com.google.android.material.button.MaterialButton
                 android:layout_width="0dp"
-                android:layout_height="wrap_content"
+                android:layout_height="56dp"
                 android:id="@+id/part_cont_btn"
                 android:text="Continue"
-                
-                android:textStyle="bold"
+                android:textSize="16sp"
                 android:enabled="false"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"

@@ -10,6 +10,9 @@ using Newtonsoft.Json;
 using Cab360Driver.EnumsConstants;
 using System.Diagnostics;
 using Cab360Driver.DataModels;
+using Android.Util;
+using Android.Content;
+using Android.App;
 
 namespace Cab360Driver.Helpers
 {
@@ -53,11 +56,8 @@ namespace Cab360Driver.Helpers
 
 
             //Building the final url string
-            string url = StringConstants.GetDirectionsBaseGateway() + output + "?" + parameters + Resource.String.google_api_key;
-
-
-            string json = "";
-            json = await GetGeoJsonAsync(url);
+            string url = StringConstants.GetDirectionsBaseGateway() + output + "?" + parameters + Application.Context.GetString(Resource.String.google_api_key);
+            var json = await GetGeoJsonAsync(url);
 
             return json;
 
@@ -100,7 +100,7 @@ namespace Cab360Driver.Helpers
             {
                 routeList.Add(item);
                 locationCount++;
-                Debug.WriteLine("Position " + locationCount.ToString() + " = " + item.Latitude.ToString() + " , " + item.Longitude.ToString());
+                Log.Debug("MapPosition", "Position " + locationCount.ToString() + " = " + item.Latitude.ToString() + " , " + item.Longitude.ToString());
 
             }
 
@@ -160,7 +160,7 @@ namespace Cab360Driver.Helpers
             {
                 routeList.Add(item);
                 locationCount++;
-                Debug.WriteLine("Position " + locationCount.ToString() + " = " + item.Latitude.ToString() + " , " + item.Longitude.ToString());
+                Log.Debug("MapPosition","Position " + locationCount.ToString() + " = " + item.Latitude.ToString() + " , " + item.Longitude.ToString());
 
             }
 
@@ -186,7 +186,7 @@ namespace Cab360Driver.Helpers
 
         }
 
-        public async void UpdateMovement(LatLng myposition, LatLng destination, string whereto)
+        public async void UpdateMovement(LatLng myposition, LatLng destination, ToPositionOf toPositionOf)
         {
             positionMarker.Visible = true;
             positionMarker.Position = myposition;
@@ -198,14 +198,14 @@ namespace Cab360Driver.Helpers
                 var directionData = JsonConvert.DeserializeObject<DirectionParser>(json);
                 string duration = directionData.routes[0].legs[0].duration.text;
                 positionMarker.Title = "Current Location";
-                positionMarker.Snippet = duration + "Away from " + whereto;
+                positionMarker.Snippet = duration + "Away from " + toPositionOf.ToString();
                 positionMarker.ShowInfoWindow();
                 isRequestingDirection = false;
             }
           
         }
 
-        public async Task<double> CalculateFares(LatLng firstpoint, LatLng lastpoint)
+        public async Task<TripReceiptModel> CalculateFares(LatLng firstpoint, LatLng lastpoint)
         {
             string directionJson = await GetDirectionJsonAsync(firstpoint, lastpoint);
             var directionData = JsonConvert.DeserializeObject<DirectionParser>(directionJson);
@@ -213,15 +213,16 @@ namespace Cab360Driver.Helpers
             double distanceValue = directionData.routes[0].legs[0].distance.value;
             double durationValue = directionData.routes[0].legs[0].duration.value;
 
-            double basefare = 10; //usd
-            double distanceFare = 5;
-            double timeFare = 5;
+            double basefare = 4; //gh cedis
+            double distanceFare = 2;
+            double timeFare = 2;
 
             double kmfare = (distanceValue / 1000) * distanceFare;
             double minsFares = (durationValue / 60) * timeFare;
             double amount = basefare + kmfare + minsFares;
             double fare = Math.Floor(amount / 10) * 10;
-            return fare;
+            var receipt = new TripReceiptModel("hello", fare, distanceValue, "Kasoa", "Mamobi");
+            return receipt;
         }
     }
 }
