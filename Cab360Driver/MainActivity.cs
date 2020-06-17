@@ -53,7 +53,6 @@ namespace Cab360Driver
         Android.Locations.Location mLastLocation;
         LatLng mLastLatLng;
 
-
         //Flags
         bool availablityStatus;
         bool isBackground;
@@ -562,6 +561,11 @@ namespace Cab360Driver
                 CreateNewRequestDialogue();
                 newRideAssigned = false;
             }
+        }
+
+        public static void ShowLocationBottomSheet(bool val)
+        {
+
         }
     }
 

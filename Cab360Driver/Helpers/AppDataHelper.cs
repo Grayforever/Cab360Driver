@@ -8,8 +8,9 @@ namespace Cab360Driver.Helpers
 {
     public static class AppDataHelper
     {
-        private static ISharedPreferences _pref1 = Application.Context.GetSharedPreferences("userinfo", FileCreationMode.Private);
-        private static readonly ISharedPreferences _pref3 = Application.Context.GetSharedPreferences("earningsInfo", FileCreationMode.MultiProcess);
+        private static readonly ISharedPreferences profilePref = Application.Context.GetSharedPreferences("driverInfo", FileCreationMode.Private);
+        private static readonly ISharedPreferences earningsPref = Application.Context.GetSharedPreferences("earningsInfo", FileCreationMode.Private);
+        private static readonly ISharedPreferences ratingsPref = Application.Context.GetSharedPreferences("ratingsInfo", FileCreationMode.Private);
         private static FirebaseAuth FireAuth;
         private static FirebaseDatabase FireDb;
 
@@ -47,7 +48,7 @@ namespace Cab360Driver.Helpers
         public static DatabaseReference GetParentReference()
         {
             GetDatabase();
-            return FireDb.GetReference("Cab360Drivers");
+            return FireDb.GetReference("Drivers");
         }
 
         public static DatabaseReference GetAvailDrivRef()
@@ -69,40 +70,24 @@ namespace Cab360Driver.Helpers
             return FireAuth?.CurrentUser;
         }
 
-        private static string firstname = _pref1?.GetString("firstname", "");
-        public static string GetFirstName()
-        {
-            return firstname;
-        }
+        public static string Firstname => profilePref?.GetString("fname", "");
 
-        private static string lastname = _pref1?.GetString("lastname", "");
-        public static string GetLastName()
-        {
-            return lastname;
-        }
+        public static string Lastname => profilePref?.GetString("lname", "");
 
-        private static string email = _pref1?.GetString("email", "");
-        public static string GetEmail()
-        {
-            return email;
-        }
+        public static string Email => profilePref?.GetString("email", "");
 
-        private static string phone = _pref1?.GetString("phone", "");
-        public static string GetPhone()
-        {
-            return phone;
-        }
+        public static string Phone => profilePref?.GetString("phone", "");
 
-        private static string city = _pref1?.GetString("city", "");
-        public static string GetCity()
-        {
-            return city;
-        }
+        public static string City => profilePref?.GetString("city", "");
 
-        private static string totEarnings = _pref3?.GetString("totalEarnings", "");
-        public static string GetTotEarnings()
-        {
-            return totEarnings;
-        }
+        public static string Fullname => $"{Firstname} {Lastname}";
+
+        public static string CarDetails => profilePref?.GetString("carDetails", "");
+
+        public static string TotRides => earningsPref?.GetString("totRides", "");
+
+        public static string TotEarnings => earningsPref?.GetString("totEarnings", "");
+
+
     }
 }

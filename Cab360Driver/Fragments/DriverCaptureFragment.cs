@@ -83,7 +83,7 @@ namespace Cab360Driver.Fragments
 
         private void GreetUser(TextView welcomeTV)
         {
-            string firstname = AppDataHelper.GetFirstName();
+            string firstname = AppDataHelper.Firstname;
             welcomeTV.Text = $"Welcome, {firstname}.";
         }
 

@@ -1,4 +1,5 @@
-﻿using Android.Graphics;
+﻿using Android.App;
+using Android.Graphics;
 using Android.OS;
 using Android.Text;
 using Android.Util;
@@ -9,7 +10,6 @@ using Cab360Driver.Adapters;
 using Cab360Driver.EnumsConstants;
 using Cab360Driver.Helpers;
 using Cab360Driver.IServices;
-using Firebase.Auth;
 using Firebase.Database;
 using Google.Android.Material.Button;
 using Google.Android.Material.TextField;
@@ -20,6 +20,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using System.Text.RegularExpressions;
 using static Android.Widget.AutoCompleteTextView;
 
 namespace Cab360Driver.Fragments
@@ -37,11 +38,19 @@ namespace Cab360Driver.Fragments
         private ICarsApi CarsApi;
         public event EventHandler CarRegComplete;
         private FirebaseDatabase FireDatabase;
+        private string[] conditions = new string[] { "Slightly Used", "Used", "New" };
+        private List<string> LColors;
 
         public override void OnCreate(Bundle savedInstanceState)
         {
             base.OnCreate(savedInstanceState);
-            
+            FireDatabase = AppDataHelper.GetDatabase();
+            LColors = new List<string>();
+            foreach (PropertyInfo property in typeof(Color).GetProperties())
+            {
+                if (property.PropertyType == typeof(Color))
+                    LColors.Add(property.Name);
+            }
         }
 
         public override View OnCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
@@ -63,17 +72,13 @@ namespace Cab360Driver.Fragments
             var _years = Years.Select(i => i.ToString()).ToArray();
             var yr_arrayAdapter = ArrayAdapterClass.CreateArrayAdapter(Activity, _years);
             CarYearEt.Adapter = yr_arrayAdapter;
-            CarYearEt.TextChanged += (s1, e1) =>
-            {
-
-            };
+            CarYearEt.TextChanged += TextChanged;
             CarYearEt.Validator = new Validator(CarYearEt);
 
             CarsApi = RestService.For<ICarsApi>(StringConstants.GetGateway());
             try
             {
                 var MyResult = await CarsApi.GetWelcome();
-
                 var make = new List<string>();
                 foreach (var car in MyResult.Results)
                 {
@@ -95,45 +100,38 @@ namespace Cab360Driver.Fragments
             catch (System.Exception e)
             {
 
-                Log.Error("api error", e.Message);
+                Log.Error("car_reg_fragment", e.Message);
             }
 
-            CarBrandEt.TextChanged += CarModelEt_TextChanged;
+            CarBrandEt.TextChanged += TextChanged;
             CarBrandEt.Validator = new Validator(CarBrandEt);
 
             //will be set by volly httprequest 
-            CarModelEt.TextChanged += CarModelEt_TextChanged;
+            CarModelEt.TextChanged += TextChanged;
             CarModelEt.Validator = new Validator(CarModelEt);
 
-            //all known colors
-            var LColors = new List<string>();
-            foreach(PropertyInfo property in typeof(Color).GetProperties())
-            {
-                if (property.PropertyType == typeof(Color))
-                    LColors.Add(property.Name);
-            }
             var coloradapter = ArrayAdapterClass.CreateArrayAdapter(Activity, LColors);
             CarColorEt.Adapter = coloradapter;
-            CarColorEt.TextChanged += CarModelEt_TextChanged;
+            CarColorEt.TextChanged += TextChanged;
             CarColorEt.Validator = new Validator(CarColorEt);
 
             //car condition
-            var conditions = new string[] { "Slightly Used", "Used", "New" };
+            
             var conditionsAdapter = ArrayAdapterClass.CreateArrayAdapter(Activity, conditions);
             ConditionEt.Adapter = conditionsAdapter;
-            ConditionEt.TextChanged += CarModelEt_TextChanged;
+            ConditionEt.TextChanged += TextChanged;
             ConditionEt.Validator = new Validator(ConditionEt);
 
-            //write custom regex for car number
-            RegNoEt.EditText.TextChanged += CarModelEt_TextChanged;
+            RegNoEt.EditText.TextChanged += TextChanged;
 
-            //nameText
-            CurrOwnEt.EditText.TextChanged += CarModelEt_TextChanged;
+            CurrOwnEt.EditText.TextChanged += TextChanged;
             
         }
 
-        private void CarModelEt_TextChanged(object sender, TextChangedEventArgs e)
+        private void TextChanged(object sender, TextChangedEventArgs e)
         {
+
+
             CheckIfEmpty();
         }
 
@@ -149,6 +147,8 @@ namespace Cab360Driver.Fragments
             ContinueBtn = view.FindViewById<MaterialButton>(Resource.Id.part_cont_btn);
             ContinueBtn.Click += ContinueBtn_Click;
         }
+
+        
 
         private void ContinueBtn_Click(object sender, EventArgs e)
         {
@@ -167,15 +167,14 @@ namespace Cab360Driver.Fragments
         private void SaveCarDetailsToDb(HashMap carMap)
         {
             var currUser = AppDataHelper.GetCurrentUser();
-            FireDatabase = AppDataHelper.GetDatabase();
             if(currUser != null)
             {
-                var vehicleRef = FireDatabase.GetReference("RegUnVerifiedCars").Child(currUser.Uid);
+                var vehicleRef = FireDatabase.GetReference("Drivers" + currUser.Uid).Child("MyCars");
                 vehicleRef.SetValue(carMap)
                     .AddOnSuccessListener(new OnSuccessListener(result =>
                     {
-                        var driverRef = AppDataHelper.GetParentReference().Child(currUser.Uid);
-                        driverRef.Child("stage_of_registration").SetValue(RegistrationStage.CarCapturing.ToString())
+                        var driverRef = AppDataHelper.GetParentReference().Child(currUser.Uid).Child("stage_of_registration");
+                        driverRef.SetValue(RegistrationStage.CarCapturing.ToString())
                             .AddOnSuccessListener(new OnSuccessListener(result2 =>
                             {
                                 CarRegComplete.Invoke(this, new EventArgs());

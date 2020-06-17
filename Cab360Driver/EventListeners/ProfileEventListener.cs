@@ -5,6 +5,7 @@ using Firebase.Database;
 using Cab360Driver.Helpers;
 using Cab360Driver.DataModels;
 using CN.Pedant.SweetAlert;
+using Android.Util;
 
 namespace Cab360Driver.EventListeners
 {
@@ -19,11 +20,7 @@ namespace Cab360Driver.EventListeners
 
         public void OnCancelled(DatabaseError error)
         {
-            new SweetAlertDialog(Application.Context, SweetAlertDialog.ErrorType)
-                    .SetTitleText("Oops...")
-                    .SetContentText("Something went wrong. Please try again later.")
-                    .SetCancelText("OK")
-                    .Show();
+            Log.Error("profilevalueeventlistener", error.Message);
         }
 
         public void OnDataChange(DataSnapshot snapshot)
@@ -32,8 +29,8 @@ namespace Cab360Driver.EventListeners
             {
                 DriverPersonal = new Driver
                 {
-                    Fname = (snapshot.Child("firstname") != null) ? snapshot.Child("firstname").Value.ToString() : "",
-                    Lname = (snapshot.Child("lastname") != null) ? snapshot.Child("lastname").Value.ToString() : "",
+                    Fname = (snapshot.Child("fname") != null) ? snapshot.Child("fname").Value.ToString() : "",
+                    Lname = (snapshot.Child("lname") != null) ? snapshot.Child("lname").Value.ToString() : "",
                     Email = (snapshot.Child("email") != null) ? snapshot.Child("email").Value.ToString() : "",
                     Phone = (snapshot.Child("phone") != null) ? snapshot.Child("phone").Value.ToString() : "",
                     City = (snapshot.Child("city") != null) ? snapshot.Child("city").Value.ToString() : "",
@@ -57,7 +54,7 @@ namespace Cab360Driver.EventListeners
             var currentUser = AppDataHelper.GetCurrentUser();
             if(currentUser != null)
             {
-                DatabaseReference driverRef = database.GetReference("Cab360Drivers/" + currentUser.Uid);
+                DatabaseReference driverRef = database.GetReference("Drivers/" + currentUser.Uid);
                 driverRef.AddValueEventListener(this);
             }
             else
@@ -69,8 +66,8 @@ namespace Cab360Driver.EventListeners
 
         private void SaveToSharedPreference(Driver driverPersonal)
         {
-            editor.PutString("firstname", driverPersonal.Fname);
-            editor.PutString("lastname", driverPersonal.Lname);
+            editor.PutString("fname", driverPersonal.Fname);
+            editor.PutString("lname", driverPersonal.Lname);
             editor.PutString("phone", driverPersonal.Phone);
             editor.PutString("email", driverPersonal.Email);
             editor.PutString("city", driverPersonal.City);

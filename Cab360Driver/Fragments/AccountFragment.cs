@@ -12,7 +12,10 @@ using AndroidX.Interpolator.View.Animation;
 using AndroidX.RecyclerView.Widget;
 using Cab360Driver.Adapters;
 using Cab360Driver.EventListeners;
+using Cab360Driver.Helpers;
 using Cab360Driver.Utils;
+using Firebase.Auth;
+using Firebase.Database;
 using Google.Android.Material.AppBar;
 using Ramotion.CardSliderLib;
 using System;
@@ -24,9 +27,7 @@ namespace Cab360Driver.Fragments
     public class AccountFragment : AndroidX.Fragment.App.Fragment
     {
         private readonly int[] pics = { Resource.Drawable.cool_car, Resource.Drawable.cool_car, Resource.Drawable.made_me_laugh, Resource.Drawable.cool_car, Resource.Drawable.cool_car };
-        
         private readonly string[] compliments = { "Awesome music", "Cool car", "Made me laugh", "Neat and tidy", "Expert navigation" };
-        
         private SliderAdapter sliderAdapter => new SliderAdapter(pics, 20, OnCardClickListener);
 
         private CardSliderLayoutManager layoutManger;
@@ -45,16 +46,37 @@ namespace Cab360Driver.Fragments
         private bool titleShow = false;
         private ValueAnimator valueAnimator = null;
 
+        private DatabaseReference userRef;
+        private FirebaseUser currUser;
+        private FirebaseDatabase fireDb;
+
         private int currentPosition;
 
         public override void OnCreate(Bundle savedInstanceState)
         {
             base.OnCreate(savedInstanceState);
+            GetDb();
+        }
+
+        private void GetDb()
+        {
+            currUser = AppDataHelper.GetCurrentUser();
+            fireDb = AppDataHelper.GetDatabase();
         }
 
         public override View OnCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
         {
             var view = inflater.Inflate(Resource.Layout.account, container, false);
+            GetControls(view);
+            SetDefaultProfileBg(Resource.Drawable.ic_bg);
+            InitListener();
+            InitRecyclerView(view);
+            InitSwitchers(view);
+            return view;
+        }
+
+        private void GetControls(View view)
+        {
             appbar = view.FindViewById<AppBarLayout>(Resource.Id.appbar_account);
             toolbar = view.FindViewById<Toolbar>(Resource.Id.toolbar_account);
             headerBitmap = view.FindViewById<ProfileHeaderBitmap>(Resource.Id.profile_header_bg);
@@ -63,11 +85,22 @@ namespace Cab360Driver.Fragments
             mHeaderLayout = view.FindViewById<FrameLayout>(Resource.Id.header_layout);
             profile_title_user = view.FindViewById<TextView>(Resource.Id.profile_title_user);
             profileTitleCount = view.FindViewById<TextView>(Resource.Id.profile_title_count);
-            SetDefaultProfileBg(Resource.Drawable.ic_bg);
-            InitListener();
-            InitRecyclerView(view);
-            InitSwitchers(view);
-            return view;
+
+            var userName = view.FindViewById<TextView>(Resource.Id.tv_username);
+            var cityText = view.FindViewById<TextView>(Resource.Id.tv_user_from);
+            var carTxt = view.FindViewById<TextView>(Resource.Id.tv_car_details);
+            var totRidesTxt = view.FindViewById<TextView>(Resource.Id.tv_rides_tot);
+            var totKmTxt = view.FindViewById<TextView>(Resource.Id.tv_rides_tot);
+            var totStarsTxt = view.FindViewById<TextView>(Resource.Id.tv_rides_tot);
+
+            SetText(userName, cityText, carTxt, totRidesTxt, totKmTxt, totStarsTxt);
+        }
+
+        private void SetText(TextView userName, TextView cityText, TextView carTxt, TextView totRidesTxt, TextView totKmTxt, TextView totStarsTxt)
+        {
+            userName.Text = AppDataHelper.Fullname;
+            cityText.Text = AppDataHelper.City;
+            carTxt.Text = AppDataHelper.CarDetails;
         }
 
         private void InitListener()
@@ -206,7 +239,7 @@ namespace Cab360Driver.Fragments
                 }
                 if (defaultBlurProfileBitmap != null)
                 {
-                    headerBitmap.SetForeground(new BitmapDrawable(defaultBlurProfileBitmap));
+                    headerBitmap.SetForeground(new BitmapDrawable(Activity.Resources, defaultBlurProfileBitmap));
                     headerBitmap.SetForegroundAlpha(0.0f);
                 }
             }
@@ -303,7 +336,6 @@ namespace Cab360Driver.Fragments
             }
         }
 
-
         private View.IOnClickListener OnCardClickListener => new MyViewOnClickListener(
             v =>
             {
@@ -328,7 +360,5 @@ namespace Cab360Driver.Fragments
                 }
             }
         );
-
-        
     }
 }

@@ -37,7 +37,7 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:id="@+id/drv_signin_email_et"
-        android:hint=""
+        android:hint="@string/hint_email_txt"
         app:layout_constraintTop_toBottomOf="@+id/signUpHeader"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"

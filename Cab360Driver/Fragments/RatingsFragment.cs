@@ -10,6 +10,7 @@ using Android.Runtime;
 using Android.Util;
 using Android.Views;
 using Android.Widget;
+using Google.Android.Material.Button;
 
 namespace Cab360Driver.Fragments
 {
@@ -26,6 +27,11 @@ namespace Cab360Driver.Fragments
         {
             // Use this to return your custom view for this Fragment
             View view = inflater.Inflate(Resource.Layout.rating, container, false);
+            var viewDetailsBtn = view.FindViewById<MaterialButton>(Resource.Id.view_ratings_details_btn);
+            viewDetailsBtn.Click += (s1, e1) =>
+              {
+                  Toast.MakeText(Activity, "Jennifer aseye", ToastLength.Long).Show();
+              };
 
             return view;
         }

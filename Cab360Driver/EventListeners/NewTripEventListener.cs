@@ -51,8 +51,8 @@ namespace Cab360Driver.EventListeners
         {
             statusEnum = RideStatusEnum.Accepted;
             tripRef.Child("status").SetValue($"{statusEnum}");
-            tripRef.Child("driver_name").SetValue(AppDataHelper.GetFirstName());
-            tripRef.Child("driver_phone").SetValue(AppDataHelper.GetPhone());
+            tripRef.Child("driver_name").SetValue(AppDataHelper.Firstname);
+            tripRef.Child("driver_phone").SetValue(AppDataHelper.Phone);
             tripRef.Child("driver_location").Child("latitude").SetValue(mLastlocation.Latitude);
             tripRef.Child("driver_location").Child("longitude").SetValue(mLastlocation.Longitude);
             tripRef.Child("driver_id").SetValue(AppDataHelper.GetCurrentUser().Uid);

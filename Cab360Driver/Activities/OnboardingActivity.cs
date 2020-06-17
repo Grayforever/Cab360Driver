@@ -1,14 +1,18 @@
 ﻿using Android.App;
 using Android.Content;
+using Android.Net;
 using Android.OS;
 using Android.Views;
+using Android.Widget;
 using AndroidX.Fragment.App;
 using AndroidX.ViewPager2.Widget;
 using Cab360Driver.Adapters;
+using Cab360Driver.BroadcastReceivers;
 using Cab360Driver.EnumsConstants;
 using Cab360Driver.Fragments;
+using Java.Lang;
 using System;
-
+using System.Runtime.CompilerServices;
 
 namespace Cab360Driver.Activities
 {
@@ -21,7 +25,6 @@ namespace Cab360Driver.Activities
     {
         private RegistrationFragmentsAdapter regAdapter;
         private ViewPager2 RegViewPager;
-        NoNetBottomSheet noNetBottomSheet = new NoNetBottomSheet();
         DriverSignInFragment SignInFragment = new DriverSignInFragment();
         DriverRegisterFragment RegisterFragment = new DriverRegisterFragment();
         DriverCaptureFragment CaptureFragment = new DriverCaptureFragment();
@@ -30,13 +33,17 @@ namespace Cab360Driver.Activities
         CarPicsFragment CarPicsFragment = new CarPicsFragment();
         AckFragment AckFragment = new AckFragment();
         private bool isSmoothScroll = false;
+        private static FragmentActivity _context;
+        private BroadcastReceiver mNetworkReceiver;
 
         protected override void OnCreate(Bundle savedInstanceState)
         {
             base.OnCreate(savedInstanceState);
             SetContentView(Resource.Layout.container_main);
             var stage = Intent.GetStringExtra("stage");
-            
+            _context = this;
+            mNetworkReceiver = new NetworkReceiver();
+            RegisterNetworkBroadcastForNougat();
             RegViewPager = FindViewById<ViewPager2>(Resource.Id.reg_viewpager1);
             RegViewPager.Orientation = ViewPager2.OrientationHorizontal;
             RegViewPager.OffscreenPageLimit = 4;
@@ -44,6 +51,7 @@ namespace Cab360Driver.Activities
             SetViewPagerAdapter();
             RequestPermissions(StringConstants.GetLocationPermissiongroup(), 0);
             GetStage(stage);
+            
         }
 
         private void GetStage(string stage)
@@ -93,7 +101,6 @@ namespace Cab360Driver.Activities
         {
             regAdapter.NotifyDataSetChanged();
             RegViewPager.SetCurrentItem(0, isSmoothScroll);
-            //ShowNoNetDialog();
         }
 
         private void SetViewPagerAdapter()
@@ -147,14 +154,14 @@ namespace Cab360Driver.Activities
         private void SetCarCaptFrag()
         {
             regAdapter.NotifyDataSetChanged();
-            RegViewPager.SetCurrentItem(5, isSmoothScroll);
+            RegViewPager.SetCurrentItem(6, isSmoothScroll);
             CarPicsFragment.CarCaptureComplete += CarPicsFragment_CarCaptureComplete;
         }
 
         private void SetCarRegFrag()
         {
             regAdapter.NotifyDataSetChanged();
-            RegViewPager.SetCurrentItem(6, isSmoothScroll);
+            RegViewPager.SetCurrentItem(5, isSmoothScroll);
             CarRegFragment.CarRegComplete += CarRegFragment_CarRegComplete;
         }
 
@@ -205,10 +212,49 @@ namespace Cab360Driver.Activities
             SetAckFrag();
         }
 
-        private void ShowNoNetDialog()
+        public static void ShowNoNetDialog(bool val)
         {
-            noNetBottomSheet.Cancelable = false;
-            noNetBottomSheet.Show(SupportFragmentManager, "nonet");
+            
+            if (val != true)
+            {
+                NoNetBottomSheet noNetBottomSheet = new NoNetBottomSheet(_context);
+                noNetBottomSheet.Cancelable = false;
+                noNetBottomSheet.Show(_context.SupportFragmentManager, "nonet");
+            }
+            else
+            {
+                Toast.MakeText(_context, "Online", ToastLength.Long).Show();
+            } 
+        }
+
+        private void RegisterNetworkBroadcastForNougat()
+        {
+            if (Build.VERSION.SdkInt >= BuildVersionCodes.N)
+            {
+                RegisterReceiver(mNetworkReceiver, new IntentFilter(ConnectivityManager.ConnectivityAction));
+            }
+            if (Build.VERSION.SdkInt >= BuildVersionCodes.M)
+            {
+                RegisterReceiver(mNetworkReceiver, new IntentFilter(ConnectivityManager.ConnectivityAction));
+            }
+        }
+
+        protected void UnregisterNetworkChanges()
+        {
+            try
+            {
+                UnregisterReceiver(mNetworkReceiver);
+            }
+            catch (IllegalArgumentException e)
+            {
+                e.PrintStackTrace();
+            }
+        }
+
+        protected override void OnDestroy()
+        {
+            base.OnDestroy();
+            UnregisterReceiver(mNetworkReceiver);
         }
 
         public override void OnBackPressed()

@@ -45,7 +45,7 @@ namespace Cab360Driver.Fragments
 
         private void BtnMain_Click(object sender, EventArgs e)
         {
-            CarCaptureComplete.Invoke(this, new EventArgs());
+            CarCaptureComplete?.Invoke(this, new EventArgs());
         }
     }
 }

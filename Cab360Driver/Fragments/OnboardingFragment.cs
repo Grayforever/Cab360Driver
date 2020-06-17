@@ -34,16 +34,14 @@ namespace Cab360Driver.Fragments
         public override View OnCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
         {
             var view = inflater.Inflate(Resource.Layout.driver_onboarding, container, false);
+            Iview = view.FindViewById<ImageView>(Resource.Id.oboarding_gif);
             SignInBtn = view.FindViewById<MaterialButton>(Resource.Id.onbd_signin_btn);
             SignUpBtn = view.FindViewById<MaterialButton>(Resource.Id.onbd_signup_btn);
-            Iview = view.FindViewById<ImageView>(Resource.Id.oboarding_gif);
-
-            Glide.With(this)
-                .Load(driverAnim)
-                .Into(Iview)
-                .ClearOnDetach();
-            SignInBtn.Click += SignInBtn_Click; 
+            SignInBtn.Click += SignInBtn_Click;
             SignUpBtn.Click += SignUpBtn_Click;
+
+            Glide.With(this).Load(driverAnim).Into(Iview).ClearOnDetach();
+            
             return view;
         }
 

@@ -109,7 +109,6 @@
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
-                    android:text="Graham Asare"
                     android:textAppearance="?attr/textAppearanceHeadline6"
                 />
 
@@ -120,7 +119,6 @@
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/tv_username"
-                    android:text="Toyota Prius- GR-545-17"
                     android:textAppearance="?attr/textAppearanceBody1"
                 />
 
@@ -149,7 +147,6 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:id="@+id/tv_user_from"
-                        android:text="Dansoman, Ghana"
                         android:layout_centerVertical="true"
                         android:layout_toEndOf="@+id/pin"
                         android:textAppearance="?attr/textAppearanceBody2"
@@ -181,7 +178,6 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:id="@+id/tv_rides_tot"
-                        android:text="100 Rides"
                         android:layout_centerVertical="true"
                         android:layout_toEndOf="@+id/rides"
                         android:textAppearance="?attr/textAppearanceBody2"
@@ -214,7 +210,6 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:id="@+id/tv_rides_tot"
-                        android:text="4.5 Stars"
                         android:layout_centerVertical="true"
                         android:layout_toEndOf="@+id/stars"
                         android:textAppearance="?attr/textAppearanceBody2"
@@ -247,7 +242,6 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:id="@+id/tv_rides_tot"
-                        android:text="2 Years"
                         android:layout_centerVertical="true"
                         android:layout_toEndOf="@+id/years"
                         android:textAppearance="?attr/textAppearanceBody2"

@@ -4,7 +4,7 @@ using Android.Util;
 using Android.Views;
 using Android.Widget;
 using AndroidX.AppCompat.Widget;
-using AndroidX.CoordinatorLayout.Widget;
+using AndroidX.Collection;
 using Cab360Driver.Adapters;
 using Cab360Driver.EnumsConstants;
 using Cab360Driver.Helpers;
@@ -24,13 +24,22 @@ namespace Cab360Driver.Fragments
         private MaterialButton SubmitBtn;
         private string[] names = { "Accra", "Kumasi", "Takoradi", "Ho", "Tema", "Tamale" };
         private FirebaseAuth FireAuth;
-        private DatabaseReference driverRef;
+        private DatabaseReference DriverRef;
+        private FirebaseDatabase FireDb;
+        private string fname, lname, email, phone, code, city;
 
         public event EventHandler<SignUpSuccessArgs> SignUpSuccess;
 
         public override void OnCreate(Bundle savedInstanceState)
         {
             base.OnCreate(savedInstanceState);
+            SetUpFirebase();
+        }
+
+        private void SetUpFirebase()
+        {
+            FireAuth = AppDataHelper.GetFirebaseAuth();
+            FireDb = AppDataHelper.GetDatabase();
         }
 
         public override View OnCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
@@ -50,11 +59,7 @@ namespace Cab360Driver.Fragments
             CodeText = view.FindViewById<TextInputLayout>(Resource.Id.drv_signup_code_et);
             PassText = view.FindViewById<TextInputLayout>(Resource.Id.drv_signup_pass_et);
             CityText = view.FindViewById<AppCompatAutoCompleteTextView>(Resource.Id.autocity_et);
-        }
 
-        public override void OnViewCreated(View view, Bundle savedInstanceState)
-        {
-            base.OnViewCreated(view, savedInstanceState);
             FnameText.EditText.AfterTextChanged += EditText_AfterTextChanged;
             LnameText.EditText.AfterTextChanged += EditText_AfterTextChanged;
             PassText.EditText.AfterTextChanged += EditText_AfterTextChanged;
@@ -67,24 +72,21 @@ namespace Cab360Driver.Fragments
 
             SubmitBtn.Click += (s1, e1) =>
             {
-                FireAuth = AppDataHelper.GetFirebaseAuth();
-                FireAuth.CreateUserWithEmailAndPassword(EmailText.EditText.Text, PassText.EditText.Text)
-                    .AddOnSuccessListener(new OnSuccessListener(r=> 
-                    {
-                        HashMap driverMap = new HashMap();
-                        driverMap.Put("firstname", FnameText.EditText.Text);
-                        driverMap.Put("lastname", LnameText.EditText.Text);
-                        driverMap.Put("email", EmailText.EditText.Text); ;
-                        driverMap.Put("phone", PhoneText.EditText.Text);
-                        driverMap.Put("city", CityText.Text);
-                        driverMap.Put("invitecode", CodeText.EditText.Text);
-                        driverMap.Put("created_at", DateTime.UtcNow.ToString());
-                        driverMap.Put("isPartner", "false");
-                        driverMap.Put("stage_of_registration", RegistrationStage.Registration.ToString());
+                fname = FnameText.EditText.Text;
+                lname = LnameText.EditText.Text;
+                email = EmailText.EditText.Text;
+                phone = PhoneText.EditText.Text;
+                city = CityText.Text;
+                code = CodeText.EditText.Text;
 
-                        SaveDriverToDb(driverMap);
-                    }))
-                    .AddOnFailureListener(new OnFailureListener(e=> { Toast.MakeText(Activity, e.Message, ToastLength.Short).Show(); }));
+                FireAuth.CreateUserWithEmailAndPassword(email, PassText.EditText.Text)
+                .AddOnSuccessListener(new OnSuccessListener(r =>
+                {
+                    SaveDriverToDb();
+                })).AddOnFailureListener(new OnFailureListener(e =>
+                {
+                    Toast.MakeText(Activity, e.Message, ToastLength.Short).Show();
+                }));
             };
         }
 
@@ -93,13 +95,22 @@ namespace Cab360Driver.Fragments
             CheckIfEmpty();
         }
 
-        private void SaveDriverToDb(HashMap driverMap)
+        private void SaveDriverToDb()
         {
-            driverRef = AppDataHelper.GetParentReference().Child(FireAuth.CurrentUser.Uid);
-            driverRef.SetValue(driverMap)
+            DriverRef = FireDb.GetReference("Drivers" + FireAuth.CurrentUser.Uid);
+            HashMap driverMap = new HashMap();
+            driverMap.Put("fname", fname);
+            driverMap.Put("lname", lname);
+            driverMap.Put("email", email);
+            driverMap.Put("phone", phone);
+            driverMap.Put("city", city);
+            driverMap.Put("invitecode", code);
+            driverMap.Put("created_at", DateTime.UtcNow.ToString());
+            
+            DriverRef.SetValue(driverMap)
                 .AddOnSuccessListener(new OnSuccessListener(r=> 
                 {
-                    driverRef.Child("stage_of_registration").SetValue(RegistrationStage.Partnering.ToString())
+                    DriverRef.Child("stage_of_registration").SetValue(RegistrationStage.Partnering.ToString())
                         .AddOnSuccessListener(new OnSuccessListener(r2=> 
                         {
                             SignUpSuccess.Invoke(this, new SignUpSuccessArgs { IsCompleted = true });
@@ -111,8 +122,10 @@ namespace Cab360Driver.Fragments
 
         private void CheckIfEmpty()
         {
-            SubmitBtn.Enabled = Patterns.EmailAddress.Matcher(EmailText.EditText.Text).Matches() && FnameText.EditText.Text.Length >= 3 &&
-                LnameText.EditText.Text.Length >= 3 && CityText.Text.Length >= 2 && PhoneText.EditText.Text.Length >= 8 && PassText.EditText.Text.Length >= 8;
+            SubmitBtn.Enabled = Patterns.EmailAddress.Matcher(EmailText.EditText.Text).Matches() 
+                && FnameText.EditText.Text.Length >= 3 &&
+                LnameText.EditText.Text.Length >= 3 && CityText.Text.Length >= 2 
+                && PhoneText.EditText.Text.Length >= 8 && PassText.EditText.Text.Length >= 8;
         }
 
         public class SignUpSuccessArgs : EventArgs

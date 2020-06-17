@@ -1,20 +1,33 @@
-﻿using Android.Content;
+﻿using Android.App;
+using Android.Content;
 using Android.OS;
 using Android.Util;
 using Android.Views;
 using Android.Widget;
+using Cab360Driver.EventListeners;
 using Cab360Driver.Helpers;
+using Firebase.Auth;
 using Google.Android.Material.Button;
 using Google.Android.Material.FloatingActionButton;
 using Google.Android.Material.TextField;
+using System.Text.RegularExpressions;
 
 namespace Cab360Driver.Fragments
 {
     public class DriverSignInFragment : AndroidX.Fragment.App.Fragment
     {
+        private FirebaseAuth _fireAuth;
+        ISharedPreferences preferences = Application.Context.GetSharedPreferences("driverInfo", FileCreationMode.Private);
+        ISharedPreferencesEditor editor;
+
         public override void OnCreate(Bundle savedInstanceState)
         {
             base.OnCreate(savedInstanceState);
+            _fireAuth = AppDataHelper.GetFirebaseAuth();
+            editor = preferences.Edit();
+
+            bool isValid = CreteRegex("GR-4945-12");
+            Log.Debug("regex", isValid.ToString());
         }
 
         public override View OnCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
@@ -46,14 +59,32 @@ namespace Cab360Driver.Fragments
                         break;
                     default:
                         {
-                            var fireAuth = AppDataHelper.GetFirebaseAuth();
-                            var fireDatabase = AppDataHelper.GetDatabase();
-                            fireAuth.SignInWithEmailAndPassword(emailText.EditText.Text, passText.EditText.Text)
+                            Log.Info("sign_in_btn_test", "button enabled");
+                            _fireAuth.SignInWithEmailAndPassword(emailText.EditText.Text, passText.EditText.Text)
                                 .AddOnSuccessListener(new OnSuccessListener(r =>
                                 {
-                                    var intent = new Intent(Activity, typeof(MainActivity));
-                                    intent.SetFlags(ActivityFlags.ClearTask | ActivityFlags.ClearTop | ActivityFlags.NewTask);
-                                    StartActivity(intent);
+                                    var fireDb = AppDataHelper.GetDatabase();
+                                    var dataRef = fireDb.GetReference("Drivers" + _fireAuth.CurrentUser.Uid);
+                                    dataRef.AddValueEventListener(new SingleValueListener(d =>
+                                    {
+                                        if (!d.Exists())
+                                            return;
+
+                                        string fname, lname, email, phone, city;
+                                        fname = (d.Child("fname") != null) ? d.Child("fname").Value.ToString() : "";
+                                        lname = (d.Child("lname") != null) ? d.Child("lname").Value.ToString() : "";
+                                        email = (d.Child("email") != null) ? d.Child("email").Value.ToString() : "";
+                                        phone = (d.Child("phone") != null) ? d.Child("phone").Value.ToString() : "";
+                                        city = (d.Child("city") != null) ? d.Child("city").Value.ToString() : "";
+
+                                        editor.PutString("fname", fname);
+                                        editor.PutString("lname", lname);
+                                        editor.PutString("email", email);
+                                        editor.PutString("phone", phone);
+                                        editor.PutString("city", city);
+                                        editor.Apply();
+
+                                    }, e=> { Toast.MakeText(Activity, e.Message, ToastLength.Short).Show(); }));
                                 }))
                                 .AddOnFailureListener(new OnFailureListener(e => { Toast.MakeText(Activity, e.Message, ToastLength.Short).Show(); }));
                             break;
@@ -61,6 +92,12 @@ namespace Cab360Driver.Fragments
                 }
 
             };
+        }
+
+        private bool CreteRegex(string test)
+        {
+            Regex regex = new Regex(@"^[a-zA-Z]{2}-\d+\-(\d{2}|[a-zA-Z])$");
+            return regex.IsMatch(test);
         }
     }
 }

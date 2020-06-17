@@ -30,12 +30,12 @@ namespace Cab360Driver.Activities
             {
                 var intent2 = new Intent(this, typeof(OnboardingActivity));
                 intent2.AddFlags(ActivityFlags.ClearTask | ActivityFlags.ClearTop | ActivityFlags.NewTask);
-                //intent2.PutExtra("stage", RegistrationStage.CarCapturing.ToString());
                 StartActivity(intent2);
             }
             else
             {
                 CheckStatus(currUser.Uid);
+                
             }
         }
 
@@ -46,10 +46,11 @@ namespace Cab360Driver.Activities
                 .AddListenerForSingleValueEvent(new SingleValueListener(snapshot=> {
                     if (!snapshot.Exists())
                     {
-                        var intent1 = new Intent(this, typeof(OnboardingActivity));
-                        intent1.AddFlags(ActivityFlags.ClearTask | ActivityFlags.ClearTop | ActivityFlags.NewTask);
-                        intent1.PutExtra("stage", snapshot.Value.ToString());
-                        StartActivity(intent1);
+                        var intent = new Intent(this, typeof(OnboardingActivity));
+                        intent.AddFlags(ActivityFlags.ClearTask | ActivityFlags.ClearTop | ActivityFlags.NewTask);
+                        intent.PutExtra("stage", snapshot.Value.ToString());
+                        StartActivity(intent);
+
                     }
                     else
                     {

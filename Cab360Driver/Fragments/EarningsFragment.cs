@@ -44,7 +44,7 @@ namespace Cab360Driver.Fragments
             var totalTripTxt = view.FindViewById<TextView>(Resource.Id.earn_tot_trip_txt);
 
             var totBalanceTxt = view.FindViewById<TextView>(Resource.Id.earn_tv2);
-            totBalanceTxt.Text = AppDataHelper.GetTotEarnings();
+            totBalanceTxt.Text = AppDataHelper.TotEarnings;
 
             var totalKmTxt = view.FindViewById<TextView>(Resource.Id.earn_tot_dis_txt);
 

@@ -1,4 +1,5 @@
-﻿using Android.OS;
+﻿using Android.Content;
+using Android.OS;
 using Android.Views;
 using Google.Android.Material.Button;
 using System;
@@ -8,8 +9,6 @@ namespace Cab360Driver.Fragments
     public class AckFragment : AndroidX.Fragment.App.Fragment
     {
         public event EventHandler OnSkip;
-        public event EventHandler OnVisit;
-        NoNetBottomSheet noNetBottomSheet = new NoNetBottomSheet();
         public override void OnCreate(Bundle savedInstanceState)
         {
             base.OnCreate(savedInstanceState);
@@ -32,16 +31,17 @@ namespace Cab360Driver.Fragments
             var visit_btn = view.FindViewById<MaterialButton>(Resource.Id.visit_site_btn);
             var skip_btn = view.FindViewById<MaterialButton>(Resource.Id.skip_btn);
             skip_btn.Click += (s1, e1) =>
-              {
-                  OnSkip?.Invoke(this, new EventArgs());
-              };
+            {
+                OnSkip?.Invoke(this, new EventArgs());
+            };
 
             visit_btn.Click += (s2, e2) =>
-              {
-                  //OnVisit?.Invoke(this, new EventArgs());
-                  noNetBottomSheet.Cancelable = false;
-                  noNetBottomSheet.Show(Activity.SupportFragmentManager, "nonet");
-              };
+            {
+                string url = "https://www.google.com";
+                Intent i = new Intent(Intent.ActionView);
+                i.SetData(Android.Net.Uri.Parse(url));
+                StartActivity(i);
+            };
         }
     }
 }
