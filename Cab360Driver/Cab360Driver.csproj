@@ -197,9 +197,6 @@
     <PackageReference Include="Com.Airbnb.Android.Lottie">
       <Version>3.0.5</Version>
     </PackageReference>
-    <PackageReference Include="Karamunting.Android.Felipecsl.GifImageView">
-      <Version>2.3.0.1</Version>
-    </PackageReference>
     <PackageReference Include="Karamunting.Android.Ramotion.CardSlider">
       <Version>0.3.1</Version>
     </PackageReference>
@@ -689,6 +686,18 @@
   </ItemGroup>
   <ItemGroup>
     <AndroidResource Include="Resources\drawable\ic_no_net.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable\ic_cedi.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable\ic_spped.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable\ic_time.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable-v24\clip_sign_in.png" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\Android\Xamarin.Android.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it.

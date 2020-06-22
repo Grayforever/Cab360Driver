@@ -14,7 +14,7 @@
   </style>
 
   <style name="AppTheme.MainScreen" parent="AppTheme">
-    <item name="android:statusBarColor">@android:color/white</item>
+    <item name="android:statusBarColor">@color/status_bar_color</item>
   </style>
 
   <style name="AppTheme.DialogWhenLarge" parent="Theme.MaterialComponents.Light.DialogWhenLarge">

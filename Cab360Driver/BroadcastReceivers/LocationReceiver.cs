@@ -20,11 +20,11 @@ namespace Cab360Driver.BroadcastReceivers
         {
             if (IsOnline(context))
             {
-
+                MainActivity.ShowLocationBottomSheet(true);
             }
             else
             {
-
+                MainActivity.ShowLocationBottomSheet(false);
             }
         }
 

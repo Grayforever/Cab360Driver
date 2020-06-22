@@ -6,6 +6,7 @@ using Android.Views;
 using Android.Widget;
 using AndroidX.CardView.Widget;
 using AndroidX.Core.Content;
+using Cab360Driver.Activities;
 using Cab360Driver.EnumsConstants;
 using Cab360Driver.Helpers;
 using Firebase.Auth;
@@ -25,8 +26,7 @@ namespace Cab360Driver.Fragments
         private TextView HeaderTxt1; 
         private TextView HeaderTxt2;
         private TextView HeaderTxt3;
-        private FirebaseAuth FireAuth;
-        private DatabaseReference driverRef;
+        
 
         public event EventHandler ProfileCaptured;
 
@@ -37,11 +37,16 @@ namespace Cab360Driver.Fragments
         private PicDisplayFragment picDisplayFragment;
         private StorageReference StoreRef;
         private FirebaseStorage FireStorage;
+        private FirebaseUser mUser;
+        private DatabaseReference driverRef;
+        private FirebaseDatabase fireDb;
         private byte[] imageArray;
 
         public override void OnCreate(Bundle savedInstanceState)
         {
             base.OnCreate(savedInstanceState);
+            mUser = AppDataHelper.GetCurrentUser();
+            fireDb = AppDataHelper.GetDatabase();
             if (ContextCompat.CheckSelfPermission(Activity, Manifest.Permission.Camera) != Android.Content.PM.Permission.Granted)
             {
                 RequestPermissions(new string[]
@@ -104,6 +109,7 @@ namespace Cab360Driver.Fragments
 
         private void BeginCameraInvoke(CaptureType captureType)
         {
+            //OnboardingActivity.ShowProgressDialog();
             switch (captureType)
             {
                 case CaptureType.ProfilePic:
@@ -182,8 +188,7 @@ namespace Cab360Driver.Fragments
                     UploadTask uploadTask = imageRef.PutBytes(imageArray);
                     uploadTask.AddOnSuccessListener(new OnSuccessListener(r1 =>
                     {
-                        FireAuth = AppDataHelper.GetFirebaseAuth();
-                        driverRef = AppDataHelper.GetParentReference().Child(FireAuth.CurrentUser.Uid);
+                        driverRef = fireDb.GetReference("Drivers").Child(mUser.Uid);
                         driverRef.Child("stage_of_registration").SetValue(RegistrationStage.CarRegistering.ToString())
                             .AddOnSuccessListener(new OnSuccessListener(r2 =>
                             {

@@ -1,182 +1,242 @@
-<?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-	xmlns:tools="http://schemas.android.com/tools"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="wrap_content"
+    android:id="@+id/new_ride_layout"
+    android:padding="16dp"
+    android:clipToPadding="false">
 
-    <FrameLayout
-        android:layout_width="match_parent"
-        android:layout_height="40dp"
-        android:layout_gravity="center"
-        android:layout_marginStart="16dp"
-        android:layout_marginEnd="16dp"
-        android:background="@drawable/circularbordersolid">
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="New Ride Request"
-            android:layout_gravity="center"
-            
-            android:textAppearance="?android:attr/textAppearanceMedium"
-        />
-    </FrameLayout>
-
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="174dp"
-        android:orientation="vertical"
-        android:background="@drawable/bg_bottomsheet_dg"
-        android:layout_gravity="bottom"
-        android:id="@+id/ride_req_ovly"
-        android:layout_marginStart="16dp"
-        android:layout_marginEnd="16dp"
-        android:layout_marginBottom="26dp"
-        android:paddingTop="8dp"
-        android:visibility="visible">
-
-        <ImageView
-            android:layout_width="16dp"
-            android:layout_height="16dp"
-            android:src="@drawable/redball"
-            android:id="@+id/redball"
-            android:layout_marginStart="24dp"
-            android:layout_marginEnd="8dp"
-            android:layout_marginTop="4dp"
+    <TextView
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:id="@+id/new_ride_header"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/anim_bell_av"
+        android:text="New ride request"
+        android:gravity="center"
+        android:textAppearance="?attr/textAppearanceHeadline5"
         />
 
-        <View
-            android:layout_width="1dp"
-            android:layout_height="24dp"
-            android:background="@android:color/darker_gray"
-            android:layout_below="@+id/redball"
-            android:layout_marginStart="32dp"
-            android:id="@+id/separator"
-            android:layout_marginTop="2dp"
-            android:layout_marginBottom="2dp"
+    <com.airbnb.lottie.LottieAnimationView
+        android:layout_width="32dp"
+        android:layout_height="32dp"
+        android:id="@+id/anim_bell_av"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/new_ride_header"
+        app:layout_constraintTop_toTopOf="parent"
+        app:lottie_fileName="bell.json"
         />
 
-        <ImageView
-            android:layout_width="16dp"
-            android:layout_height="16dp"
-            android:src="@drawable/greenball"
-            android:id="@+id/greenball"
-            android:layout_marginStart="24dp"
-            android:layout_marginEnd="8dp"
-            android:layout_marginTop="2dp"
-            android:layout_below="@+id/separator"
-        />
+    <androidx.cardview.widget.CardView
+        android:layout_width="0dp"
+        android:layout_height="56dp"
+        android:id="@+id/new_ride_from_cv"
+        app:layout_constraintTop_toBottomOf="@+id/new_ride_header"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="8dp">
 
-        <TextView
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/from_txt"
-            android:layout_toEndOf="@+id/redball"
-            android:text="Koforidua"
-            android:textSize="16sp"
-            android:layout_marginEnd="16dp"
-            
-            android:ellipsize="end"
-            android:maxLines="1"
-        />
+            android:layout_height="match_parent"
+            android:padding="8dp">
 
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/to_txt"
-            android:layout_toEndOf="@+id/greenball"
-            android:layout_below="@+id/separator"
-            android:text="Accra"
-            android:textSize="16sp"
-            android:layout_marginEnd="16dp"
-            
-            android:ellipsize="end"
-            android:maxLines="1"
-        />
-        
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:background="@android:color/darker_gray"
-            android:id="@+id/separator2"
-            android:layout_marginTop="4dp"
-            android:layout_marginBottom="2dp"
-            android:layout_below="@+id/greenball"
-        />
+            <ImageView
+                android:layout_width="16dp"
+                android:layout_height="16dp"
+                android:id="@+id/new_ride_frm_iv"
+                android:src="@drawable/position"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                />
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/separator2"
-            android:id="@+id/distance_txt"
-            android:text="5 km"
-            android:textStyle="bold"
-            android:layout_marginStart="22dp"
-            android:drawableLeft="@drawable/ic_distance"
-            android:drawablePadding="4dp"
-            android:layout_alignParentStart="true"
-            
-            android:gravity="center"
-            android:layout_marginTop="4dp"
-        />
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:id="@+id/new_ride_frm_tv"
+                app:layout_constraintStart_toEndOf="@+id/new_ride_frm_iv"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                android:text="Dansoman"
+                android:textAppearance="?attr/textAppearanceBody1"
+                android:layout_marginStart="4dp"
+                android:maxLines="2"
+                android:ellipsize="end"
+                />
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/duration_txt"
-            android:text="24 mins"
-            android:layout_marginEnd="16dp"
-            android:textStyle="bold"
-            android:drawableLeft="@drawable/ic_duration"
-            android:layout_alignParentEnd="true"
-            android:layout_below="@+id/separator2"
-            android:gravity="center"
-            android:drawablePadding="4dp"
-            android:layout_marginTop="4dp"
-        />
-       
-        <View
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </androidx.cardview.widget.CardView>
+
+    <androidx.cardview.widget.CardView
+        android:layout_width="0dp"
+        android:layout_height="56dp"
+        android:id="@+id/new_ride_to_cv"
+        app:layout_constraintTop_toBottomOf="@+id/new_ride_from_cv"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="16dp">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:background="@android:color/darker_gray"
-            android:id="@+id/separator3"
-            android:layout_marginTop="4dp"
-            android:layout_above="@+id/nre_linear"
-        />
+            android:layout_height="match_parent"
+            android:padding="8dp">
+
+            <ImageView
+                android:layout_width="16dp"
+                android:layout_height="16dp"
+                android:id="@+id/new_ride_to_iv"
+                android:src="@drawable/greenball"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                />
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:id="@+id/new_ride_to_tv"
+                app:layout_constraintStart_toEndOf="@+id/new_ride_to_iv"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                android:text="Kasoa new market"
+                android:textAppearance="?attr/textAppearanceBody1"
+                android:layout_marginStart="4dp"
+                android:maxLines="2"
+                android:ellipsize="end"
+                />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </androidx.cardview.widget.CardView>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="0dp"
+        android:layout_height="24dp"
+        android:id="@+id/toolbox"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/new_ride_to_cv"
+        android:layout_marginTop="8dp">
 
         <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:id="@+id/box1"
             android:orientation="horizontal"
-            android:id="@+id/nre_linear"
-            android:layout_alignParentBottom="true"
-            android:background="@color/colorDisabled">
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/box2"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent">
 
-            <com.google.android.material.floatingactionbutton.FloatingActionButton
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:id="@+id/decline_ride_fab"
-                app:fabSize="mini"
-                android:layout_marginStart="16dp"
-                android:layout_marginEnd="8dp"
+            <ImageView
+                android:layout_width="16dp"
+                android:layout_height="16dp"
+                android:id="@+id/box1_iview"
+                android:src="@drawable/ic_spped"
                 android:layout_gravity="center"
-                android:src="@drawable/abc_ic_clear_material"
-                android:tint="@color/colorPrimary"
-            />
+                android:layout_marginEnd="4dp"
+                />
 
-            <com.google.android.material.button.MaterialButton
+            <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:id="@+id/accept_ride_btn"
-                android:text="Accept"
-                android:textStyle="bold"
-                
-                app:icon="@drawable/ic_mtrl_chip_checked_black"
-                android:layout_marginEnd="16dp"
-            />
-            
+                android:id="@+id/box1_tv"
+                android:text="34km"
+                android:layout_gravity="center"
+                />
+
         </LinearLayout>
 
-    </RelativeLayout>
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:id="@+id/box2"
+            android:orientation="horizontal"
+            app:layout_constraintStart_toEndOf="@+id/box1"
+            app:layout_constraintEnd_toStartOf="@+id/box3"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent">
 
-</FrameLayout>
+            <ImageView
+                android:layout_width="16dp"
+                android:layout_height="16dp"
+                android:id="@+id/box2_iview"
+                android:src="@drawable/ic_time"
+                android:layout_gravity="center"
+                android:layout_marginEnd="4dp"
+                />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/box2_tv"
+                android:text="22 mins"
+                android:layout_gravity="center"
+                />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:id="@+id/box3"
+            android:orientation="horizontal"
+            app:layout_constraintStart_toEndOf="@+id/box2"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent">
+
+            <ImageView
+                android:layout_width="16dp"
+                android:layout_height="16dp"
+                android:id="@+id/box3_iview"
+                android:src="@drawable/ic_cedi"
+                android:layout_gravity="center"
+                android:layout_marginEnd="4dp"
+                />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/box3_tv"
+                android:text="56gh"
+                android:layout_gravity="center"
+                />
+
+        </LinearLayout>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <com.google.android.material.button.MaterialButton
+        android:layout_width="0dp"
+        android:layout_height="56dp"
+        android:id="@+id/new_ride_acceptBtn"
+        app:layout_constraintTop_toBottomOf="@+id/toolbox"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="8dp"
+        android:text="Accept ride"
+        android:textSize="16dp"
+        />
+
+    <TextView
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:id="@+id/new_ride_slide"
+        app:layout_constraintTop_toBottomOf="@+id/new_ride_acceptBtn"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:layout_marginTop="16dp"
+        android:gravity="center"
+        android:text="Slide down to reject"
+        android:textAppearance="?attr/textAppearanceBody1"
+        />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

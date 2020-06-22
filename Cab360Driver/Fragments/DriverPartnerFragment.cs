@@ -2,6 +2,7 @@
 using Android.OS;
 using Android.Views;
 using Android.Widget;
+using Cab360Driver.Activities;
 using Cab360Driver.EnumsConstants;
 using Cab360Driver.Helpers;
 using Firebase.Database;
@@ -20,6 +21,7 @@ namespace Cab360Driver.Fragments
         private ImageSwitcher InfoImgSwitcher;
         private MakeViewClass makeView;
         private DatabaseReference driverRef;
+        private FirebaseDatabase fireDb;
         private bool partner = true;
 
         public class PartnerEventArgs : EventArgs
@@ -31,6 +33,7 @@ namespace Cab360Driver.Fragments
         public override void OnCreate(Bundle savedInstanceState)
         {
             base.OnCreate(savedInstanceState);
+            fireDb = AppDataHelper.GetDatabase();
         }
 
         public override View OnCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
@@ -71,7 +74,8 @@ namespace Cab360Driver.Fragments
                 var currUser = AppDataHelper.GetCurrentUser();
                 if(currUser != null)
                 {
-                    driverRef = AppDataHelper.GetParentReference().Child(currUser.Uid);
+                    OnboardingActivity.ShowProgressDialog();
+                    driverRef = fireDb.GetReference("Drivers/" + currUser.Uid);
                     driverRef.Child("isPartner").SetValue(partner.ToString())
                         .AddOnSuccessListener(new OnSuccessListener(r1 =>
                         {
@@ -79,14 +83,15 @@ namespace Cab360Driver.Fragments
                                .AddOnSuccessListener(new OnSuccessListener(r2 =>
                                {
                                    PartnerTypeComplete.Invoke(this, new PartnerEventArgs { IsPartnerComplete = true });
+                                   OnboardingActivity.CloseProgressDialog();
                                }))
-                               .AddOnFailureListener(new OnFailureListener(e1 => { }));
+                               .AddOnFailureListener(new OnFailureListener(e1 => { OnboardingActivity.CloseProgressDialog(); }));
                         }))
-                        .AddOnFailureListener(new OnFailureListener(e1 => { }));
+                        .AddOnFailureListener(new OnFailureListener(e1 => { OnboardingActivity.CloseProgressDialog(); }));
                 }
                 else
                 {
-                    return;
+                    Toast.MakeText(Activity, "Something aint right", ToastLength.Short).Show();
                 }
                 
             };

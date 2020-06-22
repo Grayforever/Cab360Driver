@@ -1,6 +1,10 @@
 ﻿using Android.OS;
 using Android.Views;
+using Android.Widget;
 using Cab360Driver.EnumsConstants;
+using Cab360Driver.Helpers;
+using Firebase.Auth;
+using Firebase.Database;
 using Google.Android.Material.Button;
 using System;
 
@@ -9,11 +13,14 @@ namespace Cab360Driver.Fragments
     public class CarPicsFragment : AndroidX.Fragment.App.Fragment
     {
         public event EventHandler CarCaptureComplete;
+        private FirebaseDatabase fireDb;
+        private FirebaseUser fireUser;
 
         public override void OnCreate(Bundle savedInstanceState)
         {
             base.OnCreate(savedInstanceState);
-            
+            fireDb = AppDataHelper.GetDatabase();
+            fireUser = AppDataHelper.GetCurrentUser();
         }
 
         public override View OnCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
@@ -28,13 +35,13 @@ namespace Cab360Driver.Fragments
             var frontCard = view.FindViewById(Resource.Id.vehi_capt_c1);
             var backCard = view.FindViewById(Resource.Id.vehi_capt_c2);
             frontCard.Click += (s1, e1) =>
-              {
-                  CheckAndStartCamera(CaptureType.FrontSide);
-              };
+            {
+                CheckAndStartCamera(CaptureType.FrontSide);
+            };
             backCard.Click += (s2, e2) =>
-              {
-                  CheckAndStartCamera(CaptureType.BackSide);
-              };
+            {
+                CheckAndStartCamera(CaptureType.BackSide);
+            };
             btnMain.Click += BtnMain_Click;
         }
 
@@ -45,7 +52,14 @@ namespace Cab360Driver.Fragments
 
         private void BtnMain_Click(object sender, EventArgs e)
         {
-            CarCaptureComplete?.Invoke(this, new EventArgs());
+            if(fireUser != null)
+            {
+                var dbRef = fireDb.GetReference("Drivers/" + fireUser.Uid).Child("stage_of_registration");
+                dbRef.SetValue(RegistrationStage.Agreement.ToString())
+                    .AddOnSuccessListener(new OnSuccessListener(r => { CarCaptureComplete?.Invoke(this, new EventArgs()); }))
+                    .AddOnFailureListener(new OnFailureListener(e => { Toast.MakeText(Activity, e.Message, ToastLength.Short).Show(); }));
+            }
+            
         }
     }
 }

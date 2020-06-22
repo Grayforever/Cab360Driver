@@ -1,67 +1,60 @@
 ﻿using Android.OS;
 using Android.Views;
 using Android.Widget;
+using AndroidX.Annotations;
+using Cab360Driver.DataModels;
+using Google.Android.Material.BottomSheet;
 using Google.Android.Material.Button;
-using Google.Android.Material.FloatingActionButton;
 using System;
 
 namespace Cab360Driver.Fragments
 {
-    public class NewRequestFragment : AndroidX.Fragment.App.DialogFragment
+    public class NewRequestFragment : BottomSheetDialogFragment
     {
-
-        //Views
         private MaterialButton acceptRideButton;
-        private FloatingActionButton rejectRideButton;
-
-        string mPickupAddress;
-        string mDestinationAddress;
-        string mDuration;
-        string mDistance;
-
-        //Events
+        private View view;
+        private RideDetails _rideDetails;
         public event EventHandler RideAccepted;
-        public event EventHandler RideRejected;
 
-        public NewRequestFragment(string pickupAddress, string destinationAddress)
+        public NewRequestFragment([Nullable]RideDetails rideDetails)
         {
-            mPickupAddress = pickupAddress;
-            mDestinationAddress = destinationAddress;
+            _rideDetails = rideDetails;
         }
 
         public override void OnCreate(Bundle savedInstanceState)
         {
             base.OnCreate(savedInstanceState);
-            SetStyle(StyleNormal, Resource.Style.AppTheme_DialogWhenLarge);
+            SetStyle(StyleNormal, Resource.Style.AppTheme_ModalDialog);
         }
 
         public override View OnCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
         {
-            var view =   inflater.Inflate(Resource.Layout.new_ride_request_overlay, container, false);
+            view =  inflater.Inflate(Resource.Layout.new_ride_request_overlay, container, false);
 
-            GetControls(view);
+            GetControls();
 
             return view;
-        }
+        } 
 
-        private void GetControls(View view)
+        private void GetControls()
         {
-            acceptRideButton = (MaterialButton)view.FindViewById(Resource.Id.accept_ride_btn);
-            rejectRideButton = (FloatingActionButton)view.FindViewById(Resource.Id.decline_ride_fab);
-
-            acceptRideButton.Click += AcceptRideButton_Click;
-            rejectRideButton.Click += RejectRideButton_Click;
+            var fromTxt = view.FindViewById<TextView>(Resource.Id.new_ride_frm_tv);
+            var toTxt = view.FindViewById<TextView>(Resource.Id.new_ride_to_tv);
+            acceptRideButton = (MaterialButton)view.FindViewById(Resource.Id.new_ride_acceptBtn);
+            if (_rideDetails != null)
+            {
+                fromTxt.Text = _rideDetails.PickupAddress;
+                toTxt.Text = _rideDetails.DestinationAddress;
+            }
+            else
+            {
+                return;
+            }
+            
+            acceptRideButton.Click += (s1, e1) =>
+            {
+                RideAccepted?.Invoke(this, new EventArgs());
+            };
         }
-
-        void AcceptRideButton_Click(object sender, EventArgs e)
-        {
-            RideAccepted?.Invoke(this, new EventArgs());
-        }
-
-        void RejectRideButton_Click(object sender, EventArgs e)
-        {
-            RideRejected?.Invoke(this, new EventArgs());
-        }
-
     }
 }

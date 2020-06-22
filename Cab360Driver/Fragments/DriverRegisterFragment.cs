@@ -4,7 +4,7 @@ using Android.Util;
 using Android.Views;
 using Android.Widget;
 using AndroidX.AppCompat.Widget;
-using AndroidX.Collection;
+using Cab360Driver.Activities;
 using Cab360Driver.Adapters;
 using Cab360Driver.EnumsConstants;
 using Cab360Driver.Helpers;
@@ -72,6 +72,8 @@ namespace Cab360Driver.Fragments
 
             SubmitBtn.Click += (s1, e1) =>
             {
+                //open progress
+                OnboardingActivity.ShowProgressDialog();
                 fname = FnameText.EditText.Text;
                 lname = LnameText.EditText.Text;
                 email = EmailText.EditText.Text;
@@ -85,6 +87,8 @@ namespace Cab360Driver.Fragments
                     SaveDriverToDb();
                 })).AddOnFailureListener(new OnFailureListener(e =>
                 {
+                    //close prgress
+                    OnboardingActivity.CloseProgressDialog();
                     Toast.MakeText(Activity, e.Message, ToastLength.Short).Show();
                 }));
             };
@@ -97,7 +101,7 @@ namespace Cab360Driver.Fragments
 
         private void SaveDriverToDb()
         {
-            DriverRef = FireDb.GetReference("Drivers" + FireAuth.CurrentUser.Uid);
+            DriverRef = FireDb.GetReference("Drivers/" + FireAuth.CurrentUser.Uid);
             HashMap driverMap = new HashMap();
             driverMap.Put("fname", fname);
             driverMap.Put("lname", lname);
@@ -113,9 +117,16 @@ namespace Cab360Driver.Fragments
                     DriverRef.Child("stage_of_registration").SetValue(RegistrationStage.Partnering.ToString())
                         .AddOnSuccessListener(new OnSuccessListener(r2=> 
                         {
+                            //close prgress
+                            OnboardingActivity.CloseProgressDialog();
                             SignUpSuccess.Invoke(this, new SignUpSuccessArgs { IsCompleted = true });
                         }))
-                        .AddOnFailureListener(new OnFailureListener(e1=> { Toast.MakeText(Activity, e1.Message, ToastLength.Short).Show(); }));
+                        .AddOnFailureListener(new OnFailureListener(e1=> 
+                        {
+                            //close prgress
+                            OnboardingActivity.CloseProgressDialog();
+                            Toast.MakeText(Activity, e1.Message, ToastLength.Short).Show(); 
+                        }));
                 }))
                 .AddOnFailureListener(new OnFailureListener(e=> { Toast.MakeText(Activity, e.Message, ToastLength.Short).Show(); }));
         }
@@ -123,9 +134,11 @@ namespace Cab360Driver.Fragments
         private void CheckIfEmpty()
         {
             SubmitBtn.Enabled = Patterns.EmailAddress.Matcher(EmailText.EditText.Text).Matches() 
-                && FnameText.EditText.Text.Length >= 3 &&
-                LnameText.EditText.Text.Length >= 3 && CityText.Text.Length >= 2 
-                && PhoneText.EditText.Text.Length >= 8 && PassText.EditText.Text.Length >= 8;
+                && FnameText.EditText.Text.Length >= 3 
+                && LnameText.EditText.Text.Length >= 3 
+                && CityText.Text.Length >= 2 
+                && PhoneText.EditText.Text.Length >= 8 
+                && PassText.EditText.Text.Length >= 8;
         }
 
         public class SignUpSuccessArgs : EventArgs

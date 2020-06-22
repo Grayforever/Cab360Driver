@@ -1,6 +1,12 @@
 ﻿using Android.Content;
 using Android.OS;
 using Android.Views;
+using Android.Widget;
+using Cab360Driver.EnumsConstants;
+using Cab360Driver.Helpers;
+using Firebase;
+using Firebase.Auth;
+using Firebase.Database;
 using Google.Android.Material.Button;
 using System;
 
@@ -9,9 +15,13 @@ namespace Cab360Driver.Fragments
     public class AckFragment : AndroidX.Fragment.App.Fragment
     {
         public event EventHandler OnSkip;
+        private FirebaseDatabase fireDb;
+        private FirebaseUser fireUser;
         public override void OnCreate(Bundle savedInstanceState)
         {
             base.OnCreate(savedInstanceState);
+            fireUser = AppDataHelper.GetCurrentUser();
+            fireDb = AppDataHelper.GetDatabase();
         }
 
         public override View OnCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
@@ -32,7 +42,15 @@ namespace Cab360Driver.Fragments
             var skip_btn = view.FindViewById<MaterialButton>(Resource.Id.skip_btn);
             skip_btn.Click += (s1, e1) =>
             {
-                OnSkip?.Invoke(this, new EventArgs());
+                if(fireUser != null)
+                {
+                    var dataRef = fireDb.GetReference("Drivers/" + fireUser.Uid).Child("stage_of_registration");
+                    dataRef.SetValue(RegistrationStage.RegistrationDone.ToString())
+                    .AddOnSuccessListener(new OnSuccessListener(r =>
+                    {
+                        OnSkip?.Invoke(this, new EventArgs());
+                    })).AddOnFailureListener(new OnFailureListener(e => { Toast.MakeText(Activity, e.Message, ToastLength.Short).Show(); }));
+                }
             };
 
             visit_btn.Click += (s2, e2) =>

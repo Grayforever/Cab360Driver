@@ -4,13 +4,13 @@ using Android.OS;
 using Android.Util;
 using Android.Views;
 using Android.Widget;
+using Cab360Driver.Activities;
 using Cab360Driver.EventListeners;
 using Cab360Driver.Helpers;
 using Firebase.Auth;
 using Google.Android.Material.Button;
 using Google.Android.Material.FloatingActionButton;
 using Google.Android.Material.TextField;
-using System.Text.RegularExpressions;
 
 namespace Cab360Driver.Fragments
 {
@@ -25,9 +25,6 @@ namespace Cab360Driver.Fragments
             base.OnCreate(savedInstanceState);
             _fireAuth = AppDataHelper.GetFirebaseAuth();
             editor = preferences.Edit();
-
-            bool isValid = CreteRegex("GR-4945-12");
-            Log.Debug("regex", isValid.ToString());
         }
 
         public override View OnCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
@@ -59,12 +56,13 @@ namespace Cab360Driver.Fragments
                         break;
                     default:
                         {
-                            Log.Info("sign_in_btn_test", "button enabled");
+                            //showProgress
+                            OnboardingActivity.ShowProgressDialog();
                             _fireAuth.SignInWithEmailAndPassword(emailText.EditText.Text, passText.EditText.Text)
                                 .AddOnSuccessListener(new OnSuccessListener(r =>
                                 {
                                     var fireDb = AppDataHelper.GetDatabase();
-                                    var dataRef = fireDb.GetReference("Drivers" + _fireAuth.CurrentUser.Uid);
+                                    var dataRef = fireDb.GetReference("Drivers/" + _fireAuth.CurrentUser.Uid);
                                     dataRef.AddValueEventListener(new SingleValueListener(d =>
                                     {
                                         if (!d.Exists())
@@ -84,20 +82,22 @@ namespace Cab360Driver.Fragments
                                         editor.PutString("city", city);
                                         editor.Apply();
 
-                                    }, e=> { Toast.MakeText(Activity, e.Message, ToastLength.Short).Show(); }));
+                                    }, e=> 
+                                    {
+                                        OnboardingActivity.CloseProgressDialog();
+                                        Toast.MakeText(Activity, e.Message, ToastLength.Short).Show(); 
+                                    }));
                                 }))
-                                .AddOnFailureListener(new OnFailureListener(e => { Toast.MakeText(Activity, e.Message, ToastLength.Short).Show(); }));
+                                .AddOnFailureListener(new OnFailureListener(e => 
+                                {
+                                    OnboardingActivity.CloseProgressDialog();
+                                    Toast.MakeText(Activity, e.Message, ToastLength.Short).Show(); 
+                                }));
                             break;
                         }
                 }
 
             };
-        }
-
-        private bool CreteRegex(string test)
-        {
-            Regex regex = new Regex(@"^[a-zA-Z]{2}-\d+\-(\d{2}|[a-zA-Z])$");
-            return regex.IsMatch(test);
         }
     }
 }

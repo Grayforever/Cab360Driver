@@ -1,5 +1,4 @@
-﻿using Android.App;
-using Android.Graphics;
+﻿using Android.Graphics;
 using Android.OS;
 using Android.Text;
 using Android.Util;
@@ -40,11 +39,13 @@ namespace Cab360Driver.Fragments
         private FirebaseDatabase FireDatabase;
         private string[] conditions = new string[] { "Slightly Used", "Used", "New" };
         private List<string> LColors;
+        private Regex regex = new Regex(@"^[a-zA-Z]{2}-\d{4}\-(\d{2}|[a-zA-Z])$");
 
         public override void OnCreate(Bundle savedInstanceState)
         {
             base.OnCreate(savedInstanceState);
             FireDatabase = AppDataHelper.GetDatabase();
+            
             LColors = new List<string>();
             foreach (PropertyInfo property in typeof(Color).GetProperties())
             {
@@ -130,8 +131,6 @@ namespace Cab360Driver.Fragments
 
         private void TextChanged(object sender, TextChangedEventArgs e)
         {
-
-
             CheckIfEmpty();
         }
 
@@ -146,9 +145,7 @@ namespace Cab360Driver.Fragments
             CurrOwnEt = view.FindViewById<TextInputLayout>(Resource.Id.curr_user_til);
             ContinueBtn = view.FindViewById<MaterialButton>(Resource.Id.part_cont_btn);
             ContinueBtn.Click += ContinueBtn_Click;
-        }
-
-        
+        } 
 
         private void ContinueBtn_Click(object sender, EventArgs e)
         {
@@ -169,11 +166,11 @@ namespace Cab360Driver.Fragments
             var currUser = AppDataHelper.GetCurrentUser();
             if(currUser != null)
             {
-                var vehicleRef = FireDatabase.GetReference("Drivers" + currUser.Uid).Child("MyCars");
+                var vehicleRef = FireDatabase.GetReference("Drivers/" + currUser.Uid).Child("MyCars");
                 vehicleRef.SetValue(carMap)
                     .AddOnSuccessListener(new OnSuccessListener(result =>
                     {
-                        var driverRef = AppDataHelper.GetParentReference().Child(currUser.Uid).Child("stage_of_registration");
+                        var driverRef = FireDatabase.GetReference("Drivers").Child(currUser.Uid).Child("stage_of_registration");
                         driverRef.SetValue(RegistrationStage.CarCapturing.ToString())
                             .AddOnSuccessListener(new OnSuccessListener(result2 =>
                             {
@@ -203,8 +200,13 @@ namespace Cab360Driver.Fragments
 
         private void CheckIfEmpty()
         {
-            ContinueBtn.Enabled = CarBrandEt.Text.Length >= 3 && CarModelEt.Text.Length >= 2 && CarColorEt.Text.Length >= 3 &&
-                CarYearEt.Text.Length == 4 && ConditionEt.Text.Length >= 3 && CurrOwnEt.EditText.Text.Length >= 3 && RegNoEt.EditText.Text.Length >= 5;
+            ContinueBtn.Enabled = CarBrandEt.Text.Length >= 3 
+                && CarModelEt.Text.Length >= 2 
+                && CarColorEt.Text.Length >= 3 
+                && CarYearEt.Text.Length == 4 
+                && ConditionEt.Text.Length >= 3 
+                && CurrOwnEt.EditText.Text.Length >= 3 
+                && regex.IsMatch(RegNoEt.EditText.Text);
         } 
     }
 

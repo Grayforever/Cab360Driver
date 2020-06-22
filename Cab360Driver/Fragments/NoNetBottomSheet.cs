@@ -31,6 +31,7 @@ namespace Cab360Driver.Fragments
         private int headerText2 = Resource.String.no_net_header2;
         private int subTitle2 = Resource.String.no_net_sub2;
         private FragmentActivity _context;
+        private bool isPinging = false;
 
         public NoNetBottomSheet(FragmentActivity context)
         {
@@ -41,18 +42,19 @@ namespace Cab360Driver.Fragments
         {
             base.OnCreate(savedInstanceState);
             SetStyle(StyleNormal, Resource.Style.AppTheme_ModalDialog);
-            runtime = Runtime.GetRuntime();
+            
         }
 
         public override View OnCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
         {
             var view = inflater.Inflate(Resource.Layout.no_net_btmsht, container, false);
+            runtime = Runtime.GetRuntime();
             return view; 
         }
 
         public override void OnViewCreated(View view, Bundle savedInstanceState)
         {
-            base.OnViewCreated(view, savedInstanceState);
+            //base.OnViewCreated(view, savedInstanceState);
             noNetHeader = view.FindViewById<TextView>(Resource.Id.no_net_hdr);
             noNetSub = view.FindViewById<TextView>(Resource.Id.no_net_sbttl);
             progress = view.FindViewById<ProgressBar>(Resource.Id.no_net_prgs);
@@ -73,28 +75,43 @@ namespace Cab360Driver.Fragments
         {
             if (val)
             {
+                isPinging = true;
+                UpdateUi();
                 await PingGoogleServer();
             }
             else
             {
+                isPinging = false;
+                UpdateUi();
                 Intent intentOpenSettings = new Intent(Settings.ActionDataRoamingSettings);
                 _context.StartActivityForResult(intentOpenSettings, 0);
+                
+            }
+        }
 
+        private void UpdateUi()
+        {
+            if (!isPinging)
+            {
                 progress.Visibility = ViewStates.Invisible;
                 btnRetry.Enabled = true;
                 btnRetry.SetText(retryText1);
                 noNetHeader.SetText(headerText1);
                 noNetSub.SetText(subTitle1);
             }
+            else
+            {
+                progress.Visibility = ViewStates.Visible;
+                btnRetry.Enabled = false;
+                btnRetry.SetText(retryText2);
+                noNetHeader.SetText(headerText2);
+                noNetSub.SetText(subTitle2);
+            }
+
         }
 
         private async Task<bool> PingGoogleServer()
-        {
-            progress.Visibility = ViewStates.Visible;
-            btnRetry.Enabled = false;
-            btnRetry.SetText(retryText2);
-            noNetHeader.SetText(headerText2);
-            noNetSub.SetText(subTitle2);
+        {   
             try
             {
                 mIpAddrProcess = runtime.Exec("/system/bin/ping -c 1 8.8.8.8");

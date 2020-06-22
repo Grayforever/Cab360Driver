@@ -10,6 +10,7 @@ using AndroidX.Core.Content;
 using AndroidX.Fragment.App;
 using AndroidX.ViewPager2.Widget;
 using Cab360Driver.Adapters;
+using Cab360Driver.BroadcastReceivers;
 using Cab360Driver.DataModels;
 using Cab360Driver.EnumsConstants;
 using Cab360Driver.EventListeners;
@@ -31,18 +32,19 @@ namespace Cab360Driver
         private FloatingActionButton fabToggleOnline;
 
         //Views
-        ViewPager2 viewpager;
-        BottomNavigationView bnve;
+        private ViewPager2 viewpager;
+        private BottomNavigationView bnve;
 
         //Fragments
-        HomeFragment homeFragment = new HomeFragment();
-        RatingsFragment ratingsFragment = new RatingsFragment();
-        EarningsFragment earningsFragment = new EarningsFragment();
-        AccountFragment accountFragment = new AccountFragment();
-        NewRequestFragment requestFoundDialogue;
+        private HomeFragment homeFragment = new HomeFragment();
+        private RatingsFragment ratingsFragment = new RatingsFragment();
+        private EarningsFragment earningsFragment = new EarningsFragment();
+        private AccountFragment accountFragment = new AccountFragment();
+        private NewRequestFragment newRideDialog;
 
         //PermissionRequest
         private const int RequestID = 0;
+        private LocationReceiver _locationReceiver;
         
         //EventListeners
         AvailablityListener availablityListener;
@@ -68,37 +70,26 @@ namespace Cab360Driver
 
         //Helpers
         private MapFunctionHelper mapHelper;
-        private ProfileEventListener profileEvent = new ProfileEventListener();
-        private EarningsEventLister earningsEvent = new EarningsEventLister();
+        private static FragmentActivity _this;
 
         protected override void OnCreate(Bundle savedInstanceState)
         {
             base.OnCreate(savedInstanceState);
             SetContentView(Resource.Layout.activity_main);
             ConnectViews();
-            CheckSpecialPermission();
-            profileEvent.Create();
-            earningsEvent.Create();
-            profileEvent.UserNotFoundEvent += ProfileEvent_UserNotFoundEvent;
+            SetupViewPager();
+            _this = this;
+            
             statusEnum = RideStatusEnum.Normal;
         }
 
         protected override void OnStart()
         {
             base.OnStart();
-        }
-
-        private void ProfileEvent_UserNotFoundEvent(object sender, EventArgs e)
-        {
-            var alert = new SweetAlertDialog(this, SweetAlertDialog.WarningType);
-            alert.SetTitleText("Oops...");
-            alert.SetContentText("Something went wrong. Please check your network connection!");
-            alert.SetConfirmText("Sure");
-            alert.SetConfirmClickListener(new SweetConfirmClick(s=> 
-            {
-                s.DismissWithAnimation();
-            }));
-            alert.Show();
+            player = MediaPlayer.Create(this, Resource.Raw.alert);
+            _locationReceiver = new LocationReceiver();
+            mapHelper = new MapFunctionHelper(homeFragment.mainMap);
+            CheckSpecialPermission();
         }
 
         private void ConnectViews()
@@ -154,36 +145,48 @@ namespace Cab360Driver
             bnve = (BottomNavigationView)FindViewById(Resource.Id.bnve);
             BadgeDrawable badge = bnve.GetOrCreateBadge(Resource.Menu.bottomnav);
             badge.SetVisible(true);
-            bnve.NavigationItemSelected += (s1, e1)=> 
-            {
-                var itemID = e1.Item.ItemId;
-                switch (itemID)
-                {
-                    case Resource.Id.action_earning:
-                        viewpager.SetCurrentItem(1, false);
-                        break;
-
-                    case Resource.Id.action_home:
-                        viewpager.SetCurrentItem(0, false);
-                        break;
-
-                    case Resource.Id.action_rating:
-                        viewpager.SetCurrentItem(2, false);
-                        break;
-
-                    case Resource.Id.action_account:
-                        viewpager.SetCurrentItem(3, false);
-                        break;
-
-                    default:
-                        return;
-                }
-            };
+            bnve.NavigationItemSelected += Bnve_NavigationItemSelected;
 
             viewpager = (ViewPager2)FindViewById(Resource.Id.viewpager);
             viewpager.OffscreenPageLimit = 3;
             viewpager.UserInputEnabled = false;
-            SetupViewPager();
+            
+        }
+
+        private void Bnve_NavigationItemSelected(object sender, BottomNavigationView.NavigationItemSelectedEventArgs e)
+        {
+            var itemID = e.Item.ItemId;
+            switch (itemID)
+            {
+                case Resource.Id.action_earning:
+                    viewpager.SetCurrentItem(1, false);
+                    break;
+
+                case Resource.Id.action_home:
+                    viewpager.SetCurrentItem(0, false);
+                    break;
+
+                case Resource.Id.action_rating:
+                    viewpager.SetCurrentItem(2, false);
+                    break;
+
+                case Resource.Id.action_account:
+                    viewpager.SetCurrentItem(3, false);
+                    break;
+
+                default:
+                    return;
+            }
+        }
+
+        private void SetupViewPager()
+        {
+            ViewPagerAdapter adapter = new ViewPagerAdapter(SupportFragmentManager, Lifecycle);
+            adapter.AddFragment(homeFragment, "Home");
+            adapter.AddFragment(earningsFragment, "Earnings");
+            adapter.AddFragment(ratingsFragment, "Rating");
+            adapter.AddFragment(accountFragment, "Account");
+            viewpager.Adapter = adapter;
 
             homeFragment.CurrentLocation += HomeFragment_CurrentLocation;
             homeFragment.TripActionArrived += HomeFragment_TripActionArrived;
@@ -206,31 +209,6 @@ namespace Cab360Driver
             availablityListener.ReActivate();
         }
 
-        private void ShowFareDialog(double fares, double distance, string from, string to)
-        {
-            var collectPaymentFragment = new CollectPaymentFragment(fares, distance, from, to);
-            collectPaymentFragment.Cancelable = false;
-            collectPaymentFragment.Show(SupportFragmentManager, "Collect Payment Fragment");
-            collectPaymentFragment.PaymentCollected += (s1, e1) =>
-            {
-                var earnDataRef = e1.DataRef;
-                earnDataRef.Child("totalEarnings").AddListenerForSingleValueEvent(new SingleValueListener(dataSnapshot =>
-                {
-                    if (!dataSnapshot.Exists())
-                        earnDataRef.Child("totalEarnings").SetValueAsync(fares);
-
-                    var earning= dataSnapshot.Value;
-                    double totalEarnings = (int)earning + fares;
-                    earnDataRef.Child("totalEarnings").SetValueAsync(totalEarnings.ToString());
-                    collectPaymentFragment.Dismiss();
-                }, dataError=> 
-                {
-                    Toast.MakeText(this, dataError.Message, ToastLength.Short).Show();
-                    collectPaymentFragment.Dismiss();
-                }));
-            };
-        }
-
         public void HomeFragment_TripActionStartTrip(object sender, EventArgs e)
         {
             var startTripAlert = new SweetAlertDialog(this, SweetAlertDialog.WarningType);
@@ -246,41 +224,6 @@ namespace Cab360Driver
             }));
             startTripAlert.Show();
 
-        }
-
-        private void HomeFragment_Navigate(object sender, EventArgs e)
-        {
-            try
-            {
-                if (newRideDetails != null)
-                {
-                    string uriString = statusEnum == RideStatusEnum.Accepted
-                        ? NavUriString(newRideDetails.PickupLat, newRideDetails.PickupLng)
-                        : NavUriString(newRideDetails.DestinationLat, newRideDetails.DestinationLng);
-                    OpenGoogleMap(uriString);
-                }
-                else
-                {
-                    return;
-                }
-            }
-            catch (System.Exception exception)
-            {
-                Toast.MakeText(this, exception.Message, ToastLength.Short).Show();
-            }
-        }
-
-        private void OpenGoogleMap(string uriString)
-        {
-            Android.Net.Uri googleMapIntentUri = Android.Net.Uri.Parse(uriString);
-            Intent mapIntent = new Intent(Intent.ActionView, googleMapIntentUri);
-            mapIntent.SetPackage("com.google.android.apps.maps");
-            StartActivity(mapIntent);
-        }
-
-        private string NavUriString(double lat, double lng)
-        {
-            return $"{StringConstants.GetNavigateBaseGateway()}{lat},{lng}";
         }
 
         private void HomeFragment_CallRider(object sender, EventArgs e)
@@ -354,6 +297,41 @@ namespace Cab360Driver
             }
         }
 
+        private void HomeFragment_Navigate(object sender, EventArgs e)
+        {
+            try
+            {
+                if (newRideDetails != null)
+                {
+                    string uriString = statusEnum == RideStatusEnum.Accepted
+                        ? NavUriString(newRideDetails.PickupLat, newRideDetails.PickupLng)
+                        : NavUriString(newRideDetails.DestinationLat, newRideDetails.DestinationLng);
+                    OpenGoogleMap(uriString);
+                }
+                else
+                {
+                    return;
+                }
+            }
+            catch (System.Exception exception)
+            {
+                Toast.MakeText(this, exception.Message, ToastLength.Short).Show();
+            }
+        }
+
+        private void OpenGoogleMap(string uriString)
+        {
+            Android.Net.Uri googleMapIntentUri = Android.Net.Uri.Parse(uriString);
+            Intent mapIntent = new Intent(Intent.ActionView, googleMapIntentUri);
+            mapIntent.SetPackage("com.google.android.apps.maps");
+            StartActivity(mapIntent);
+        }
+
+        private string NavUriString(double lat, double lng)
+        {
+            return $"{StringConstants.GetNavigateBaseGateway()}{lat},{lng}";
+        }
+
         private void TakeDriverOnline()
         {
             if(mLastLocation != null)
@@ -386,10 +364,10 @@ namespace Cab360Driver
 
         private void AvailablityListener_RideTimedOut(object sender, AvailablityListener.TimeoutMessageArgs e)
         {
-            if (requestFoundDialogue != null)
+            if (newRideDialog != null)
             {
-                requestFoundDialogue.Dismiss();
-                requestFoundDialogue = null;
+                newRideDialog.Dismiss();
+                newRideDialog = null;
                 player.Stop();
                 player = null;
             }
@@ -420,68 +398,7 @@ namespace Cab360Driver
 
         }
 
-        private void CreateNewRequestDialogue()
-        {
-            requestFoundDialogue = new NewRequestFragment(newRideDetails.PickupAddress, newRideDetails.DestinationAddress);
-            requestFoundDialogue.Cancelable = false;
-            requestFoundDialogue.Show(SupportFragmentManager, "Request");
-
-            //Play Alert
-            player = MediaPlayer.Create(this, Resource.Raw.alert);
-            player.Start();
-
-            requestFoundDialogue.RideRejected += (s1, e1) =>
-            {
-                //Stop Alert
-                if (player != null)
-                {
-                    player.Stop();
-                    player = null;
-                }
-
-                //Dissmiss Dialogue
-                if (requestFoundDialogue != null)
-                {
-                    requestFoundDialogue.Dismiss();
-                    requestFoundDialogue = null;
-                }
-
-                RideRejectDialog rideRejectDialog = new RideRejectDialog();
-                rideRejectDialog.Show(SupportFragmentManager, "reject ride");
-
-                availablityListener.ReActivate();
-
-                //Do other stuff
-            };
-
-            requestFoundDialogue.RideAccepted += async (s2, e2) =>
-            {
-                newTripEventListener = new NewTripEventListener(newRideDetails.RideId, mLastLocation);
-                newTripEventListener.Create();
-                statusEnum = RideStatusEnum.Accepted;
-
-                //Stop Alert
-                if (player != null)
-                {
-                    player.Stop();
-                    player = null;
-                }
-
-                //Dissmiss Dialogue
-                if (requestFoundDialogue != null)
-                {
-                    requestFoundDialogue.Dismiss();
-                    requestFoundDialogue = null;
-                }
-
-                homeFragment.CreateTrip(newRideDetails.RiderName);
-                mapHelper = new MapFunctionHelper(homeFragment.mainMap);
-                LatLng pickupLatLng = new LatLng(newRideDetails.PickupLat, newRideDetails.PickupLng);
-                string directionJson = await mapHelper.GetDirectionJsonAsync(mLastLatLng, pickupLatLng);
-
-                mapHelper.DrawTripOnMap(directionJson);
-            };
-        }
+       
 
         private void RideDetailsListener_RideDetailsFound(object sender, RideDetailsListener.RideDetailsEventArgs e)
         {
@@ -493,7 +410,7 @@ namespace Cab360Driver
 
             if (!isBackground)
             {
-                CreateNewRequestDialogue();
+                CreateNewRequestDialog();
             }
             else
             {
@@ -506,12 +423,64 @@ namespace Cab360Driver
             }
         }
 
+        private void CreateNewRequestDialog()
+        {
+            if(newRideDetails != null)
+            {
+                newRideDialog = new NewRequestFragment(newRideDetails);
+                newRideDialog.Show(SupportFragmentManager, "Request");
+
+                player.Start();
+
+                newRideDialog.OnDismiss(new OnDialogCancel(null, () =>
+                {
+                    //Stop Alert
+                    if (player.IsPlaying && newRideDialog != null)
+                    {
+                        player.Stop();
+                        newRideDialog.Dismiss();
+                        newRideDialog = null;
+
+                        //RideRejectDialog rideRejectDialog = new RideRejectDialog();
+                        //rideRejectDialog.Show(SupportFragmentManager, "reject ride");
+
+                        availablityListener.ReActivate();
+                    }
+                }));
+
+                newRideDialog.RideAccepted += async (s2, e2) =>
+                {
+                    statusEnum = RideStatusEnum.Accepted;
+                    newTripEventListener = new NewTripEventListener(newRideDetails.RideId, mLastLocation);
+                    newTripEventListener.Create();
+
+                    if (player.IsPlaying && newRideDialog != null)
+                    {
+                        player.Stop();
+
+                        newRideDialog.Dismiss();
+                        newRideDialog = null;
+                    }
+                     
+                    homeFragment.CreateTrip(newRideDetails.RiderName);
+                    
+                    LatLng pickupLatLng = new LatLng(newRideDetails.PickupLat, newRideDetails.PickupLng);
+                    mapHelper.DrawTripOnMap(await mapHelper.GetDirectionJsonAsync(mLastLatLng, pickupLatLng));
+                };
+            }
+            else
+            {
+                return;
+            }
+            
+        }
+
         private void AvailablityListener_RideCancelled(object sender, EventArgs e)
         {
-            if (requestFoundDialogue != null)
+            if (newRideDialog != null)
             {
-                requestFoundDialogue.Dismiss();
-                requestFoundDialogue = null;
+                newRideDialog.Dismiss();
+                newRideDialog = null;
                 player.Stop();
                 player = null;
             }
@@ -520,14 +489,29 @@ namespace Cab360Driver
             availablityListener.ReActivate();
         }
 
-        private void SetupViewPager()
+        private void ShowFareDialog(double fares, double distance, string from, string to)
         {
-            ViewPagerAdapter adapter = new ViewPagerAdapter(SupportFragmentManager, Lifecycle);
-            adapter.AddFragment(homeFragment, "Home");
-            adapter.AddFragment(earningsFragment, "Earnings");
-            adapter.AddFragment(ratingsFragment, "Rating");
-            adapter.AddFragment(accountFragment, "Account");
-            viewpager.Adapter = adapter;
+            var collectPaymentFragment = new CollectPaymentFragment(fares, distance, from, to);
+            collectPaymentFragment.Cancelable = false;
+            collectPaymentFragment.Show(SupportFragmentManager, "Collect Payment Fragment");
+            collectPaymentFragment.PaymentCollected += (s1, e1) =>
+            {
+                var earnDataRef = e1.DataRef;
+                earnDataRef.Child("totalEarnings").AddListenerForSingleValueEvent(new SingleValueListener(dataSnapshot =>
+                {
+                    if (!dataSnapshot.Exists())
+                        earnDataRef.Child("totalEarnings").SetValueAsync(fares);
+
+                    var earning = dataSnapshot.Value;
+                    double totalEarnings = (int)earning + fares;
+                    earnDataRef.Child("totalEarnings").SetValueAsync(totalEarnings.ToString());
+                    collectPaymentFragment.Dismiss();
+                }, dataError =>
+                {
+                    Toast.MakeText(this, dataError.Message, ToastLength.Short).Show();
+                    collectPaymentFragment.Dismiss();
+                }));
+            };
         }
 
         private bool CheckSpecialPermission()
@@ -558,14 +542,44 @@ namespace Cab360Driver
             isBackground = false;
             if (newRideAssigned)
             {
-                CreateNewRequestDialogue();
+                CreateNewRequestDialog();
                 newRideAssigned = false;
             }
         }
 
         public static void ShowLocationBottomSheet(bool val)
         {
+            if (val != true)
+            {
+                NoLocationBtmSht noLocationBtmSht = new NoLocationBtmSht(_this);
+                noLocationBtmSht.Cancelable = false;
+                noLocationBtmSht.Show(_this.SupportFragmentManager, "no_location");
+            }
+            else
+            {
+                Toast.MakeText(_this, "location on", ToastLength.Long).Show();
+            }
+        }
 
+
+        public sealed class OnDialogCancel : Java.Lang.Object, IDialogInterface
+        {
+            private Action _cancel, _dismiss;
+            public OnDialogCancel(Action cancel, Action dismiss)
+            {
+                _cancel = cancel;
+                _dismiss = dismiss;
+            }
+
+            public void Cancel()
+            {
+                _cancel?.Invoke();
+            }
+
+            public void Dismiss()
+            {
+                _dismiss?.Invoke();
+            }
         }
     }
 

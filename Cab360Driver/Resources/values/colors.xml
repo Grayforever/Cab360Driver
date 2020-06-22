@@ -12,6 +12,7 @@
   <color name="blue">#348af7</color>
   <color name="green_dot_big">@color/blue</color>
   <color name="green_dot_small">@color/blue</color>
+  <color name="status_bar_color">#F2F3F5</color>
 
   <!--white transparencies-->
   <color name="colorTransparentWhite_95">#f2ffffff</color>

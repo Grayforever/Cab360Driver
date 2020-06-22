@@ -62,7 +62,8 @@ namespace Cab360Driver.Fragments
 
         private void WithdrawBtn_Click(object sender, System.EventArgs e)
         {
-            
+            NewRequestFragment newRequestFragment = new NewRequestFragment(null);
+            newRequestFragment.Show(Activity.SupportFragmentManager, "test");
         }
 
         private void ChartTypespinner_ItemSelected(object sender, AdapterView.ItemSelectedEventArgs e)
