@@ -8,7 +8,7 @@ No need for that. Just clone
 
 ## Usage
 
-After cloning the project, migrate to the strings folder, a subfolder of the resources folder, locate:
+After cloning the project, navigate to the strings folder, a subfolder of the resources folder, locate:
 
 ```bash
 <string name="google_api_key">PUT_YOUR_API_KEY_HERE</string>
