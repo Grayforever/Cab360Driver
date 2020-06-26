@@ -22,4 +22,4 @@ Pull requests are welcome. For major changes, please open an issue first to disc
 Please make sure to update tests as appropriate.
 
 ## License
-[GNU](//http://www.gnu.org/licenses/fdl-1.3.html)
+[GNU](www.gnu.org/licenses/fdl-1.3.html)
