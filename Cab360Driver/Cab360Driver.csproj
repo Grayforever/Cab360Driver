@@ -76,6 +76,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Activities\CameraActivity.cs" />
     <Compile Include="Activities\OnboardingActivity.cs" />
     <Compile Include="Activities\SplashActivity.cs" />
     <Compile Include="Adapters\ArrayAdapter.cs" />
@@ -95,13 +96,11 @@
     <Compile Include="EnumsConstants\RegistrationStage.cs" />
     <Compile Include="EnumsConstants\RideStatusEnum.cs" />
     <Compile Include="EnumsConstants\StringConstants.cs" />
-    <Compile Include="EnumsConstants\StringValidType.cs" />
     <Compile Include="EnumsConstants\ToPositionOf.cs" />
     <Compile Include="EventListeners\AnimatorListener.cs" />
     <Compile Include="EventListeners\AnimatorUpdateListener.cs" />
     <Compile Include="EventListeners\AvailablityListener.cs" />
     <Compile Include="EventListeners\EarningsEventLister.cs" />
-    <Compile Include="EventListeners\GetSessionListener.cs" />
     <Compile Include="EventListeners\MyRvOnScrollListener.cs" />
     <Compile Include="EventListeners\MyViewOnClickListener.cs" />
     <Compile Include="EventListeners\MyVtoOnGlobalLayoutListener.cs" />
@@ -110,7 +109,6 @@
     <Compile Include="EventListeners\RideDetailsListener.cs" />
     <Compile Include="EventListeners\SingleValueListener.cs" />
     <Compile Include="EventListeners\SweetConfirmClick.cs" />
-    <Compile Include="EventListeners\TaskCompletionListeners.cs" />
     <Compile Include="Fragments\AccountFragment.cs" />
     <Compile Include="Fragments\AckFragment.cs" />
     <Compile Include="Fragments\BaseFragment.cs" />
@@ -138,6 +136,7 @@
     <Compile Include="Helpers\LocationCallbackHelper.cs" />
     <Compile Include="Helpers\MapFunctionHelper.cs" />
     <Compile Include="Helpers\NotificationHelper.cs" />
+    <Compile Include="Helpers\OnCompleteListener.cs" />
     <Compile Include="Helpers\OnFailureListener.cs" />
     <Compile Include="Helpers\OnSuccessListener.cs" />
     <Compile Include="IServices\ICarsApi.cs" />
@@ -200,6 +199,9 @@
     <PackageReference Include="Karamunting.Android.Ramotion.CardSlider">
       <Version>0.3.1</Version>
     </PackageReference>
+    <PackageReference Include="Karamunting.Android.RedApparat.Fotoapparat">
+      <Version>2.7.0.1</Version>
+    </PackageReference>
     <PackageReference Include="Karamunting.AndroidX.BumpTech.Glide">
       <Version>4.9.0</Version>
     </PackageReference>
@@ -261,10 +263,13 @@
       <Version>1.0.0.3</Version>
     </PackageReference>
     <PackageReference Include="Xamarin.Firebase.ML.Common">
-      <Version>122.1.1-preview01</Version>
+      <Version>71.1612.1</Version>
     </PackageReference>
     <PackageReference Include="Xamarin.Firebase.ML.Vision">
-      <Version>124.0.3-preview01</Version>
+      <Version>71.1700.2</Version>
+    </PackageReference>
+    <PackageReference Include="Xamarin.Firebase.ML.Vision.Face.Model">
+      <Version>120.0.1-preview01</Version>
     </PackageReference>
     <PackageReference Include="Xamarin.Google.Android.Material" Version="1.1.0.1-rc3" />
     <PackageReference Include="Xamarin.AndroidX.Legacy.Support.Core.Utils" Version="1.0.0.1" />
@@ -431,22 +436,10 @@
     </AndroidResource>
   </ItemGroup>
   <ItemGroup>
-    <AndroidResource Include="Resources\drawable-v24\circular_grey_bordersolid.xml" />
-  </ItemGroup>
-  <ItemGroup>
-    <AndroidResource Include="Resources\drawable-v24\circularbordersolid.xml" />
-  </ItemGroup>
-  <ItemGroup>
     <AndroidResource Include="Resources\drawable-v24\ic_bg.xml" />
   </ItemGroup>
   <ItemGroup>
     <AndroidResource Include="Resources\drawable-v24\ic_launcher_foreground.xml" />
-  </ItemGroup>
-  <ItemGroup>
-    <AndroidResource Include="Resources\drawable-v24\menu.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <AndroidResource Include="Resources\drawable-v24\star.png" />
   </ItemGroup>
   <ItemGroup>
     <AndroidResource Include="Resources\drawable\bg_bottomsheet_dg.xml" />
@@ -564,12 +557,6 @@
     </AndroidResource>
   </ItemGroup>
   <ItemGroup>
-    <AndroidResource Include="Resources\drawable-v24\ic_driver2.jpg" />
-  </ItemGroup>
-  <ItemGroup>
-    <AndroidResource Include="Resources\drawable-v24\ic_driver1.jpg" />
-  </ItemGroup>
-  <ItemGroup>
     <AndroidResource Include="Resources\layout\partner_vehicle_fragment.xml">
       <SubType>Designer</SubType>
     </AndroidResource>
@@ -650,18 +637,9 @@
     <AndroidResource Include="Resources\drawable\ic_year.png" />
   </ItemGroup>
   <ItemGroup>
-    <AndroidResource Include="Resources\drawable-nodpi\cool_car.jpg" />
-  </ItemGroup>
-  <ItemGroup>
-    <AndroidResource Include="Resources\drawable-nodpi\made_me_laugh.jpg" />
-  </ItemGroup>
-  <ItemGroup>
     <AndroidResource Include="Resources\layout\forgot_password.xml">
       <SubType>Designer</SubType>
     </AndroidResource>
-  </ItemGroup>
-  <ItemGroup>
-    <AndroidResource Include="Resources\drawable\ic_forgot_pass.png" />
   </ItemGroup>
   <ItemGroup>
     <AndroidResource Include="Resources\drawable\ic_email.png" />
@@ -697,7 +675,36 @@
     <AndroidResource Include="Resources\drawable\ic_time.png" />
   </ItemGroup>
   <ItemGroup>
-    <AndroidResource Include="Resources\drawable-v24\clip_sign_in.png" />
+    <AndroidResource Include="Resources\drawable-nodpi\cool_car.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable-nodpi\expert_nav.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable-nodpi\friendly.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable-nodpi\music.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable-nodpi\neat.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\layout\cam_layout.xml">
+      <SubType>Designer</SubType>
+    </AndroidResource>
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable-nodpi\collect_payment.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable-nodpi\sign_in_pablo.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable-nodpi\forgot_pass.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable-nodpi\driver_pablo.png" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\Android\Xamarin.Android.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it.

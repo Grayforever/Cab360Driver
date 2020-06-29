@@ -10,14 +10,14 @@ using Android.Widget;
 using AndroidX.Annotations;
 using AndroidX.Interpolator.View.Animation;
 using AndroidX.RecyclerView.Widget;
+using BumpTech.GlideLib;
 using Cab360Driver.Adapters;
 using Cab360Driver.EventListeners;
 using Cab360Driver.Helpers;
 using Cab360Driver.Utils;
-using Firebase.Auth;
-using Firebase.Database;
 using Google.Android.Material.AppBar;
 using Ramotion.CardSliderLib;
+using Refractored.Controls;
 using System;
 using Toolbar = AndroidX.AppCompat.Widget.Toolbar;
 
@@ -26,13 +26,15 @@ namespace Cab360Driver.Fragments
     [Register("id.Cab360Driver.Fragments.AccountFragment")]
     public class AccountFragment : AndroidX.Fragment.App.Fragment
     {
-        private readonly int[] pics = { Resource.Drawable.cool_car, Resource.Drawable.cool_car, Resource.Drawable.made_me_laugh, Resource.Drawable.cool_car, Resource.Drawable.cool_car };
+        private readonly int[] pics = { Resource.Drawable.music, Resource.Drawable.cool_car, Resource.Drawable.friendly, Resource.Drawable.neat, Resource.Drawable.expert_nav };
         private readonly string[] compliments = { "Awesome music", "Cool car", "Made me laugh", "Neat and tidy", "Expert navigation" };
-        private SliderAdapter sliderAdapter => new SliderAdapter(pics, 20, OnCardClickListener);
+        private string[] compliValues;
+        private SliderAdapter sliderAdapter => new SliderAdapter(pics, 5, OnCardClickListener);
 
         private CardSliderLayoutManager layoutManger;
         private RecyclerView recyclerView;
         private TextSwitcher complimentsSwitcher;
+        private TextSwitcher compliValuesSwitcher;
         private AppBarLayout appbar;
         private Toolbar toolbar;
         private ProfileHeaderBitmap headerBitmap;
@@ -41,28 +43,47 @@ namespace Cab360Driver.Fragments
         private Bitmap defaultBlurProfileBitmap;
         private TextView profile_title_user;
         private TextView profileTitleCount;
+        private _BaseCircleImageView profileView;
 
         private bool collapsed = false;
         private bool titleShow = false;
         private ValueAnimator valueAnimator = null;
 
-        private DatabaseReference userRef;
-        private FirebaseUser currUser;
-        private FirebaseDatabase fireDb;
+
 
         private int currentPosition;
 
         public override void OnCreate(Bundle savedInstanceState)
         {
             base.OnCreate(savedInstanceState);
-            GetDb();
+            
         }
 
         private void GetDb()
         {
-            currUser = AppDataHelper.GetCurrentUser();
-            fireDb = AppDataHelper.GetDatabase();
+            var compliRef = AppDataHelper.GetDatabase().GetReference($"Drivers/{AppDataHelper.GetCurrentUser().Uid}/MyCompliments");
+            compliRef.AddValueEventListener(new SingleValueListener(
+                snapshot => 
+                {
+                    if (snapshot.Exists())
+                    {
+                        string cool_car = snapshot.Child("cool_car").Value.ToString();
+                        string awesome_music = snapshot.Child("awesome_music").Value.ToString();
+                        string friendly = snapshot.Child("friendly").Value.ToString();
+                        string nav = snapshot.Child("expert_nav").Value.ToString();
+                        string neat = snapshot.Child("neat_tidy").Value.ToString();
+
+                        compliValues = new string[] { awesome_music, cool_car, friendly, neat, nav };
+                        compliValuesSwitcher.SetCurrentText(compliValues[0]);
+                    }
+                }, 
+                error=> 
+                {
+                    Toast.MakeText(Activity, error.Message, ToastLength.Short).Show();
+                }));
         }
+
+        
 
         public override View OnCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
         {
@@ -72,6 +93,7 @@ namespace Cab360Driver.Fragments
             InitListener();
             InitRecyclerView(view);
             InitSwitchers(view);
+            GetDb();
             return view;
         }
 
@@ -85,6 +107,9 @@ namespace Cab360Driver.Fragments
             mHeaderLayout = view.FindViewById<FrameLayout>(Resource.Id.header_layout);
             profile_title_user = view.FindViewById<TextView>(Resource.Id.profile_title_user);
             profileTitleCount = view.FindViewById<TextView>(Resource.Id.profile_title_count);
+            profileView = view.FindViewById<_BaseCircleImageView>(Resource.Id.profile_header_avatar);
+
+            
 
             var userName = view.FindViewById<TextView>(Resource.Id.tv_username);
             var cityText = view.FindViewById<TextView>(Resource.Id.tv_user_from);
@@ -93,14 +118,19 @@ namespace Cab360Driver.Fragments
             var totKmTxt = view.FindViewById<TextView>(Resource.Id.tv_rides_tot);
             var totStarsTxt = view.FindViewById<TextView>(Resource.Id.tv_rides_tot);
 
-            SetText(userName, cityText, carTxt, totRidesTxt, totKmTxt, totStarsTxt);
-        }
+            new Handler().Post(() =>
+            {
+                Glide.With(this)
+                    .Load(AppDataHelper.ImgUrl)
+                    .Into(profileView);
 
-        private void SetText(TextView userName, TextView cityText, TextView carTxt, TextView totRidesTxt, TextView totKmTxt, TextView totStarsTxt)
-        {
-            userName.Text = AppDataHelper.Fullname;
-            cityText.Text = AppDataHelper.City;
-            carTxt.Text = AppDataHelper.CarDetails;
+                userName.Text = AppDataHelper.Fullname;
+                cityText.Text = AppDataHelper.City;
+                carTxt.Text = AppDataHelper.CarDetails;
+                profile_title_user.Text = userName.Text;
+                profileTitleCount.Text = cityText.Text;
+            });
+            
         }
 
         private void InitListener()
@@ -297,6 +327,16 @@ namespace Cab360Driver.Fragments
             complimentsSwitcher.SetOutAnimation(Activity, animV[1]);
             complimentsSwitcher.SetText(compliments[pos % compliments.Length]);
 
+            if(compliValues.Length != 0)
+            {
+                compliValuesSwitcher.SetInAnimation(Activity, animV[0]);
+                compliValuesSwitcher.SetOutAnimation(Activity, animV[1]);
+                compliValuesSwitcher.SetText(compliValues[pos % compliValues.Length]);
+            }
+            else
+            {
+                return; 
+            }
             currentPosition = pos;
         }
 
@@ -306,6 +346,9 @@ namespace Cab360Driver.Fragments
             complimentsSwitcher.SetFactory(new TextViewFactoy(Resource.Style.ComplimentsTextView, false, Activity));
             complimentsSwitcher.SetCurrentText(compliments[0]);
 
+            compliValuesSwitcher = (TextSwitcher)view.FindViewById(Resource.Id.ts_compliValues);
+            compliValuesSwitcher.SetFactory(new TextViewFactoy(Resource.Style.CompliValuesTextView, false, Activity));
+            
         }
 
         public class TextViewFactoy : Java.Lang.Object, ViewSwitcher.IViewFactory

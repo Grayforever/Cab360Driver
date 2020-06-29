@@ -57,7 +57,6 @@
                         android:ellipsize="end"
                         android:gravity="center_vertical"
                         android:maxLines="1"
-                        android:text="Graham Asare"
                         android:textAppearance="?attr/textAppearanceBody1"
                         android:textColor="@android:color/white"
                         />
@@ -68,7 +67,6 @@
                         android:layout_height="wrap_content"
                         android:layout_marginBottom="6dp"
                         android:gravity="center_vertical"
-                        android:text="Totota Prius"
                         android:textAppearance="?attr/textAppearanceBody2"
                         android:textColor="@android:color/white"
                         />
@@ -259,22 +257,46 @@
                 
                 />
 
-            <FrameLayout
-                android:id="@+id/countries"
+            <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="38dp"
-                android:layout_marginTop="16dp">
+                android:layout_marginTop="30dp"
+                android:layout_marginBottom="8dp">
 
-                <TextView
-                    android:id="@+id/tv_comp_hd"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_vertical"
-                    android:textAppearance="?attr/textAppearanceHeadline6"
-                    android:layout_marginStart="@dimen/recycler_view_left_offset"
-                    android:text="Rider compliments"/>
+                <FrameLayout
+                    android:id="@+id/countries"
+                    android:layout_width="match_parent"
+                    android:layout_height="38dp"
+                    android:layout_marginTop="16dp">
 
-            </FrameLayout>
+                    <TextView
+                        android:id="@+id/tv_comp_hd"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
+                        android:textAppearance="?attr/textAppearanceHeadline6"
+                        android:layout_marginStart="@dimen/recycler_view_left_offset"
+                        android:text="Rider compliments"/>
+
+                </FrameLayout>
+
+                <FrameLayout
+                    android:layout_width="85dp"
+                    android:layout_height="match_parent"
+                    android:layout_alignParentEnd="true"
+                    android:background="@drawable/temperature_background"
+                    android:layout_centerVertical="true"
+                    android:id="@+id/frameLayout">
+
+                    <TextSwitcher
+                        android:id="@+id/ts_compliValues"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"/>
+
+                </FrameLayout>
+
+            </RelativeLayout>
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/recycler_view"

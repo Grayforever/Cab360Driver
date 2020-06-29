@@ -9,10 +9,10 @@ using Android.Util;
 
 namespace Cab360Driver.EventListeners
 {
-    public class ProfileEventListener : Java.Lang.Object, IValueEventListener
+    public sealed class ProfileEventListener : Java.Lang.Object, IValueEventListener
     {
 
-        private readonly ISharedPreferences preferences = Application.Context.GetSharedPreferences("userinfo", FileCreationMode.MultiProcess);
+        private readonly ISharedPreferences preferences = Application.Context.GetSharedPreferences("userInfo", FileCreationMode.Private);
         private ISharedPreferencesEditor editor;
         private Driver DriverPersonal;
         public event EventHandler UserNotFoundEvent;
@@ -34,10 +34,11 @@ namespace Cab360Driver.EventListeners
                     Email = (snapshot.Child("email") != null) ? snapshot.Child("email").Value.ToString() : "",
                     Phone = (snapshot.Child("phone") != null) ? snapshot.Child("phone").Value.ToString() : "",
                     City = (snapshot.Child("city") != null) ? snapshot.Child("city").Value.ToString() : "",
-                    Code = (snapshot.Child("invitecode") != null) ? snapshot.Child("invitecode").Value.ToString() : ""
+                    Code = (snapshot.Child("invitecode") != null) ? snapshot.Child("invitecode").Value.ToString() : "",
+                    ImgUrl = (snapshot.Child("profile_img_url") != null) ? snapshot.Child("profile_img_url").Value.ToString() : "",
                 };
 
-                SaveToSharedPreference(DriverPersonal);
+                SaveToSharedPreference();
                 UserFoundEvent?.Invoke(this, new EventArgs());
             }
             else
@@ -64,14 +65,15 @@ namespace Cab360Driver.EventListeners
 
         }
 
-        private void SaveToSharedPreference(Driver driverPersonal)
+        private void SaveToSharedPreference()
         {
-            editor.PutString("fname", driverPersonal.Fname);
-            editor.PutString("lname", driverPersonal.Lname);
-            editor.PutString("phone", driverPersonal.Phone);
-            editor.PutString("email", driverPersonal.Email);
-            editor.PutString("city", driverPersonal.City);
-            editor.PutString("invitecode", driverPersonal.Code);
+            editor.PutString("fname", DriverPersonal.Fname);
+            editor.PutString("lname", DriverPersonal.Lname);
+            editor.PutString("phone", DriverPersonal.Phone);
+            editor.PutString("email", DriverPersonal.Email);
+            editor.PutString("city", DriverPersonal.City);
+            editor.PutString("invitecode", DriverPersonal.Code);
+            editor.PutString("img_url", DriverPersonal.ImgUrl);
             editor.Apply();
         }
     }

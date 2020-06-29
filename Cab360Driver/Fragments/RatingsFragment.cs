@@ -1,15 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
-using Android.App;
-using Android.Content;
-using Android.OS;
-using Android.Runtime;
-using Android.Util;
+﻿using Android.OS;
 using Android.Views;
-using Android.Widget;
 using Google.Android.Material.Button;
 
 namespace Cab360Driver.Fragments
@@ -30,10 +20,12 @@ namespace Cab360Driver.Fragments
             var viewDetailsBtn = view.FindViewById<MaterialButton>(Resource.Id.view_ratings_details_btn);
             viewDetailsBtn.Click += (s1, e1) =>
               {
-                  Toast.MakeText(Activity, "Jennifer aseye", ToastLength.Long).Show();
+
               };
 
             return view;
         }
+
+
     }
 }

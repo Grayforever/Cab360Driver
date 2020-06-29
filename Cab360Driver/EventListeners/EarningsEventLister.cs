@@ -16,13 +16,13 @@ namespace Cab360Driver.EventListeners
             var currentUser = AppDataHelper.GetCurrentUser();
             if(currentUser != null)
             {
-                var driverRef = AppDataHelper.GetParentReference().Child("earnings").Child(currentUser.Uid);
+                var driverRef = AppDataHelper.GetDatabase().GetReference($"Drivers/{currentUser.Uid}/MyEarnings");
                 driverRef.AddValueEventListener(new SingleValueListener(r=> 
                 {
                     if (!r.Exists())
                         return;
 
-                    totEarnings = r.Child("totalEarnings") != null ? r.Child("totalEarnings").Value.ToString() : "";
+                    totEarnings = r.Child("totEarnings") != null ? r.Child("totEarnings").Value.ToString() : "";
                     SaveToSharedPreference();
                 }, e=> 
                 {
@@ -37,7 +37,7 @@ namespace Cab360Driver.EventListeners
 
         private void SaveToSharedPreference()
         {
-            editor.PutString("totalEarnings", totEarnings);
+            editor.PutString("totEarnings", totEarnings);
             editor.Apply();
         }
     }

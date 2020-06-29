@@ -89,6 +89,13 @@ namespace Cab360Driver
             player = MediaPlayer.Create(this, Resource.Raw.alert);
             _locationReceiver = new LocationReceiver();
             mapHelper = new MapFunctionHelper(homeFragment.mainMap);
+            //get earnings data
+            EarningsEventLister earningsEvent = new EarningsEventLister();
+            earningsEvent.Create();
+            //get profile data
+            ProfileEventListener profileEvent = new ProfileEventListener();
+            profileEvent.Create();
+
             CheckSpecialPermission();
         }
 

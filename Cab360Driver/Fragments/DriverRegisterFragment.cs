@@ -8,8 +8,6 @@ using Cab360Driver.Activities;
 using Cab360Driver.Adapters;
 using Cab360Driver.EnumsConstants;
 using Cab360Driver.Helpers;
-using Firebase.Auth;
-using Firebase.Database;
 using Google.Android.Material.Button;
 using Google.Android.Material.TextField;
 using Java.Util;
@@ -23,9 +21,6 @@ namespace Cab360Driver.Fragments
         private AppCompatAutoCompleteTextView CityText;
         private MaterialButton SubmitBtn;
         private string[] names = { "Accra", "Kumasi", "Takoradi", "Ho", "Tema", "Tamale" };
-        private FirebaseAuth FireAuth;
-        private DatabaseReference DriverRef;
-        private FirebaseDatabase FireDb;
         private string fname, lname, email, phone, code, city;
 
         public event EventHandler<SignUpSuccessArgs> SignUpSuccess;
@@ -33,24 +28,16 @@ namespace Cab360Driver.Fragments
         public override void OnCreate(Bundle savedInstanceState)
         {
             base.OnCreate(savedInstanceState);
-            SetUpFirebase();
-        }
-
-        private void SetUpFirebase()
-        {
-            FireAuth = AppDataHelper.GetFirebaseAuth();
-            FireDb = AppDataHelper.GetDatabase();
         }
 
         public override View OnCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
         {
-            var view =  inflater.Inflate(Resource.Layout.driver_signup_layout, container, false);
-            GetControls(view);
-            return view;
+            return inflater.Inflate(Resource.Layout.driver_signup_layout, container, false);
         }
 
-        private void GetControls(View view)
+        public override void OnViewCreated(View view, Bundle savedInstanceState)
         {
+            base.OnViewCreated(view, savedInstanceState);
             SubmitBtn = view.FindViewById<MaterialButton>(Resource.Id.drv_signup_sbmtbtn);
             FnameText = view.FindViewById<TextInputLayout>(Resource.Id.drv_signup_fname_et);
             LnameText = view.FindViewById<TextInputLayout>(Resource.Id.drv_signup_lname_et);
@@ -81,7 +68,7 @@ namespace Cab360Driver.Fragments
                 city = CityText.Text;
                 code = CodeText.EditText.Text;
 
-                FireAuth.CreateUserWithEmailAndPassword(email, PassText.EditText.Text)
+                AppDataHelper.GetFirebaseAuth().CreateUserWithEmailAndPassword(email, PassText.EditText.Text)
                 .AddOnSuccessListener(new OnSuccessListener(r =>
                 {
                     SaveDriverToDb();
@@ -101,7 +88,7 @@ namespace Cab360Driver.Fragments
 
         private void SaveDriverToDb()
         {
-            DriverRef = FireDb.GetReference("Drivers/" + FireAuth.CurrentUser.Uid);
+            var DriverRef = AppDataHelper.GetDatabase().GetReference($"Drivers/{ AppDataHelper.GetCurrentUser().Uid}");
             HashMap driverMap = new HashMap();
             driverMap.Put("fname", fname);
             driverMap.Put("lname", lname);
@@ -114,16 +101,14 @@ namespace Cab360Driver.Fragments
             DriverRef.SetValue(driverMap)
                 .AddOnSuccessListener(new OnSuccessListener(r=> 
                 {
-                    DriverRef.Child("stage_of_registration").SetValue(RegistrationStage.Partnering.ToString())
+                    DriverRef.Child(StringConstants.StageofRegistration).SetValue(RegistrationStage.Partnering.ToString())
                         .AddOnSuccessListener(new OnSuccessListener(r2=> 
                         {
-                            //close prgress
                             OnboardingActivity.CloseProgressDialog();
                             SignUpSuccess.Invoke(this, new SignUpSuccessArgs { IsCompleted = true });
                         }))
                         .AddOnFailureListener(new OnFailureListener(e1=> 
                         {
-                            //close prgress
                             OnboardingActivity.CloseProgressDialog();
                             Toast.MakeText(Activity, e1.Message, ToastLength.Short).Show(); 
                         }));

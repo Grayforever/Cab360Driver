@@ -7,28 +7,13 @@
     tools:ignore="HardcodedText"
     android:padding="16dp">
 
-    <TextView
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:id="@+id/congrats_txt"
-        android:text="Congratulations!\nYou have been successfully registered on our platform. An email containing the date of your car inspection and venue has been sent to your mailbox. You can also visit our site for more info or skip this stage."
-        android:gravity="center"
-        android:textAlignment="center"
-        android:inputType="textMultiLine"
-        android:lineSpacingExtra="4dp"
-        android:textAppearance="?attr/textAppearanceBody1"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"
-        
-        />
-
     <com.google.android.material.button.MaterialButton
         android:layout_width="0dp"
         android:layout_height="56dp"
         android:id="@+id/visit_site_btn"
+        style="@style/Widget.MaterialComponents.Button.OutlinedButton"
         app:layout_constraintStart_toStartOf="parent"
+        app:strokeWidth="2dp"
         app:layout_constraintEnd_toStartOf="@+id/skip_btn"
         app:layout_constraintBottom_toBottomOf="parent"
         android:text="Visit site"
@@ -40,14 +25,12 @@
         android:layout_width="0dp"
         android:layout_height="56dp"
         android:id="@+id/skip_btn"
-        style="@style/Widget.MaterialComponents.Button.OutlinedButton"
         app:layout_constraintStart_toEndOf="@+id/visit_site_btn"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
         android:text="Skip"
         android:textSize="16sp"
         android:layout_marginStart="4dp"
-        app:strokeWidth="2dp"
         />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

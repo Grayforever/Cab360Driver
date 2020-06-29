@@ -12,5 +12,8 @@ namespace Cab360Driver.DataModels
         public double DestinationLat { get; set; }
         public double DestinationLng { get; set; }
         public string RideId { get; set; }
+        public string Distance { get; set; }
+        public string Duration { get; set; }
+        public string Fare { get; set; }
     }
 }

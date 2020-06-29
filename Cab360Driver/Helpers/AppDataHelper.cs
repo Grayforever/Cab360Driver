@@ -8,7 +8,7 @@ namespace Cab360Driver.Helpers
 {
     public static class AppDataHelper
     {
-        private static readonly ISharedPreferences profilePref = Application.Context.GetSharedPreferences("driverInfo", FileCreationMode.Private);
+        private static readonly ISharedPreferences profilePref = Application.Context.GetSharedPreferences("userInfo", FileCreationMode.Private);
         private static readonly ISharedPreferences earningsPref = Application.Context.GetSharedPreferences("earningsInfo", FileCreationMode.Private);
         private static readonly ISharedPreferences ratingsPref = Application.Context.GetSharedPreferences("ratingsInfo", FileCreationMode.Private);
         private static FirebaseAuth FireAuth;
@@ -88,6 +88,6 @@ namespace Cab360Driver.Helpers
 
         public static string TotEarnings => earningsPref?.GetString("totEarnings", "");
 
-
+        public static string ImgUrl => profilePref?.GetString("img_url", "");
     }
 }

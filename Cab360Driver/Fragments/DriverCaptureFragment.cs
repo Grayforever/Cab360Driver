@@ -1,5 +1,7 @@
 ﻿using Android;
+using Android.Content;
 using Android.Content.Res;
+using Android.Gms.Tasks;
 using Android.Graphics;
 using Android.OS;
 using Android.Views;
@@ -9,44 +11,29 @@ using AndroidX.Core.Content;
 using Cab360Driver.Activities;
 using Cab360Driver.EnumsConstants;
 using Cab360Driver.Helpers;
-using Firebase.Auth;
-using Firebase.Database;
 using Firebase.Storage;
-using Plugin.Media;
-using Plugin.Media.Abstractions;
 using System;
-using System.IO;
 
 namespace Cab360Driver.Fragments
 {
     public class DriverCaptureFragment : AndroidX.Fragment.App.Fragment
     {
         private CardView Card1, Card2, Card3;
+        private TextView WelcomeTxt;
         private ImageView NxtImg1, NxtImg2, NxtImg3;
         private TextView HeaderTxt1; 
         private TextView HeaderTxt2;
         private TextView HeaderTxt3;
-        
-
         public event EventHandler ProfileCaptured;
-
         public const int RequestCode = 100;
         public const int RequestPermission = 200;
-
         private BeforeUSnapFragment CameraIntroDialog = new BeforeUSnapFragment();
         private PicDisplayFragment picDisplayFragment;
-        private StorageReference StoreRef;
-        private FirebaseStorage FireStorage;
-        private FirebaseUser mUser;
-        private DatabaseReference driverRef;
-        private FirebaseDatabase fireDb;
-        private byte[] imageArray;
+        public static StorageReference imageRef;
 
         public override void OnCreate(Bundle savedInstanceState)
         {
             base.OnCreate(savedInstanceState);
-            mUser = AppDataHelper.GetCurrentUser();
-            fireDb = AppDataHelper.GetDatabase();
             if (ContextCompat.CheckSelfPermission(Activity, Manifest.Permission.Camera) != Android.Content.PM.Permission.Granted)
             {
                 RequestPermissions(new string[]
@@ -58,38 +45,36 @@ namespace Cab360Driver.Fragments
 
         public override View OnCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
         {
-            var view = inflater.Inflate(Resource.Layout.driver_capture_layout, container, false);
-            GetControls(view);
-            return view;
+            return inflater.Inflate(Resource.Layout.driver_capture_layout, container, false);
         }
 
-        private void GetControls(View view)
+        public override void OnViewCreated(View view, Bundle savedInstanceState)
         {
-            Card1 = view.FindViewById<CardView>(Resource.Id.req_c1);
-            Card1.Click += Card1_Click;
-
-            Card2 = view.FindViewById<CardView>(Resource.Id.req_c2);
-            Card2.Click += Card2_Click;
-
-            Card3 = view.FindViewById<CardView>(Resource.Id.req_c3);
-            Card3.Click += Card3_Click;
-
+            base.OnViewCreated(view, savedInstanceState);
             NxtImg1 = view.FindViewById<ImageView>(Resource.Id.nxt_img1);
             NxtImg2 = view.FindViewById<ImageView>(Resource.Id.nxt_img2);
             NxtImg3 = view.FindViewById<ImageView>(Resource.Id.nxt_img3);
-
-            var WelcomeTxt = view.FindViewById<TextView>(Resource.Id.drv_capt_welc_tv);
-            GreetUser(WelcomeTxt);
-
             HeaderTxt1 = view.FindViewById<TextView>(Resource.Id.rec_text);
             HeaderTxt2 = view.FindViewById<TextView>(Resource.Id.rec_text2);
             HeaderTxt3 = view.FindViewById<TextView>(Resource.Id.rec_text3);
-        }
+            Card1 = view.FindViewById<CardView>(Resource.Id.req_c1);
+            Card2 = view.FindViewById<CardView>(Resource.Id.req_c2);
+            Card3 = view.FindViewById<CardView>(Resource.Id.req_c3);
+            WelcomeTxt = view.FindViewById<TextView>(Resource.Id.drv_capt_welc_tv);
 
-        private void GreetUser(TextView welcomeTV)
-        {
-            string firstname = AppDataHelper.Firstname;
-            welcomeTV.Text = $"Welcome, {firstname}.";
+            Card1.Click += Card1_Click;
+            Card2.Click += Card2_Click;
+            Card3.Click += Card3_Click;
+
+
+            if (AppDataHelper.GetCurrentUser() == null)
+                return;
+
+            new Handler().Post(() =>
+            {
+                WelcomeTxt.Text = AppDataHelper.GetCurrentUser().DisplayName;
+            });
+
         }
 
         private void Card3_Click(object sender, EventArgs e)
@@ -109,7 +94,7 @@ namespace Cab360Driver.Fragments
 
         private void BeginCameraInvoke(CaptureType captureType)
         {
-            //OnboardingActivity.ShowProgressDialog();
+            OnboardingActivity.ShowProgressDialog();
             switch (captureType)
             {
                 case CaptureType.ProfilePic:
@@ -132,39 +117,14 @@ namespace Cab360Driver.Fragments
         {
             if (ContextCompat.CheckSelfPermission(Activity, Manifest.Permission.Camera) == Android.Content.PM.Permission.Granted)
             {
-                try
-                {
-                    TakePhotoAsync();
-                }
-                catch(Exception e)
-                {
-                    Toast.MakeText(Activity, e.Message, ToastLength.Short).Show();
-                }
+                var cameraIntent = new Intent(Activity, typeof(CameraActivity));
+                StartActivity(cameraIntent);
             }
             else
             {
                 ShouldShowRequestPermissionRationale(Manifest.Permission.Camera);
             }
         }
-
-        private async void TakePhotoAsync()
-        {
-            await CrossMedia.Current.Initialize();
-            var file = await CrossMedia.Current.TakePhotoAsync(new StoreCameraMediaOptions
-            {
-                PhotoSize = PhotoSize.Medium,
-                CompressionQuality = 60,
-                Name = "myimage.jpg",
-                Directory = "sample",
-            });
-
-            if (file != null)
-            {
-                imageArray = await File.ReadAllBytesAsync(file.Path);
-                var bitmapProfile = await BitmapFactory.DecodeByteArrayAsync(imageArray, 0, imageArray.Length);
-                DisplayPic(bitmapProfile);
-            }
-        }  
 
         private void DisplayPic(Bitmap bitmap)
         {
@@ -175,46 +135,57 @@ namespace Cab360Driver.Fragments
             picDisplayFragment.RetakePic += PicDisplayFragment_RetakePic;
         }
 
-        private void PicDisplayFragment_SavePic(object sender, PicDisplayFragment.HasImageEventArgs e)
+        private void PicDisplayFragment_SavePic(object sender, EventArgs e)
         {
-            if(e.viewHasImage == true)
+            OnboardingActivity.ShowProgressDialog();
+            var storeRef = FirebaseStorage.Instance.GetReferenceFromUrl("gs://taxiproject-185a4.appspot.com");
+            if (AppDataHelper.GetCurrentUser() != null)
             {
-                FireStorage = FirebaseStorage.Instance;
-                StoreRef = FireStorage.GetReferenceFromUrl("gs://taxiproject-185a4.appspot.com");
-                var currUser = AppDataHelper.GetCurrentUser();
-                if(currUser != null)
+                imageRef = storeRef.Child("driverProfilePics/" + AppDataHelper.GetCurrentUser().Uid);
+                //change null
+                imageRef.PutBytes(null).ContinueWithTask(new ContinuationTask(t =>
                 {
-                    var imageRef = StoreRef.Child("driverProfilePics/" + currUser.Uid);
-                    UploadTask uploadTask = imageRef.PutBytes(imageArray);
-                    uploadTask.AddOnSuccessListener(new OnSuccessListener(r1 =>
+                    if (!t.IsSuccessful)
                     {
-                        driverRef = fireDb.GetReference("Drivers").Child(mUser.Uid);
-                        driverRef.Child("stage_of_registration").SetValue(RegistrationStage.CarRegistering.ToString())
+                        OnboardingActivity.CloseProgressDialog();
+                        Toast.MakeText(Activity, t.Exception.Message, ToastLength.Long).Show();
+                    }
+
+                })).AddOnCompleteListener(new OnCompleteListener(t =>
+                {
+                    if (t.IsSuccessful)
+                    {
+                        var driverRef = AppDataHelper.GetDatabase().GetReference($"Drivers/{AppDataHelper.GetCurrentUser().Uid}");
+                        driverRef.Child("profile_img_url").SetValue(t.Result.ToString()).AddOnCompleteListener(new OnCompleteListener(t3 =>
+                        {
+                            if (!t3.IsSuccessful)
+                                Toast.MakeText(Activity, t3.Exception.Message, ToastLength.Long).Show();
+                                OnboardingActivity.CloseProgressDialog();
+
+                            driverRef.Child(StringConstants.StageofRegistration).SetValue($"{RegistrationStage.CarRegistering}")
                             .AddOnSuccessListener(new OnSuccessListener(r2 =>
                             {
                                 ProfileCaptured.Invoke(this, new EventArgs());
                                 UpdateUiOnCpture(CaptureType.ProfilePic);
-                            }))
-                            .AddOnFailureListener(new OnFailureListener(e2 =>
+                                OnboardingActivity.CloseProgressDialog();
+
+                            })).AddOnFailureListener(new OnFailureListener(e2 =>
                             {
                                 UpdateUiOnError(CaptureType.ProfilePic);
+                                OnboardingActivity.CloseProgressDialog();
                                 Toast.MakeText(Activity, e2.Message, ToastLength.Short).Show();
+
                             }));
-                    }));
-                    uploadTask.AddOnFailureListener(new OnFailureListener(e1 =>
+                        }));
+                        
+                    }
+                    else
                     {
-                        Toast.MakeText(Activity, e1.Message, ToastLength.Short).Show();
-                    }));
-                }
-                else
-                {
-                    return;
-                }
-                
-            }
-            else
-            {
-                Toast.MakeText(Activity, "no image to save", ToastLength.Short).Show();
+                        OnboardingActivity.CloseProgressDialog();
+                        Toast.MakeText(Activity, t.Exception.Message, ToastLength.Long).Show();
+                    }
+
+                }));
             }
         }
 
@@ -240,6 +211,8 @@ namespace Cab360Driver.Fragments
                     NxtImg3.ImageTintList = ColorStateList.ValueOf(Color.Blue);
                     break;
             }
+
+            OnboardingActivity.CloseProgressDialog();
         }
 
         private void UpdateUiOnError(CaptureType captureType)
@@ -261,6 +234,23 @@ namespace Cab360Driver.Fragments
                     NxtImg3.SetImageResource(Resource.Drawable.ic_error);
                     HeaderTxt3.SetText(Resource.String.string_attention_seekr);
                     break;
+            }
+            OnboardingActivity.CloseProgressDialog();
+        }
+
+        internal sealed class ContinuationTask : Java.Lang.Object, IContinuation
+        {
+            private Action<Task> _then;
+
+            public ContinuationTask(Action<Task> then)
+            {
+                _then = then;
+            }
+
+            public Java.Lang.Object Then(Task task)
+            {
+                _then.Invoke(task);
+                return imageRef.GetDownloadUrl();
             }
         }
     }

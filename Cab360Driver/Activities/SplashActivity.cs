@@ -7,19 +7,15 @@ using Cab360Driver.EnumsConstants;
 using Cab360Driver.EventListeners;
 using Cab360Driver.Helpers;
 using Firebase.Auth;
-using Firebase.Database;
-using System;
 
 namespace Cab360Driver.Activities
 {
     [Activity(MainLauncher = true, ScreenOrientation = Android.Content.PM.ScreenOrientation.Portrait)]
     public class SplashActivity : AppCompatActivity
     {
-        private FirebaseDatabase fireDb;
         protected override void OnCreate(Bundle savedInstanceState)
         {
             base.OnCreate(savedInstanceState);
-            fireDb = AppDataHelper.GetDatabase();
         }
 
         protected override void OnResume()
@@ -32,34 +28,40 @@ namespace Cab360Driver.Activities
         {
             if(currUser is null)
             {
-                var intent2 = new Intent(this, typeof(OnboardingActivity));
-                StartActivity(intent2);
-                GC.Collect();
+                StartActivity(typeof(OnboardingActivity));
+
                 Finish();
             }
             else
             {
                 CheckStatus(currUser.Uid);
-                
             }
         }
 
         private void CheckStatus(string uid)
         {
-            var fireDataRef = fireDb.GetReference("Drivers").Child(uid);
-            fireDataRef.OrderByChild("stage_of_registration").EqualTo($"{RegistrationStage.RegistrationDone}")
-                .AddListenerForSingleValueEvent(new SingleValueListener(snapshot=> {
-                    if (!snapshot.Exists())
+            var fireDataRef = AppDataHelper.GetDatabase().GetReference($"Drivers/{uid}");
+            fireDataRef.Child(StringConstants.StageofRegistration)
+                .AddValueEventListener(new SingleValueListener(snapshot=> {
+                    if (snapshot.Exists())
                     {
-                        var intent = new Intent(this, typeof(OnboardingActivity));
-                        intent.PutExtra("stage", snapshot.Value.ToString());
-                        StartActivity(intent);
-                        Finish();
+                        var stage = snapshot.Value.ToString();
+                        if (stage == $"{RegistrationStage.RegistrationDone}")
+                        {
+                            StartActivity(typeof(MainActivity));
+                            Finish();
+                        }
+                        else
+                        {
+                            var intentSub = new Intent(this, typeof(OnboardingActivity));
+                            intentSub.PutExtra("stage", stage);
+                            StartActivity(intentSub);
+                            Finish();
+                        }
                     }
                     else
                     {
-                        var intent3 = new Intent(this, typeof(MainActivity));
-                        StartActivity(intent3);
+                        StartActivity(typeof(OnboardingActivity));
                         Finish();
                     }
                 }, error=> 

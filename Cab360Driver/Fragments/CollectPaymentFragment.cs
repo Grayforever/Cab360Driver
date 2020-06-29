@@ -2,6 +2,7 @@
 using Android.Views;
 using Android.Widget;
 using Cab360Driver.Helpers;
+using Firebase.Auth;
 using Firebase.Database;
 using Java.Util;
 using System;
@@ -14,6 +15,7 @@ namespace Cab360Driver.Fragments
         private readonly double _distance;
         private readonly string _from;
         private readonly string _to;
+        private FirebaseUser currUser;
 
         public event EventHandler<PaymentCollectedEventArgs> PaymentCollected;
         public class PaymentCollectedEventArgs : EventArgs
@@ -33,6 +35,7 @@ namespace Cab360Driver.Fragments
         {
             base.OnCreate(savedInstanceState);
             SetStyle(StyleNormal, Resource.Style.AppTheme_DialogWhenLarge);
+            currUser = AppDataHelper.GetCurrentUser();
             // Create your fragment here
         }
 
@@ -62,9 +65,8 @@ namespace Cab360Driver.Fragments
 
             collectPayButton.Click += (s1, e1) =>
             {
-                var mAuth = AppDataHelper.GetFirebaseAuth();
                 var dataObject = HashEarnings();
-                var mEarningsRef = AppDataHelper.GetParentReference().Child("earnings").Child(mAuth.CurrentUser.Uid);
+                var mEarningsRef = AppDataHelper.GetDatabase().GetReference($"Drivers/{currUser.Uid}/MyEarnings/{DateTime.UtcNow}");
                 mEarningsRef.SetValue(dataObject)
                     .AddOnSuccessListener(new OnSuccessListener(result =>
                     {
@@ -84,7 +86,6 @@ namespace Cab360Driver.Fragments
             earnMap.Put("rideFare", _fares);
             earnMap.Put("from", _from);
             earnMap.Put("to", _to);
-            earnMap.Put("currentDate", $"{DateTime.UtcNow}");
             return earnMap;
         }
 

@@ -1,7 +1,6 @@
 ﻿using Android.Graphics;
 using Android.OS;
 using Android.Views;
-using Android.Widget;
 using Google.Android.Material.Button;
 using Refractored.Controls;
 using System;
@@ -10,16 +9,9 @@ namespace Cab360Driver.Fragments
 {
     public class PicDisplayFragment : AndroidX.Fragment.App.DialogFragment
     {
-        public static Bitmap _bitmap;
+        private Bitmap _bitmap;
         public event EventHandler RetakePic;
-        public event EventHandler<HasImageEventArgs> SavePic;
-
-        public class HasImageEventArgs : EventArgs
-        {
-            public bool viewHasImage { get; set; }
-            public byte[] ImageArray { get; set; }
-        }
-        private bool hasImage = false;
+        public event EventHandler SavePic;
 
         public PicDisplayFragment(Bitmap bitmap)
         {
@@ -50,11 +42,10 @@ namespace Cab360Driver.Fragments
             if (_bitmap != null)
             {
                 profileImage.SetImageBitmap(_bitmap);
-                hasImage = true;
             }
             else
             {
-                hasImage = false;
+                return;
             }   
 
         }
@@ -67,7 +58,7 @@ namespace Cab360Driver.Fragments
 
         private void SaveBtn_Click(object sender, EventArgs e)
         {
-            SavePic.Invoke(this, new HasImageEventArgs { viewHasImage = hasImage});
+            SavePic.Invoke(this, new EventArgs());
             Dismiss();
         }
     }

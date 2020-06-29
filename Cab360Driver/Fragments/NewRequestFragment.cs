@@ -12,7 +12,6 @@ namespace Cab360Driver.Fragments
     public class NewRequestFragment : BottomSheetDialogFragment
     {
         private MaterialButton acceptRideButton;
-        private View view;
         private RideDetails _rideDetails;
         public event EventHandler RideAccepted;
 
@@ -29,28 +28,32 @@ namespace Cab360Driver.Fragments
 
         public override View OnCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
         {
-            view =  inflater.Inflate(Resource.Layout.new_ride_request_overlay, container, false);
+            return inflater.Inflate(Resource.Layout.new_ride_request_overlay, container, false);
+        }
 
-            GetControls();
-
-            return view;
-        } 
-
-        private void GetControls()
+        public override void OnViewCreated(View view, Bundle savedInstanceState)
         {
+            base.OnViewCreated(view, savedInstanceState);
             var fromTxt = view.FindViewById<TextView>(Resource.Id.new_ride_frm_tv);
             var toTxt = view.FindViewById<TextView>(Resource.Id.new_ride_to_tv);
+            var distanceTxt = view.FindViewById<TextView>(Resource.Id.box1_tv);
+            var durationTxt = view.FindViewById<TextView>(Resource.Id.box2_tv);
+            var fareTxt = view.FindViewById<TextView>(Resource.Id.box3_tv);
+
             acceptRideButton = (MaterialButton)view.FindViewById(Resource.Id.new_ride_acceptBtn);
             if (_rideDetails != null)
             {
                 fromTxt.Text = _rideDetails.PickupAddress;
                 toTxt.Text = _rideDetails.DestinationAddress;
+                distanceTxt.Text = _rideDetails.Distance;
+                durationTxt.Text = _rideDetails.Duration;
+                fareTxt.Text = _rideDetails.Fare;
             }
             else
             {
                 return;
             }
-            
+
             acceptRideButton.Click += (s1, e1) =>
             {
                 RideAccepted?.Invoke(this, new EventArgs());

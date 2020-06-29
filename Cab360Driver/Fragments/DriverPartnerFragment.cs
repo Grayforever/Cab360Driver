@@ -1,11 +1,10 @@
-﻿using Android.Content;
+﻿using Android.App;
 using Android.OS;
 using Android.Views;
 using Android.Widget;
 using Cab360Driver.Activities;
 using Cab360Driver.EnumsConstants;
 using Cab360Driver.Helpers;
-using Firebase.Database;
 using Google.Android.Material.Button;
 using System;
 using static Android.Widget.ViewSwitcher;
@@ -15,71 +14,60 @@ namespace Cab360Driver.Fragments
 {
     public class DriverPartnerFragment : AndroidX.Fragment.App.Fragment, IViewFactory
     {
-        private MaterialButton ContinueBtn;
-        private TextSwitcher InfoTSwitcher;
-        private MaterialButtonToggleGroup AccountTypeTGroup;
-        private ImageSwitcher InfoImgSwitcher;
-        private MakeViewClass makeView;
-        private DatabaseReference driverRef;
-        private FirebaseDatabase fireDb;
         private bool partner = true;
+        private int[] anim = { Resource.Animation.slide_in_top, Resource.Animation.slide_out_bottom };
 
-        public class PartnerEventArgs : EventArgs
-        {
-            public bool IsPartnerComplete { get; set; }
-        }
         public event EventHandler<PartnerEventArgs> PartnerTypeComplete;
 
         public override void OnCreate(Bundle savedInstanceState)
         {
             base.OnCreate(savedInstanceState);
-            fireDb = AppDataHelper.GetDatabase();
         }
 
         public override View OnCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
         {
-            var view =  inflater.Inflate(Resource.Layout.driver_partner_layout, container, false);
-            GetControls(view);
-            return view;
+            return inflater.Inflate(Resource.Layout.driver_partner_layout, container, false);
         }
 
-        private void GetControls(View view)
+        public override void OnViewCreated(View view, Bundle savedInstanceState)
         {
-            InfoTSwitcher = view.FindViewById<TextSwitcher>(Resource.Id.drv_part_txt_swtchr1);
-            InitSwitcher();
-            InfoImgSwitcher = view.FindViewById<ImageSwitcher>(Resource.Id.drv_part_img_swtchr1);
-            InitImgSwitcher();
-            AccountTypeTGroup = view.FindViewById<MaterialButtonToggleGroup>(Resource.Id.drv_part_tggl_grp);
-            AccountTypeTGroup.AddOnButtonCheckedListener(new OnButtonChecked(id=> 
+            base.OnViewCreated(view, savedInstanceState);
+            var AccountTypeTGroup = view.FindViewById<MaterialButtonToggleGroup>(Resource.Id.drv_part_tggl_grp);
+            var InfoImgSwitcher = view.FindViewById<ImageSwitcher>(Resource.Id.drv_part_img_swtchr1);
+            var InfoTSwitcher = view.FindViewById<TextSwitcher>(Resource.Id.drv_part_txt_swtchr1);
+            var ContinueBtn = view.FindViewById<MaterialButton>(Resource.Id.drv_part_cnt_btn);
+
+            InitSwitchers(InfoImgSwitcher, InfoTSwitcher);
+
+            AccountTypeTGroup.AddOnButtonCheckedListener(new OnButtonChecked(id =>
             {
                 switch (id)
                 {
                     case Resource.Id.drv_tggl_partner_btn:
                         partner = true;
                         InfoTSwitcher.SetText(GetString(Resource.String.partner_desc_txt));
-                        InfoImgSwitcher.SetImageResource(Resource.Drawable.ic_driver1);
+                        InfoImgSwitcher.SetImageResource(Resource.Drawable.driver_pablo);
                         break;
 
                     case Resource.Id.drv_tggl_driver_btn:
                         partner = false;
                         InfoTSwitcher.SetText(GetString(Resource.String.driving_desc_txt));
-                        InfoImgSwitcher.SetImageResource(Resource.Drawable.ic_driver2);
+                        InfoImgSwitcher.SetImageResource(Resource.Drawable.driver_pablo);
                         break;
                 }
             }));
 
-            ContinueBtn = view.FindViewById<MaterialButton>(Resource.Id.drv_part_cnt_btn);
+            
             ContinueBtn.Click += (s1, e1) =>
             {
-                var currUser = AppDataHelper.GetCurrentUser();
-                if(currUser != null)
+                if (AppDataHelper.GetCurrentUser() != null)
                 {
                     OnboardingActivity.ShowProgressDialog();
-                    driverRef = fireDb.GetReference("Drivers/" + currUser.Uid);
+                    var driverRef = AppDataHelper.GetDatabase().GetReference($"Drivers/{AppDataHelper.GetCurrentUser().Uid}");
                     driverRef.Child("isPartner").SetValue(partner.ToString())
                         .AddOnSuccessListener(new OnSuccessListener(r1 =>
                         {
-                            driverRef.Child("stage_of_registration").SetValue(RegistrationStage.Capturing.ToString())
+                            driverRef.Child(StringConstants.StageofRegistration).SetValue(RegistrationStage.Capturing.ToString())
                                .AddOnSuccessListener(new OnSuccessListener(r2 =>
                                {
                                    PartnerTypeComplete.Invoke(this, new PartnerEventArgs { IsPartnerComplete = true });
@@ -93,65 +81,59 @@ namespace Cab360Driver.Fragments
                 {
                     Toast.MakeText(Activity, "Something aint right", ToastLength.Short).Show();
                 }
-                
             };
         }
 
-        private void InitImgSwitcher()
+        private void InitSwitchers(ImageSwitcher imageSwitcher, TextSwitcher textSwitcher)
         {
-            makeView = new MakeViewClass(Activity);
-            InfoImgSwitcher.SetFactory(makeView);
-            InfoImgSwitcher.SetInAnimation(Activity, Resource.Animation.slide_in_right);
-            InfoImgSwitcher.SetOutAnimation(Activity, Resource.Animation.slide_out_left);
-            InfoImgSwitcher.SetImageResource(Resource.Drawable.ic_driver1);
-        }
+            imageSwitcher.SetFactory(new ViewFactory());
+            imageSwitcher.SetInAnimation(Activity, anim[0]);
+            imageSwitcher.SetOutAnimation(Activity, anim[1]);
+            imageSwitcher.SetImageResource(Resource.Drawable.driver_pablo);
 
-        private void InitSwitcher()
-        {
-            InfoTSwitcher.SetFactory(this);
-            InfoTSwitcher.SetInAnimation(Activity, Resource.Animation.slide_in_right);
-            InfoTSwitcher.SetOutAnimation(Activity, Resource.Animation.slide_out_left);
-            InfoTSwitcher.SetCurrentText(GetString(Resource.String.partner_desc_txt));
+            textSwitcher.SetFactory(this);
+            textSwitcher.SetInAnimation(Activity, anim[0]);
+            textSwitcher.SetOutAnimation(Activity, anim[1]);
+            textSwitcher.SetCurrentText(GetString(Resource.String.partner_desc_txt));
         }
 
         public View MakeView()
         {
             var textInfos = new TextView(Activity);
             textInfos.Gravity = GravityFlags.Center | GravityFlags.CenterVertical;
-            textInfos.SetTextAppearance(Resource.Style.TextAppearance_AppCompat_Body1);
+            textInfos.SetTextAppearance(Resource.Style.TextAppearance_MaterialComponents_Body1);
             return textInfos;
         }
-    }
 
-    public sealed class MakeViewClass : Java.Lang.Object, IViewFactory
-    {
-        Context context;
-
-        public MakeViewClass(Context _context)
+        public class PartnerEventArgs : EventArgs
         {
-            context = _context;
+            public bool IsPartnerComplete { get; set; }
         }
 
-        public View MakeView()
+        internal sealed class ViewFactory : Java.Lang.Object, IViewFactory
         {
-            var image = new ImageView(context);
-            image.SetScaleType(ImageView.ScaleType.CenterCrop);
-            return image;
-        }
-    }
 
-    public sealed class OnButtonChecked : Java.Lang.Object, IOnButtonCheckedListener
-    {
-        private readonly Action<int> _onButtonChecked;
-
-        public OnButtonChecked(Action<int> onButtonChecked)
-        {
-            _onButtonChecked = onButtonChecked;
+            public View MakeView()
+            {
+                var image = new ImageView(Application.Context);
+                image.SetScaleType(ImageView.ScaleType.CenterCrop);
+                return image;
+            }
         }
 
-        void IOnButtonCheckedListener.OnButtonChecked(MaterialButtonToggleGroup p0, int p1, bool p2)
+        internal sealed class OnButtonChecked : Java.Lang.Object, IOnButtonCheckedListener
         {
-            _onButtonChecked?.Invoke(p1);
+            private readonly Action<int> _onButtonChecked;
+
+            public OnButtonChecked(Action<int> onButtonChecked)
+            {
+                _onButtonChecked = onButtonChecked;
+            }
+
+            void IOnButtonCheckedListener.OnButtonChecked(MaterialButtonToggleGroup p0, int p1, bool p2)
+            {
+                _onButtonChecked?.Invoke(p1);
+            }
         }
     }
 }

@@ -1,12 +1,18 @@
 ﻿using Android;
+using Android.App;
+using Android.Content;
+using System.Text.RegularExpressions;
 
 namespace Cab360Driver.EnumsConstants
 {
     public static class StringConstants
     {
+        private static ISharedPreferences preferences = Application.Context.GetSharedPreferences("driverInfo", FileCreationMode.Private);
+        private static ISharedPreferencesEditor editor;
         private static string gateway1 = "https://parseapi.back4app.com";
         private static string mapsNavigateBaseGateway = "google.navigation:q=";
         private static string mapsDirectionsBaseGateway = "https://maps.googleapis.com/maps/api/directions/";
+        private static Regex regex = new Regex(@"^[a-zA-Z]{2}-\d{4}\-(\d{2}|[a-zA-Z])$");
         private static string[] permissionsGroup =
         {
             Manifest.Permission.AccessCoarseLocation,
@@ -34,6 +40,19 @@ namespace Cab360Driver.EnumsConstants
         public static string[] GetLocationPermissiongroup()
         {
             return permissionsGroup;
+        }
+
+        public static string StageofRegistration => "stage_of_registration";
+
+        public static ISharedPreferencesEditor GetEditor()
+        {
+            editor = preferences.Edit();
+            return editor;
+        }
+
+        public static bool IsCarNumMatch(string carNum)
+        {
+            return regex.IsMatch(carNum);
         }
     }
 }
