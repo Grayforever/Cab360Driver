@@ -29,7 +29,6 @@ namespace Cab360Driver.Activities
             if(currUser is null)
             {
                 StartActivity(typeof(OnboardingActivity));
-
                 Finish();
             }
             else

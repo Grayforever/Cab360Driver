@@ -10,12 +10,14 @@ namespace Cab360Driver.Fragments
     public class PicDisplayFragment : AndroidX.Fragment.App.DialogFragment
     {
         private Bitmap _bitmap;
+        private int _rotation;
         public event EventHandler RetakePic;
         public event EventHandler SavePic;
 
-        public PicDisplayFragment(Bitmap bitmap)
+        public PicDisplayFragment(Bitmap bitmap, int rotation)
         {
             _bitmap = bitmap;
+            _rotation = rotation;
         }
 
         public override void OnCreate(Bundle savedInstanceState)
@@ -42,6 +44,7 @@ namespace Cab360Driver.Fragments
             if (_bitmap != null)
             {
                 profileImage.SetImageBitmap(_bitmap);
+                profileImage.Rotation = -_rotation;
             }
             else
             {
@@ -53,6 +56,7 @@ namespace Cab360Driver.Fragments
         private void RetakeBtn_Click(object sender, EventArgs e)
         {
             RetakePic.Invoke(this, new EventArgs());
+            _bitmap = null;
             Dismiss();
         }
 

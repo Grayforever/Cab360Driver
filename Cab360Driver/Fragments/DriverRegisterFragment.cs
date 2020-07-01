@@ -7,7 +7,11 @@ using AndroidX.AppCompat.Widget;
 using Cab360Driver.Activities;
 using Cab360Driver.Adapters;
 using Cab360Driver.EnumsConstants;
+using Cab360Driver.EventListeners;
 using Cab360Driver.Helpers;
+using CN.Pedant.SweetAlert;
+using Firebase;
+using Firebase.Auth;
 using Google.Android.Material.Button;
 using Google.Android.Material.TextField;
 using Java.Util;
@@ -22,6 +26,8 @@ namespace Cab360Driver.Fragments
         private MaterialButton SubmitBtn;
         private string[] names = { "Accra", "Kumasi", "Takoradi", "Ho", "Tema", "Tamale" };
         private string fname, lname, email, phone, code, city;
+        private SweetAlertDialog infoAlertDialog;
+        public event EventHandler OnEmailExistsListener;
 
         public event EventHandler<SignUpSuccessArgs> SignUpSuccess;
 
@@ -69,14 +75,41 @@ namespace Cab360Driver.Fragments
                 code = CodeText.EditText.Text;
 
                 AppDataHelper.GetFirebaseAuth().CreateUserWithEmailAndPassword(email, PassText.EditText.Text)
-                .AddOnSuccessListener(new OnSuccessListener(r =>
+                .AddOnCompleteListener(new OnCompleteListener(t =>
                 {
-                    SaveDriverToDb();
-                })).AddOnFailureListener(new OnFailureListener(e =>
-                {
-                    //close prgress
-                    OnboardingActivity.CloseProgressDialog();
-                    Toast.MakeText(Activity, e.Message, ToastLength.Short).Show();
+                    if (!t.IsSuccessful)
+                    {
+                        try
+                        {
+                            OnboardingActivity.CloseProgressDialog();
+                            throw t.Exception;
+                        }
+                        catch (FirebaseAuthInvalidCredentialsException)
+                        {
+                            OnboardingActivity.ShowErrorDialog("The email or password is not correct");
+                        }
+                        catch (FirebaseAuthUserCollisionException)
+                        {
+                            ShowEmailExistsDialog();
+                        }
+                        catch (FirebaseAuthInvalidUserException)
+                        {
+                            OnboardingActivity.ShowErrorDialog("User invalid");
+                        }
+                        catch (FirebaseNetworkException)
+                        {
+                            OnboardingActivity.ShowNoNetDialog(false);
+                        }
+                        catch (Exception)
+                        {
+                            OnboardingActivity.ShowErrorDialog("Your request could not be completed at this time");
+                        }
+                    }
+                    else
+                    {
+                        SaveDriverToDb();
+                    }
+                    
                 }));
             };
         }
@@ -113,7 +146,11 @@ namespace Cab360Driver.Fragments
                             Toast.MakeText(Activity, e1.Message, ToastLength.Short).Show(); 
                         }));
                 }))
-                .AddOnFailureListener(new OnFailureListener(e=> { Toast.MakeText(Activity, e.Message, ToastLength.Short).Show(); }));
+                .AddOnFailureListener(new OnFailureListener(e=> 
+                {
+                    OnboardingActivity.ShowErrorDialog("Something went wrong, please retry");
+                
+                }));
         }
 
         private void CheckIfEmpty()
@@ -124,6 +161,35 @@ namespace Cab360Driver.Fragments
                 && CityText.Text.Length >= 2 
                 && PhoneText.EditText.Text.Length >= 8 
                 && PassText.EditText.Text.Length >= 8;
+        }
+
+        private void ShowEmailExistsDialog()
+        {
+            infoAlertDialog = new SweetAlertDialog(Activity, SweetAlertDialog.ErrorType);
+            infoAlertDialog.SetCancelable(false);
+            infoAlertDialog.SetTitleText("Sign up error");
+            infoAlertDialog.SetContentText("The email account provided is associated with an existing account. Would you like to sign in instead?");
+            infoAlertDialog.SetCancelText("No");
+            infoAlertDialog.SetConfirmText("Yes");
+            infoAlertDialog.SetConfirmClickListener(new SweetConfirmClick(sweet =>
+            {
+                ClearTextFields();
+                OnEmailExistsListener?.Invoke(this, new EventArgs());
+                infoAlertDialog.DismissWithAnimation();
+                infoAlertDialog = null;
+            }));
+            infoAlertDialog.Show();
+        }
+
+        private void ClearTextFields()
+        {
+            FnameText.EditText.Text = "";
+            LnameText.EditText.Text = "";
+            CityText.Text = "";
+            PhoneText.EditText.Text = "";
+            PassText.EditText.Text = "";
+            EmailText.EditText.Text = "";
+            CodeText.EditText.Text = "";
         }
 
         public class SignUpSuccessArgs : EventArgs

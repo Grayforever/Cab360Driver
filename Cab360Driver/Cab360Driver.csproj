@@ -148,6 +148,7 @@
     <Compile Include="Utils\BackgroundBitmapCache.cs" />
     <Compile Include="Utils\Blur.cs" />
     <Compile Include="Utils\DecodeBitmapTask.cs" />
+    <Compile Include="Utils\DialogUtils.cs" />
     <Compile Include="Utils\ForegroundImageView.cs" />
     <Compile Include="Utils\ProfileBtnBehavior.cs" />
     <Compile Include="Utils\ProfileHeaderBitmap.cs" />
@@ -220,14 +221,14 @@
     <PackageReference Include="System.Net.Http">
       <Version>4.3.4</Version>
     </PackageReference>
-    <PackageReference Include="Xam.Plugin.Media">
-      <Version>5.0.1</Version>
-    </PackageReference>
     <PackageReference Include="Xamarin.Android.Support.Design">
       <Version>28.0.0.3</Version>
     </PackageReference>
     <PackageReference Include="Xamarin.AndroidX.Arch.Core.Common">
       <Version>2.1.0.1</Version>
+    </PackageReference>
+    <PackageReference Include="Xamarin.AndroidX.Concurrent.Futures">
+      <Version>1.0.0.1</Version>
     </PackageReference>
     <PackageReference Include="Xamarin.AndroidX.ConstraintLayout">
       <Version>1.1.3.1</Version>
@@ -261,15 +262,6 @@
     </PackageReference>
     <PackageReference Include="Xamarin.AndroidX.ViewPager2">
       <Version>1.0.0.3</Version>
-    </PackageReference>
-    <PackageReference Include="Xamarin.Firebase.ML.Common">
-      <Version>71.1612.1</Version>
-    </PackageReference>
-    <PackageReference Include="Xamarin.Firebase.ML.Vision">
-      <Version>71.1700.2</Version>
-    </PackageReference>
-    <PackageReference Include="Xamarin.Firebase.ML.Vision.Face.Model">
-      <Version>120.0.1-preview01</Version>
     </PackageReference>
     <PackageReference Include="Xamarin.Google.Android.Material" Version="1.1.0.1-rc3" />
     <PackageReference Include="Xamarin.AndroidX.Legacy.Support.Core.Utils" Version="1.0.0.1" />
@@ -336,6 +328,12 @@
     </PackageReference>
     <PackageReference Include="Xamarin.GooglePlayServices.Tasks">
       <Version>117.0.2-preview01</Version>
+    </PackageReference>
+    <PackageReference Include="Xamarin.GooglePlayServices.Vision">
+      <Version>120.0.0-preview01</Version>
+    </PackageReference>
+    <PackageReference Include="Xamarin.GooglePlayServices.Vision.Face.Contour.Internal">
+      <Version>116.0.0-preview01</Version>
     </PackageReference>
   </ItemGroup>
   <ItemGroup>

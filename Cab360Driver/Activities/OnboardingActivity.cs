@@ -9,6 +9,7 @@ using AndroidX.ViewPager2.Widget;
 using Cab360Driver.Adapters;
 using Cab360Driver.BroadcastReceivers;
 using Cab360Driver.EnumsConstants;
+using Cab360Driver.EventListeners;
 using Cab360Driver.Fragments;
 using CN.Pedant.SweetAlert;
 using Java.Lang;
@@ -36,6 +37,7 @@ namespace Cab360Driver.Activities
         private static FragmentActivity _context;
         private BroadcastReceiver mNetworkReceiver;
         public static SweetAlertDialog loadingDialog = null;
+        public static SweetAlertDialog errorDialog = null;
         public static NoNetBottomSheet noNetBottomSheet = null;
 
         protected override void OnCreate(Bundle savedInstanceState)
@@ -43,7 +45,8 @@ namespace Cab360Driver.Activities
             base.OnCreate(savedInstanceState);
             SetContentView(Resource.Layout.container_main);
             InitControls();
-            GetStage();
+            string stage = Intent.GetStringExtra("stage");
+            GetStage(stage);
             mNetworkReceiver = new NetworkReceiver();
             RegisterNetworkBroadcastForNougat();
             RequestPermissions(StringConstants.GetLocationPermissiongroup(), 0);
@@ -77,10 +80,8 @@ namespace Cab360Driver.Activities
 
 
         //router
-        private void GetStage()
+        private void GetStage(string stage)
         {
-            string stage = Intent.GetStringExtra("stage");
-
             if (!string.IsNullOrEmpty(stage))
             {
                 if (stage == RegistrationStage.Partnering.ToString())
@@ -131,11 +132,23 @@ namespace Cab360Driver.Activities
         {
             RegViewPager.SetCurrentItem(2, isSmoothScroll);
             RegisterFragment.SignUpSuccess += RegisterFragment_SignUpSuccess;
+            RegisterFragment.OnEmailExistsListener += RegisterFragment_OnEmailExistsListener;
+        }
+
+        private void RegisterFragment_OnEmailExistsListener(object sender, EventArgs e)
+        {
+            SetSignInFrag();
         }
 
         private void SetSignInFrag()
         {
             RegViewPager.SetCurrentItem(1, isSmoothScroll);
+            SignInFragment.onRegUncompleteListener += SignInFragment_onRegUncompleteListener;
+        }
+
+        private void SignInFragment_onRegUncompleteListener(object sender, DriverSignInFragment.RegUncompleteArgs e)
+        {
+            GetStage(e.StageReached);
         }
 
         private void SetPartnerFrag()
@@ -173,9 +186,7 @@ namespace Cab360Driver.Activities
         private void AckFragment_OnSkip(object sender, EventArgs e)
         {
             var intent = new Intent(this, typeof(MainActivity));
-            //intent.SetFlags(ActivityFlags.ClearTask | ActivityFlags.ClearTop | ActivityFlags.NewTask);
             StartActivity(intent);
-            GC.Collect();
             Finish();
         }
 
@@ -211,7 +222,6 @@ namespace Cab360Driver.Activities
         {
             SetAckFrag();
         }
-
 
         //custom
         public static void ShowNoNetDialog(bool val)
@@ -253,6 +263,23 @@ namespace Cab360Driver.Activities
             }
         }
 
+        public static void ShowErrorDialog(string errorMessage)
+        {
+            errorDialog = new SweetAlertDialog(_context, SweetAlertDialog.ErrorType);
+            errorDialog.SetCancelable(false);
+            errorDialog.SetTitleText("Oops...");
+            errorDialog.SetContentText(errorMessage);
+            errorDialog.SetConfirmText("OK");
+            errorDialog.ShowCancelButton(false);
+            errorDialog.SetConfirmClickListener(new SweetConfirmClick(d => 
+            {
+                errorDialog.DismissWithAnimation();
+                errorDialog = null;
+             
+            }));
+            errorDialog.Show();
+        }
+
         private void RegisterNetworkBroadcastForNougat()
         {
             if (Build.VERSION.SdkInt >= BuildVersionCodes.N)
@@ -277,7 +304,6 @@ namespace Cab360Driver.Activities
             }
         }
 
-
         //overrides
         protected override void OnDestroy()
         {
@@ -293,8 +319,13 @@ namespace Cab360Driver.Activities
             }
             else
             {
-                base.OnBackPressed();
+                Finish();
             }
+        }
+
+        protected override void OnSaveInstanceState(Bundle outState)
+        {
+
         }
     }
 }

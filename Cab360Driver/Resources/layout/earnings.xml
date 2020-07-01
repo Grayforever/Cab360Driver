@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+
 <androidx.coordinatorlayout.widget.CoordinatorLayout 
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -59,11 +59,11 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:textAppearance="?android:attr/textAppearanceLarge"
-                            android:text=""
                             android:maxLines="1"
                             android:textStyle="bold"
                             android:ellipsize="end"
                             android:id="@+id/earn_tv2"
+                            android:text="¢0.00"
                             />
                     </LinearLayout>
                     
@@ -76,6 +76,7 @@
                         android:layout_centerVertical="true"
                         android:text="Withdraw"
                         android:textSize="16sp"
+                        android:enabled="false"
                         />
 
                 </RelativeLayout>

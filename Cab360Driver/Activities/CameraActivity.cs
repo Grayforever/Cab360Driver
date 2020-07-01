@@ -5,10 +5,6 @@ using Android.Runtime;
 using Android.Views;
 using Android.Widget;
 using AndroidX.AppCompat.App;
-using Cab360Driver.Helpers;
-using Firebase.ML.Vision;
-using Firebase.ML.Vision.Common;
-using Firebase.ML.Vision.Face;
 using Google.Android.Material.FloatingActionButton;
 using IO.FotoapparatLib;
 using IO.FotoapparatLib.Configurations;
@@ -41,14 +37,13 @@ namespace Cab360Driver.Activities
         private Fotoapparat fotoapparat;
         private FloatingActionButton capture;
         private FloatingActionButton switchCamera;
-        public event EventHandler<ImageCapturedEventArgs> onImageCaptured;
+        public static event EventHandler<ImageCapturedEventArgs> onImageCaptured;
 
         bool activeCameraBack = true;
 
         private CameraConfiguration cameraConfiguration = new CameraConfiguration.Builder()
             .PhotoResolution(StandardRatio(HighestResolution()))
             .FocusMode(FirstAvailable(ContinuousFocusPicture(), AutoFocus(), Fixed()))
-            .Flash(FirstAvailable(AutoFlash(), Torch(), AutoRedEye()))
             .PreviewFpsRange(HighestFps())
             .SensorSensitivity(HighestSensorSensitivity())
             .FrameProcessor(new SampleFrameProcessor())
@@ -125,52 +120,10 @@ namespace Cab360Driver.Activities
                     {
                         return;
                     }
-
-                    onImageCaptured?.Invoke(this, new ImageCapturedEventArgs { image = r.JavaCast<BitmapPhoto>().Bitmap });
-                    GC.Collect();
+                    BitmapPhoto bitmapPhoto = r.JavaCast<BitmapPhoto>();
+                    onImageCaptured?.Invoke(this, new ImageCapturedEventArgs { ProfilePic = bitmapPhoto.Bitmap, RotationDegrees = bitmapPhoto.RotationDegrees });
                     Finish();
                 }));
-        }
-
-        private void StartDetection(Bitmap bitmap)
-        {
-            FirebaseVisionFaceDetectorOptions options = new FirebaseVisionFaceDetectorOptions.Builder()
-                .SetClassificationType(FirebaseVisionFaceDetectorOptions.AllClassifications)
-                .SetLandmarkType(FirebaseVisionFaceDetectorOptions.AllLandmarks)
-                .SetModeType(FirebaseVisionFaceDetectorOptions.AccurateMode)
-                .Build();
-
-            FirebaseVisionFaceDetector detector = FirebaseVision.Instance.GetVisionFaceDetector(options);
-            FirebaseVisionImage image = FirebaseVisionImage.FromBitmap(bitmap);
-            detector.DetectInImage(image).AddOnSuccessListener(new OnSuccessListener(r => 
-            {
-                JavaList<FirebaseVisionFace> faces = r.JavaCast<JavaList<FirebaseVisionFace>>();
-            })).AddOnFailureListener(new OnFailureListener(f=> { Toast.MakeText(this, f.Message, ToastLength.Long).Show(); }));
-        }
-
-        private void ProcessResult(JavaList<FirebaseVisionFace> faces)
-        {
-            float smileProb = 0;
-            float leftEyeOpenProb = 0;
-            float rightEyeOpenProb = 0;
-
-            foreach(var face in faces)
-            {
-                if (face.SmilingProbability != FirebaseVisionFace.UncomputedProbability)
-                {
-                    smileProb = face.SmilingProbability;
-                }
-                if (face.LeftEyeOpenProbability != FirebaseVisionFace.UncomputedProbability)
-                {
-                    leftEyeOpenProb = face.LeftEyeOpenProbability;
-                }
-                if (face.RightEyeOpenProbability != FirebaseVisionFace.UncomputedProbability)
-                {
-                    rightEyeOpenProb = face.RightEyeOpenProbability;
-                }
-
-                Toast.MakeText(this, "face found", ToastLength.Long).Show();
-            }
         }
 
         protected override void OnStart()
@@ -223,7 +176,8 @@ namespace Cab360Driver.Activities
 
         public class ImageCapturedEventArgs : EventArgs
         {
-            public Bitmap image { get; set; }
+            public Bitmap ProfilePic { get; set; }
+            public int RotationDegrees { get; set; }
         }
     }
 }
