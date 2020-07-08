@@ -29,7 +29,6 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:id="@+id/drv_capt_welc_tv"
-                android:text="Welcome, Daniel"
                 android:textAppearance="?attr/textAppearanceHeadline4"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
@@ -70,7 +69,9 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/drv_capt_head_tv"
                 app:layout_constraintBottom_toBottomOf="parent"
-                android:layout_marginTop="24dp">
+                android:layout_marginTop="24dp"
+                android:padding="8dp"
+                android:clipToPadding="false">
 
                 <androidx.cardview.widget.CardView
                     android:layout_width="match_parent"
@@ -78,7 +79,6 @@
                     android:id="@+id/req_c1"
                     app:cardBackgroundColor="@color/colorCardTint"
                     app:cardCornerRadius="5dp"
-                    android:stateListAnimator="@animator/lift_on_touch"
                     android:layout_weight="1"
                     android:clickable="true"
                     android:foreground="?android:attr/selectableItemBackground">
@@ -126,7 +126,6 @@
                     android:id="@+id/req_c2"
                     app:cardBackgroundColor="@color/colorCardTint"
                     app:cardCornerRadius="5dp"
-                    android:stateListAnimator="@animator/lift_on_touch"
                     android:layout_weight="1"
                     android:clickable="true"
                     android:layout_marginTop="16dp"
@@ -176,7 +175,6 @@
                     android:id="@+id/req_c3"
                     app:cardBackgroundColor="@color/colorCardTint"
                     app:cardCornerRadius="5dp"
-                    android:stateListAnimator="@animator/lift_on_touch"
                     android:layout_weight="1"
                     android:layout_marginTop="16dp"
                     android:clickable="true"

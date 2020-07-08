@@ -76,9 +76,10 @@ namespace Cab360Driver.Fragments
             FirebaseUser user = AppDataHelper.GetCurrentUser();
             if(user != null)
             {
+                string userName = user.DisplayName;
                 WelcomeTxt.PostDelayed(() => 
                 {
-                    WelcomeTxt.Text = $"Welcome {user.DisplayName}";
+                    WelcomeTxt.Text = "Welcome " + userName;
                 }, 1000);
             }
 
@@ -101,7 +102,6 @@ namespace Cab360Driver.Fragments
 
         private void BeginCameraInvoke(CaptureType captureType)
         {
-            OnboardingActivity.ShowProgressDialog();
             switch (captureType)
             {
                 case CaptureType.ProfilePic:
@@ -144,13 +144,10 @@ namespace Cab360Driver.Fragments
 
         private void DisplayPic(Bitmap bitmap, int rotation)
         {
-            OnboardingActivity.CloseProgressDialog();
             picDisplayFragment = new PicDisplayFragment(bitmap, rotation);
-            picDisplayFragment.Cancelable = false;
             AndroidX.Fragment.App.FragmentTransaction ft = ChildFragmentManager.BeginTransaction();
             ft.Add(picDisplayFragment, "pic_display");
             ft.CommitAllowingStateLoss();
-            OnboardingActivity.CloseProgressDialog();
             picDisplayFragment.SavePic += PicDisplayFragment_SavePic;
             picDisplayFragment.RetakePic += PicDisplayFragment_RetakePic;
         }

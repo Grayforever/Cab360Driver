@@ -261,24 +261,19 @@
                 android:layout_width="match_parent"
                 android:layout_height="38dp"
                 android:layout_marginTop="30dp"
-                android:layout_marginBottom="8dp">
+                android:layout_marginBottom="8dp"
+                android:clipToPadding="false">
 
-                <FrameLayout
-                    android:id="@+id/countries"
-                    android:layout_width="match_parent"
-                    android:layout_height="38dp"
-                    android:layout_marginTop="16dp">
-
-                    <TextView
-                        android:id="@+id/tv_comp_hd"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center_vertical"
-                        android:textAppearance="?attr/textAppearanceHeadline6"
-                        android:layout_marginStart="@dimen/recycler_view_left_offset"
-                        android:text="Rider compliments"/>
-
-                </FrameLayout>
+                <TextView
+                    android:id="@+id/tv_comp_hd"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:textAppearance="?attr/textAppearanceHeadline6"
+                    android:layout_marginStart="@dimen/recycler_view_left_offset"
+                    android:text="Rider compliments"
+                    android:layout_centerVertical="true"
+                    />
 
                 <FrameLayout
                     android:layout_width="85dp"

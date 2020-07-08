@@ -4,17 +4,15 @@
 	xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#282828">
+    android:background="@color/background_material_dark">
 
     <io.fotoapparat.view.CameraView
         android:id="@+id/cameraView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         tools:layout_editor_absoluteX="8dp"
-        tools:layout_editor_absoluteY="8dp"
-        tools:visibility="visible">
+        tools:layout_editor_absoluteY="8dp">
 
-        <!--Optionally add tap to focus-->
         <io.fotoapparat.view.FocusView
             android:id="@+id/focusView"
             android:layout_width="match_parent"
@@ -29,6 +27,7 @@
         app:backgroundTint="@android:color/white"
         android:layout_gravity="bottom|center"
         app:useCompatPadding="true"
+        app:maxImageSize="32dp"
         />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
@@ -39,6 +38,7 @@
         app:fabSize="mini"
         android:layout_gravity="bottom|end"
         app:useCompatPadding="true"
+        android:src="@android:drawable/ic_menu_rotate"
         />
 
 </androidx.appcompat.widget.FitWindowsFrameLayout>

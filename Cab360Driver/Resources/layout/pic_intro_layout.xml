@@ -9,13 +9,14 @@
     android:paddingStart="16dp"
     android:paddingEnd="16dp"
     android:paddingBottom="16dp"
-    android:paddingTop="?android:attr/actionBarSize">
+    android:paddingTop="?android:attr/actionBarSize"
+    android:clipToPadding="false">
 
     <TextView
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:id="@+id/take_ya_pp_txt"
-        android:text="Before you begin, please make sure:"
+        android:text="@string/before_you_snap"
         android:textAppearance="?attr/textAppearanceHeadline5"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -73,7 +74,7 @@
     <com.google.android.material.button.MaterialButton
         android:layout_width="0dp"
         android:layout_height="56dp"
-        android:text="take photo"
+        android:text="@string/take_photo"
         android:textSize="16sp"
         android:id="@+id/intro_takephoto_btn"
         app:layout_constraintBottom_toBottomOf="parent"

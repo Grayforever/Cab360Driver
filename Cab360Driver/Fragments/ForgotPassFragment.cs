@@ -1,18 +1,20 @@
 ﻿using Android.OS;
 using Android.Util;
 using Android.Views;
-using Android.Widget;
-using AndroidX.ConstraintLayout.Widget;
+using Cab360Driver.Activities;
 using Cab360Driver.Helpers;
+using Firebase;
+using Firebase.Auth;
 using Google.Android.Material.Button;
-using Google.Android.Material.Snackbar;
 using Google.Android.Material.TextField;
+using System;
 
 namespace Cab360Driver.Fragments
 {
     public class ForgotPassFragment : AndroidX.Fragment.App.DialogFragment
     {
-        private ConstraintLayout forgotPassRoot;
+        private TextInputLayout emailEditText;
+
         public override void OnCreate(Bundle savedInstanceState)
         {
             base.OnCreate(savedInstanceState);
@@ -27,8 +29,7 @@ namespace Cab360Driver.Fragments
         public override void OnViewCreated(View view, Bundle savedInstanceState)
         {
             base.OnViewCreated(view, savedInstanceState);
-            forgotPassRoot = view.FindViewById<ConstraintLayout>(Resource.Id.forgot_pass_root);
-            var emailEditText = view.FindViewById<TextInputLayout>(Resource.Id.forgot_email_et);
+            emailEditText = view.FindViewById<TextInputLayout>(Resource.Id.forgot_email_et);
             var nextBtn = view.FindViewById<MaterialButton>(Resource.Id.btn_fgt_email_snd);
             emailEditText.EditText.TextChanged += (s1, e1) =>
             {
@@ -37,24 +38,64 @@ namespace Cab360Driver.Fragments
 
             nextBtn.Click += (s1, e1) =>
             {
-                AppDataHelper.GetFirebaseAuth().SendPasswordResetEmail(emailEditText.EditText.Text)
+                SendEmail();
+            };
+        }
+
+        private void SendEmail()
+        {
+            OnboardingActivity.ShowProgressDialog();
+            AppDataHelper.GetFirebaseAuth().SendPasswordResetEmail(emailEditText.EditText.Text)
                 .AddOnCompleteListener(new OnCompleteListener(t =>
                 {
-                    if (t.IsSuccessful)
+                    if (!t.IsSuccessful)
                     {
-                        Snackbar.Make(forgotPassRoot, "We've sent you a confirmation message", BaseTransientBottomBar.LengthIndefinite)
-                            .SetAction("OK", view =>
-                            {
-                                Toast.MakeText(Activity, "clicked", ToastLength.Short).Show();
-                            });
+                        try
+                        {
+                            OnboardingActivity.CloseProgressDialog();
+                            throw t.Exception;
+                        }
+                        catch (FirebaseAuthEmailException)
+                        {
+                            OnboardingActivity.ShowErrorDialog("The email address provided is not asscociated with any Cab360 account. " +
+                                "Please enter a valid Cab360 account related email");
+                        }
+                        catch (FirebaseAuthInvalidCredentialsException)
+                        {
+                            OnboardingActivity.ShowErrorDialog("The email provided is invalid");
+                        }
+                        catch (FirebaseNetworkException)
+                        {
+                            OnboardingActivity.ShowNoNetDialog(false);
+                        }
+                        catch (Exception e)
+                        {
+                            OnboardingActivity.ShowErrorDialog(e.Message);
+                        }
                     }
                     else
                     {
-                        Toast.MakeText(Activity, t.Exception.Message, ToastLength.Short).Show();
+                        OnboardingActivity.CloseProgressDialog();
+
+                        EmailSentFragment emailBtmSht = new EmailSentFragment();
+                        AndroidX.Fragment.App.FragmentTransaction ft = ChildFragmentManager.BeginTransaction();
+                        ft.Add(emailBtmSht, "camera_intro");
+                        ft.CommitAllowingStateLoss();
+                        emailBtmSht.onResendClick += EmailBtmSht_onResendClick;
+                        emailBtmSht.onOkClick += EmailBtmSht_onOkClick;
                     }
 
                 }));
-            };
+        }
+
+        private void EmailBtmSht_onOkClick(object sender, EventArgs e)
+        {
+            DismissAllowingStateLoss();
+        }
+
+        private void EmailBtmSht_onResendClick(object sender, EventArgs e)
+        {
+            SendEmail();
         }
     }
 }

@@ -21,13 +21,14 @@
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:padding="16dp">
+            android:padding="16dp"
+            android:clipToPadding="false">
 
             <TextView
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:id="@+id/part_vehi_intro_txt"
-                android:text="Tell us more about your car"
+                android:text="Tell us about your car"
                 android:textAppearance="?attr/textAppearanceHeadline6"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -49,7 +50,6 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:id="@+id/brand_lay"
-                    android:hint="Car brand"
                     app:layout_constraintStart_toStartOf="parent"
                     android:layout_marginEnd="4dp"
                     app:layout_constraintEnd_toStartOf="@+id/model_lay"
@@ -62,6 +62,7 @@
                         android:singleLine="true"
                         android:inputType="textCapWords"
                         android:imeOptions="actionNext"
+                        android:hint="@string/car_brand"
                         android:lines="1"
                         />
 
@@ -81,11 +82,10 @@
                         android:layout_height="wrap_content"
                         android:id="@+id/model_ac_tv"
                         android:singleLine="true"
-                        
                         android:inputType="textCapWords"
                         android:imeOptions="actionNext"
                         android:lines="1"
-                        android:hint="Model"  
+                        android:hint="@string/car_model"  
                         />
 
                 </com.google.android.material.textfield.TextInputLayout>
@@ -116,11 +116,10 @@
                         android:layout_height="wrap_content"
                         android:id="@+id/year_ac_tv"
                         android:singleLine="true"
-                        
                         android:inputType="number"
                         android:imeOptions="actionNext"
                         android:maxLines="1"
-                        android:hint="Year"
+                        android:hint="@string/car_year"
                         android:maxLength="4"    
                         />
 
@@ -140,7 +139,6 @@
                         android:layout_height="wrap_content"
                         android:id="@+id/state_ac_tv"
                         android:singleLine="true"
-                        
                         android:inputType="none"
                         android:imeOptions="actionNext"
                         android:maxLines="1"
@@ -158,7 +156,6 @@
                 android:layout_height="wrap_content"
                 app:layout_constraintTop_toBottomOf="@+id/yearConstraint"
                 app:layout_constraintEnd_toEndOf="parent"
-                
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintBottom_toTopOf="@id/curr_user_til"
                 android:id="@+id/descConstraint"
@@ -178,14 +175,13 @@
                         android:layout_height="wrap_content"
                         android:id="@+id/color_ac_tv"
                         android:singleLine="true"
-                        
                         android:inputType="textCapWords"
                         android:imeOptions="actionNext"
                         android:maxLines="1"
                         android:ellipsize="end"
                         android:paddingStart="12dp"
                         android:paddingEnd="8dp"
-                        android:hint="Color"
+                        android:hint="@string/car_color"
                         
                         />
 
@@ -203,8 +199,7 @@
                     <com.google.android.material.textfield.TextInputEditText
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:hint="Registration number"
-                        
+                        android:hint="@string/car_reg_no"
                         android:inputType="textCapCharacters"
                         android:imeOptions="actionNext"
                         />
@@ -228,8 +223,7 @@
                 <com.google.android.material.textfield.TextInputEditText
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="Current owner"
-                    
+                    android:hint="@string/car_owner"
                     android:inputType="textCapWords"
                     android:imeOptions="actionDone"
                     />
@@ -242,8 +236,7 @@
                 android:id="@+id/pls_tick_tv"
                 android:layout_below="@+id/curr_user_til"
                 android:textAppearance="?android:attr/textAppearanceMedium"
-                android:text="Please tick the appropriate box"
-                
+                android:text="@string/please_tick"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/curr_user_til"
@@ -288,7 +281,6 @@
                     android:text="Clean interior"
                     android:layout_columnWeight="1"
                     app:useMaterialThemeColors="true"
-                    
                     android:id="@+id/chk_inte"
                     />
 
@@ -298,7 +290,6 @@
                     android:text="Fire extinguisher"
                     android:layout_columnWeight="1"
                     app:useMaterialThemeColors="true"
-                    
                     android:id="@+id/chk_fire"
                     />
 
@@ -308,7 +299,7 @@
                 android:layout_width="0dp"
                 android:layout_height="56dp"
                 android:id="@+id/part_cont_btn"
-                android:text="Continue"
+                android:text="@string/continue_txt"
                 android:textSize="16sp"
                 android:enabled="false"
                 app:layout_constraintBottom_toBottomOf="parent"

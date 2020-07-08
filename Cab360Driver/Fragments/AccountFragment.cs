@@ -61,26 +61,34 @@ namespace Cab360Driver.Fragments
 
         private void GetDb()
         {
-            var compliRef = AppDataHelper.GetDatabase().GetReference($"Drivers/{AppDataHelper.GetCurrentUser().Uid}/MyCompliments");
-            compliRef.AddValueEventListener(new SingleValueListener(
-                snapshot => 
-                {
-                    if (snapshot.Exists())
+            if(AppDataHelper.GetCurrentUser() != null)
+            {
+                var compliRef = AppDataHelper.GetDatabase().GetReference($"Drivers/{AppDataHelper.GetCurrentUser().Uid}/MyCompliments");
+                compliRef.AddValueEventListener(new SingleValueListener(
+                    snapshot =>
                     {
-                        string cool_car = snapshot.Child("cool_car").Value.ToString();
-                        string awesome_music = snapshot.Child("awesome_music").Value.ToString();
-                        string friendly = snapshot.Child("friendly").Value.ToString();
-                        string nav = snapshot.Child("expert_nav").Value.ToString();
-                        string neat = snapshot.Child("neat_tidy").Value.ToString();
+                        if (snapshot.Exists())
+                        {
+                            string cool_car = snapshot.Child("cool_car").Value.ToString();
+                            string awesome_music = snapshot.Child("awesome_music").Value.ToString();
+                            string friendly = snapshot.Child("friendly").Value.ToString();
+                            string nav = snapshot.Child("expert_nav").Value.ToString();
+                            string neat = snapshot.Child("neat_tidy").Value.ToString();
 
-                        compliValues = new string[] { awesome_music, cool_car, friendly, neat, nav };
-                        compliValuesSwitcher.SetCurrentText(compliValues[0]);
-                    }
-                }, 
-                error=> 
-                {
-                    Toast.MakeText(Activity, error.Message, ToastLength.Short).Show();
-                }));
+                            compliValues = new string[] { awesome_music, cool_car, friendly, neat, nav };
+                            compliValuesSwitcher.SetCurrentText(compliValues[0]); 
+                        }
+                    },
+                    error =>
+                    {
+                        Toast.MakeText(Activity, error.Message, ToastLength.Short).Show();
+                    }));
+            }
+            else
+            {
+                return;
+            }
+            
         }
 
         
@@ -89,7 +97,7 @@ namespace Cab360Driver.Fragments
         {
             var view = inflater.Inflate(Resource.Layout.account, container, false);
             GetControls(view);
-            SetDefaultProfileBg(Resource.Drawable.ic_bg);
+            SetDefaultProfileBg(Resource.Drawable.background_);
             InitListener();
             InitRecyclerView(view);
             InitSwitchers(view);

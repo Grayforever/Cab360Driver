@@ -65,7 +65,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintBottom_toTopOf="@+id/spacely"
         android:layout_marginTop="16dp"
-        android:hint="Password"
+        android:hint="@string/hint_pass_txt"
         app:endIconMode="password_toggle"
         app:boxStrokeWidthFocused="2dp">
 

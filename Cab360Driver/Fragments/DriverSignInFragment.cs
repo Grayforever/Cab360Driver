@@ -1,4 +1,5 @@
-﻿using Android.Content;
+﻿using Android.App;
+using Android.Content;
 using Android.OS;
 using Android.Util;
 using Android.Views;
@@ -43,7 +44,9 @@ namespace Cab360Driver.Fragments
             forgotPassBtn.Click += (s1, e1) =>
             {
                 ForgotPassFragment passFragment = new ForgotPassFragment();
-                passFragment.Show(Activity.SupportFragmentManager, "show forgot fragment");
+                AndroidX.Fragment.App.FragmentTransaction ft = ChildFragmentManager.BeginTransaction();
+                ft.Add(passFragment, "forgot_pass_fragment");
+                ft.CommitAllowingStateLoss();
             };
 
             var continueFab = view.FindViewById<FloatingActionButton>(Resource.Id.fab1);
@@ -130,15 +133,11 @@ namespace Cab360Driver.Fragments
                                         }
                                         catch(FirebaseAuthInvalidCredentialsException)
                                         {
-                                            OnboardingActivity.ShowErrorDialog("The email or password is not correct");
-                                        }
-                                        catch(FirebaseAuthUserCollisionException)
-                                        {
-                                            OnboardingActivity.ShowErrorDialog("The email provided is associated with an existing account");
+                                            OnboardingActivity.ShowErrorDialog("Your email or password is incorrect. Please try again.");
                                         }
                                         catch(FirebaseAuthInvalidUserException)
                                         {
-                                            OnboardingActivity.ShowErrorDialog("User account not found");
+                                            OnboardingActivity.ShowErrorDialog("We can't find an account with this email address. Please try again or create a new account.");
                                         }
                                         catch(FirebaseNetworkException)
                                         {
@@ -146,7 +145,7 @@ namespace Cab360Driver.Fragments
                                         }
                                         catch(Exception)
                                         {
-                                            OnboardingActivity.ShowErrorDialog("We couldnt sign you in at this time. Please retry");
+                                            OnboardingActivity.ShowErrorDialog("We couldn't sign you in at this time. Please retry");
                                         }
                                     }
                                     

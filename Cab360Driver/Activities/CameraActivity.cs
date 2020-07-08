@@ -19,7 +19,6 @@ using Java.IO;
 using System;
 using static IO.FotoapparatLib.Logs.LoggersKt;
 using static IO.FotoapparatLib.Selectors.AspectRatioSelectorsKt;
-using static IO.FotoapparatLib.Selectors.FlashSelectorsKt;
 using static IO.FotoapparatLib.Selectors.FocusModeSelectorsKt;
 using static IO.FotoapparatLib.Selectors.LensPositionSelectorsKt;
 using static IO.FotoapparatLib.Selectors.PreviewFpsRangeSelectorsKt;

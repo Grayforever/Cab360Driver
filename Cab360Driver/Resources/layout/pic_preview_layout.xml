@@ -5,7 +5,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:padding="16dp"
-    tools:ignore="HardcodedText">
+    tools:ignore="HardcodedText"
+    android:clipToPadding="false">
 
     <Refractored.Controls.CircleImageView
         android:layout_width="0dp"
@@ -26,7 +27,7 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:id="@+id/wanna_txt"
-        android:text="Want to use this photo?"
+        android:text="Is this photo OK?"
         android:textAppearance="?attr/textAppearanceHeadline5"
         app:layout_constraintBottom_toTopOf="@+id/wanna_txt2"
         app:layout_constraintStart_toStartOf="parent"
@@ -40,7 +41,7 @@
         android:layout_height="wrap_content"
         android:id="@+id/wanna_txt2"
         android:textAppearance="?attr/textAppearanceBody1"
-        android:text="By tapping SAVE, you agree that Cab360 may collect and process your photos with technology that allows us to verify your identity"
+        android:text="@string/by_tapping_save"
         android:textAlignment="center"
         android:inputType="textMultiLine"
         app:layout_constraintStart_toStartOf="parent"
@@ -53,7 +54,7 @@
         android:layout_width="0dp"
         android:layout_height="56dp"
         android:id="@+id/prev_retake_btn"
-        android:text="retake"
+        android:text="@string/retake"
         android:textSize="16sp"
         app:strokeWidth="2dp"
         style="@style/Widget.MaterialComponents.Button.OutlinedButton"
@@ -67,7 +68,7 @@
         android:layout_width="0dp"
         android:layout_height="56dp"
         android:id="@+id/prev_save_btn"
-        android:text="save"
+        android:text="@string/save"
         android:textSize="16sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
