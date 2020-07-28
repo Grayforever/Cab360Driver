@@ -1,51 +1,57 @@
-
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.coordinatorlayout.widget.CoordinatorLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
 	xmlns:app="http://schemas.android.com/apk/res-auto"
 	xmlns:tools="http://schemas.android.com/tools"
 	android:layout_width="match_parent"
 	android:layout_height="match_parent"
-	android:fitsSystemWindows="true">
+	android:id="@+id/main_root">
 
-	<androidx.viewpager2.widget.ViewPager2 xmlns:android="http://schemas.android.com/apk/res/android"                            
-		android:id="@+id/viewpager"
-		android:layout_height="0dp"
-		android:layout_width="0dp"
-		app:layout_constraintTop_toTopOf="parent"
-		app:layout_constraintBottom_toTopOf="@id/bnve"
+	<androidx.constraintlayout.widget.ConstraintLayout 
+		android:layout_width="match_parent"
+		android:layout_height="match_parent">
+
+		<include
+			layout="@layout/container"
+			android:id="@+id/container"
+			android:layout_width="0dp"
+			android:layout_height="0dp"
+			app:layout_constraintBottom_toTopOf="@+id/bnve"
+			app:layout_constraintTop_toTopOf="parent"
+			app:layout_constraintStart_toStartOf="parent"
+			app:layout_constraintEnd_toEndOf="parent"
+			
+			/>
+
+		<com.google.android.material.bottomnavigation.BottomNavigationView                          
+			android:id="@+id/bnve"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			app:menu="@menu/bottomnav"
+			app:elevation="6dp"
+			app:layout_constraintBottom_toBottomOf="parent"
+			app:layout_constraintStart_toStartOf="parent"
+			app:layout_constraintEnd_toEndOf="parent"
+			app:layout_behavior="@string/hide_bottom_view_on_scroll_behavior"
+			/>
+
+		
+	</androidx.constraintlayout.widget.ConstraintLayout>
+
+	<com.bitvale.switcher.SwitcherC
+		android:layout_width="@dimen/design_fab_size_normal"
+		android:layout_height="@dimen/design_fab_size_normal"
+		android:id="@+id/switcher"
+		android:checked="false"
+		android:elevation="8dp"
 		app:layout_constraintStart_toStartOf="parent"
 		app:layout_constraintEnd_toEndOf="parent"
-	/>
-
-	<com.google.android.material.bottomnavigation.BottomNavigationView                          
-		android:id="@+id/bnve"
-		android:layout_width="0dp"
-		android:layout_height="wrap_content"
-		app:menu="@menu/bottomnav"
-		app:elevation="6dp"
-		android:layout_gravity="bottom"
-		android:layout_alignParentBottom="true"
 		app:layout_constraintBottom_toBottomOf="parent"
-		app:layout_constraintStart_toStartOf="parent"
-		app:layout_constraintEnd_toEndOf="parent"
-		app:layout_behavior="@string/hide_bottom_view_on_scroll_behavior"
-		/>
-	
-	<com.google.android.material.floatingactionbutton.FloatingActionButton
-		android:layout_width="wrap_content"
-		android:layout_height="wrap_content"
-		android:id="@+id/fab_toggle_online"
-		android:clickable="true"
-		app:maxImageSize="32dp"
-		app:elevation="8dp"
 		app:layout_anchor="@+id/bnve"
-		app:layout_anchorGravity="center_horizontal"
-		android:src="@drawable/ic_car_offline"
-		app:layout_constraintBottom_toBottomOf="parent"
-		app:layout_constraintStart_toStartOf="parent"
-		app:layout_constraintEnd_toEndOf="parent"
-		app:tint="@null"
+		app:layout_anchorGravity="center_horizontal| bottom"
 		android:layout_marginBottom="12dp"
-	/>
-	
+		/>
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+	<include
+        layout="@layout/notifications"
+        />
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

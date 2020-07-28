@@ -14,20 +14,10 @@
         android:layout_height="wrap_content"
         android:id="@+id/new_ride_header"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/anim_bell_av"
+        app:layout_constraintEnd_toEndOf="parent"
         android:text="New ride request"
         android:gravity="center"
         android:textAppearance="?attr/textAppearanceHeadline5"
-        />
-
-    <com.airbnb.lottie.LottieAnimationView
-        android:layout_width="32dp"
-        android:layout_height="32dp"
-        android:id="@+id/anim_bell_av"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/new_ride_header"
-        app:layout_constraintTop_toTopOf="parent"
-        app:lottie_fileName="bell.json"
         />
 
     <androidx.cardview.widget.CardView
@@ -42,7 +32,8 @@
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:padding="8dp">
+            android:padding="8dp"
+            android:clipToPadding="false">
 
             <ImageView
                 android:layout_width="16dp"
@@ -139,7 +130,6 @@
                 android:layout_width="16dp"
                 android:layout_height="16dp"
                 android:id="@+id/box1_iview"
-                android:src="@drawable/ic_spped"
                 android:layout_gravity="center"
                 android:layout_marginEnd="4dp"
                 />
@@ -168,7 +158,6 @@
                 android:layout_width="16dp"
                 android:layout_height="16dp"
                 android:id="@+id/box2_iview"
-                android:src="@drawable/ic_time"
                 android:layout_gravity="center"
                 android:layout_marginEnd="4dp"
                 />
@@ -197,7 +186,6 @@
                 android:layout_width="16dp"
                 android:layout_height="16dp"
                 android:id="@+id/box3_iview"
-                android:src="@drawable/ic_cedi"
                 android:layout_gravity="center"
                 android:layout_marginEnd="4dp"
                 />

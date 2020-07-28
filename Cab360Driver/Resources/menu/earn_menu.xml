@@ -1,0 +1,15 @@
+﻿<menu xmlns:android="http://schemas.android.com/apk/res/android"
+      xmlns:app="http://schemas.android.com/apk/res-auto">
+
+  <item android:id="@+id/action_edetails"
+        android:title="Details"
+        />
+
+  <item android:id="@+id/action_esettings"
+        android:title="Settings"
+        />
+  <item android:id="@+id/action_ereport"
+        android:title="Report"
+        />
+
+</menu>

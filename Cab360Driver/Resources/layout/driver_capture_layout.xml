@@ -30,6 +30,7 @@
                 android:layout_height="wrap_content"
                 android:id="@+id/drv_capt_welc_tv"
                 android:textAppearance="?attr/textAppearanceHeadline4"
+                android:text="Welcome"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -148,7 +149,7 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Drivers License"
+                            android:text="Front of vehicle"
                             android:id="@+id/drv_photo_txt2"
                             android:layout_alignParentBottom="true"
                             android:textAppearance="?attr/textAppearanceSubtitle2"
@@ -198,7 +199,7 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Reverse side of Drivers License"
+                            android:text="Back of vehicle"
                             android:id="@+id/drv_photo_txt3"
                             android:textAppearance="?attr/textAppearanceSubtitle2"
                             android:layout_alignParentBottom="true"

@@ -8,7 +8,6 @@ namespace Cab360Driver.Fragments
 {
     public class EmailSentFragment : BottomSheetDialogFragment
     {
-        private string _email;
         public event EventHandler onResendClick;
         public event EventHandler onOkClick;
         public override void OnCreate(Bundle savedInstanceState)

@@ -52,6 +52,8 @@ namespace Cab360Driver.Activities
         {
             base.OnCreate(savedInstanceState);
             SetContentView(Resource.Layout.cam_layout);
+            Window.AddFlags(WindowManagerFlags.Fullscreen);
+            Window.DecorView.SystemUiVisibility = (StatusBarVisibility)SystemUiFlags.ImmersiveSticky;
             cameraView = FindViewById<CameraView>(Resource.Id.cameraView);
             focusView = FindViewById<FocusView>(Resource.Id.focusView);
             capture = FindViewById<FloatingActionButton>(Resource.Id.fabCapture);
@@ -112,7 +114,7 @@ namespace Cab360Driver.Activities
             PhotoResult photoResult = fotoapparat.TakePicture();
             photoResult.SaveToFile(new File(GetExternalFilesDir("photos"), "photo.jpg"));
             photoResult
-                .ToBitmap(ResolutionTransformersKt.Scaled(0.25f))
+                .ToBitmap()
                 .WhenDone(new WhenDoneListener(r =>
                 {
                     if (r == null)
@@ -123,6 +125,7 @@ namespace Cab360Driver.Activities
                     onImageCaptured?.Invoke(this, new ImageCapturedEventArgs { ProfilePic = bitmapPhoto.Bitmap, RotationDegrees = bitmapPhoto.RotationDegrees });
                     Finish();
                 }));
+                
         }
 
         protected override void OnStart()

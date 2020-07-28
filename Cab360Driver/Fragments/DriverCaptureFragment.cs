@@ -14,7 +14,6 @@ using AndroidX.Core.Content;
 using Cab360Driver.Activities;
 using Cab360Driver.EnumsConstants;
 using Cab360Driver.Helpers;
-using Firebase.Auth;
 using Firebase.Storage;
 using System;
 using System.IO;
@@ -30,12 +29,10 @@ namespace Cab360Driver.Fragments
         private TextView HeaderTxt2;
         private TextView HeaderTxt3;
         public event EventHandler ProfileCaptured;
-        public const int RequestCode = 100;
         public const int RequestPermission = 200;
-        private BeforeUSnapFragment CameraIntroDialog = new BeforeUSnapFragment();
-        private PicDisplayFragment picDisplayFragment;
         public static StorageReference imageRef;
         private Bitmap bitmap;
+        private PicDisplayFragment picDisplayFragment;
 
         public override void OnCreate(Bundle savedInstanceState)
         {
@@ -71,18 +68,6 @@ namespace Cab360Driver.Fragments
             Card1.Click += Card1_Click;
             Card2.Click += Card2_Click;
             Card3.Click += Card3_Click;
-
-
-            FirebaseUser user = AppDataHelper.GetCurrentUser();
-            if(user != null)
-            {
-                string userName = user.DisplayName;
-                WelcomeTxt.PostDelayed(() => 
-                {
-                    WelcomeTxt.Text = "Welcome " + userName;
-                }, 1000);
-            }
-
         }
 
         private void Card3_Click(object sender, EventArgs e)
@@ -105,10 +90,11 @@ namespace Cab360Driver.Fragments
             switch (captureType)
             {
                 case CaptureType.ProfilePic:
+                    BeforeUSnapFragment bUSnap = new BeforeUSnapFragment();
                     AndroidX.Fragment.App.FragmentTransaction ft = ChildFragmentManager.BeginTransaction();
-                    ft.Add(CameraIntroDialog, "camera_intro");
+                    ft.Add(bUSnap, "camera_intro");
                     ft.CommitAllowingStateLoss();
-                    CameraIntroDialog.StartCameraAsync += CameraIntroDialog_StartCameraAsync;
+                    bUSnap.StartCameraAsync += CameraIntroDialog_StartCameraAsync;
                     break;
                 case CaptureType.FrontOfLicense:
                     break;
@@ -117,8 +103,9 @@ namespace Cab360Driver.Fragments
             }
         }
 
-        private void CameraIntroDialog_StartCameraAsync(object sender, BeforeUSnapFragment.CamArgs e)
+        private void CameraIntroDialog_StartCameraAsync(object sender, EventArgs args)
         {
+            OnboardingActivity.ShowProgressDialog();
             CheckAndStartCamera();
         }
 
@@ -138,13 +125,15 @@ namespace Cab360Driver.Fragments
 
         private void CameraActivity_onImageCaptured(object sender, CameraActivity.ImageCapturedEventArgs e)
         {
+            OnboardingActivity.CloseProgressDialog();
             bitmap = e.ProfilePic;
-            DisplayPic(bitmap, e.RotationDegrees);
+            DisplayPic(e.RotationDegrees);
         }
 
-        private void DisplayPic(Bitmap bitmap, int rotation)
+        private void DisplayPic(int rotation)
         {
             picDisplayFragment = new PicDisplayFragment(bitmap, rotation);
+            picDisplayFragment.Cancelable = true;
             AndroidX.Fragment.App.FragmentTransaction ft = ChildFragmentManager.BeginTransaction();
             ft.Add(picDisplayFragment, "pic_display");
             ft.CommitAllowingStateLoss();
@@ -154,51 +143,69 @@ namespace Cab360Driver.Fragments
 
         private void PicDisplayFragment_SavePic(object sender, EventArgs e)
         {
-            OnboardingActivity.ShowProgressDialog();
-            DetectFace();
-            
+            //DetectFace();
+            SaveImage();
         }
 
         private void DetectFace()
         {
-            FaceDetector faceDetector = new FaceDetector.Builder(Activity)
-                .SetTrackingEnabled(false)
-                .SetLandmarkType(LandmarkDetectionType.All)
-                .SetProminentFaceOnly(true)
-                .SetMode(FaceDetectionMode.Accurate)
-                .Build();
+            OnboardingActivity.ShowProgressDialog();
+            try
+            {
+                FaceDetector detector = new FaceDetector.Builder(Context)
+                    .SetMode(FaceDetectionMode.Accurate)
+                    .SetClassificationType(ClassificationType.All)
+                    .SetLandmarkType(LandmarkDetectionType.All)
+                    .SetProminentFaceOnly(true)
+                    .SetTrackingEnabled(false)
+                    .Build();
 
-            if (!faceDetector.IsOperational)
+                if (!detector.IsOperational)
+                {
+                    //Handle contingency
+                }
+                else
+                {
+                    Frame frame = new Frame.Builder()
+                        .SetBitmap(bitmap)
+                        .Build();
+
+                    var faces = detector.Detect(frame);
+                    detector.Release();
+                    DetectedResponse(bitmap, faces);
+                }
+
+                
+                SaveImage();
+            }
+            catch (Exception e)
             {
                 OnboardingActivity.CloseProgressDialog();
-                OnboardingActivity.ShowErrorDialog("Face detector could'nt start");
+                OnboardingActivity.ShowErrorDialog(e.Message);
             }
-
-            Frame frame = new Frame.Builder()
-                .SetBitmap(bitmap)
-                .Build();
-            var faces = faceDetector.Detect(frame);
-            DetectedResponse(faces);
-            faceDetector.Release();
-            
         }
 
-        private void DetectedResponse(SparseArray faces)
+        private void DetectedResponse(Bitmap bitmap, SparseArray faces)
         {
-            int faceId = faces.Size();
-            if (faceId == 1)
+            if (faces.Size() < 1)
+            {
+                OnboardingActivity.CloseProgressDialog();
+                OnboardingActivity.ShowErrorDialog("No face in photo");
+            }
+            else if (faces.Size() == 1)
             {
                 SaveImage();
             }
-            else
+            else if (faces.Size() > 1)
             {
                 OnboardingActivity.CloseProgressDialog();
-                OnboardingActivity.ShowErrorDialog("We could'nt detect your face, please retake photo.");
+                OnboardingActivity.ShowErrorDialog("More than one face detected");
             }
         }
 
         private void SaveImage()
         {
+            picDisplayFragment.DismissAllowingStateLoss();
             var storeRef = FirebaseStorage.Instance.GetReferenceFromUrl("gs://taxiproject-185a4.appspot.com");
             if (AppDataHelper.GetCurrentUser() != null)
             {
@@ -259,6 +266,7 @@ namespace Cab360Driver.Fragments
         private void PicDisplayFragment_RetakePic(object sender, EventArgs e)
         {
             CheckAndStartCamera();
+            picDisplayFragment.DismissAllowingStateLoss();
         }
 
         private void UpdateUiOnCpture(CaptureType captureType)

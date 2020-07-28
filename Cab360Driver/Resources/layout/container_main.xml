@@ -3,15 +3,21 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
 	xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:fitsSystemWindows="true">
 
     <androidx.viewpager2.widget.ViewPager2
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:id="@+id/reg_viewpager1"
-        
         />
 
-    
-
+    <ProgressBar
+        android:layout_width="74dp"
+        android:layout_height="74dp"
+        android:id="@+id/cont_viewpager"
+        app:layout_anchor="@+id/reg_viewpager1"
+        app:layout_anchorGravity="center"
+        android:visibility="gone"
+        />
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

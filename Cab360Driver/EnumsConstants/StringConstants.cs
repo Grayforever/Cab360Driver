@@ -7,8 +7,6 @@ namespace Cab360Driver.EnumsConstants
 {
     public static class StringConstants
     {
-        private static ISharedPreferences preferences = Application.Context.GetSharedPreferences("driverInfo", FileCreationMode.Private);
-        private static ISharedPreferencesEditor editor;
         private static string gateway1 = "https://parseapi.back4app.com";
         private static string mapsNavigateBaseGateway = "google.navigation:q=";
         private static string mapsDirectionsBaseGateway = "https://maps.googleapis.com/maps/api/directions/";
@@ -43,12 +41,6 @@ namespace Cab360Driver.EnumsConstants
         }
 
         public static string StageofRegistration => "stage_of_registration";
-
-        public static ISharedPreferencesEditor GetEditor()
-        {
-            editor = preferences.Edit();
-            return editor;
-        }
 
         public static bool IsCarNumMatch(string carNum)
         {

@@ -1,7 +1,7 @@
 ﻿using Android.OS;
 using Android.Views;
 using Android.Widget;
-using BumpTech.GlideLib;
+using Bumptech.Glide;
 using Google.Android.Material.Button;
 using System;
 
@@ -17,6 +17,12 @@ namespace Cab360Driver.Fragments
 
         public readonly Action<EventArgs> _onSignUp;
         public readonly Action<EventArgs> _onSignIn;
+
+        public override void OnActivityCreated(Bundle savedInstanceState)
+        {
+            base.OnActivityCreated(savedInstanceState);
+            Glide.With(Context).Load(driverAnim).Into(Iview).WaitForLayout();
+        }
 
         public OnboardingFragment(Action<EventArgs> onSignUp, Action<EventArgs> onSignIn)
         {
@@ -39,8 +45,6 @@ namespace Cab360Driver.Fragments
             SignUpBtn = view.FindViewById<MaterialButton>(Resource.Id.onbd_signup_btn);
             SignInBtn.Click += SignInBtn_Click;
             SignUpBtn.Click += SignUpBtn_Click;
-
-            Glide.With(this).Load(driverAnim).Into(Iview).ClearOnDetach();
             
             return view;
         }

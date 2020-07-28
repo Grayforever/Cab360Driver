@@ -17,7 +17,7 @@ using System;
 
 namespace Cab360Driver.Activities
 {
-    [Activity(Label = "@string/app_name", MainLauncher = false, Theme = "@style/AppTheme.MainScreen", 
+    [Activity(Label = "@string/app_name", MainLauncher = false, Theme = "@style/AppTheme", 
         ConfigurationChanges = Android.Content.PM.ConfigChanges.ScreenSize, 
         ScreenOrientation = Android.Content.PM.ScreenOrientation.Portrait, 
         WindowSoftInputMode = SoftInput.AdjustResize| SoftInput.StateHidden)]
@@ -26,12 +26,12 @@ namespace Cab360Driver.Activities
     {
         private RegistrationFragmentsAdapter regAdapter;
         private ViewPager2 RegViewPager;
+        private ProgressBar progressBar;
         DriverSignInFragment SignInFragment = new DriverSignInFragment();
         DriverRegisterFragment RegisterFragment = new DriverRegisterFragment();
         DriverCaptureFragment CaptureFragment = new DriverCaptureFragment();
         DriverPartnerFragment PartnerFragment = new DriverPartnerFragment();
         CarRegFragment CarRegFragment = new CarRegFragment();
-        CarPicsFragment CarPicsFragment = new CarPicsFragment();
         AckFragment AckFragment = new AckFragment();
         private bool isSmoothScroll = false;
         private static FragmentActivity _context;
@@ -45,17 +45,16 @@ namespace Cab360Driver.Activities
             base.OnCreate(savedInstanceState);
             SetContentView(Resource.Layout.container_main);
             InitControls();
-            string stage = Intent.GetStringExtra("stage");
-            GetStage(stage);
+            GetStage(base.Intent.GetStringExtra("stage"));
             mNetworkReceiver = new NetworkReceiver();
             RegisterNetworkBroadcastForNougat();
-            RequestPermissions(StringConstants.GetLocationPermissiongroup(), 0);
             _context = this;
         }
 
         private void InitControls()
         {
             RegViewPager = FindViewById<ViewPager2>(Resource.Id.reg_viewpager1);
+            progressBar = FindViewById<ProgressBar>(Resource.Id.cont_viewpager);
             regAdapter = new RegistrationFragmentsAdapter(SupportFragmentManager, Lifecycle);
             RegViewPager.Orientation = ViewPager2.OrientationHorizontal;
             RegViewPager.OffscreenPageLimit = 4;
@@ -73,7 +72,6 @@ namespace Cab360Driver.Activities
             regAdapter.AddFragments(PartnerFragment);
             regAdapter.AddFragments(CaptureFragment);
             regAdapter.AddFragments(CarRegFragment);
-            regAdapter.AddFragments(CarPicsFragment);
             regAdapter.AddFragments(AckFragment);
             RegViewPager.Adapter = regAdapter;
         }
@@ -86,35 +84,20 @@ namespace Cab360Driver.Activities
             {
                 if (stage == RegistrationStage.Partnering.ToString())
                 {
-                    
-                    RegViewPager.SetCurrentItem(3, isSmoothScroll);
-                    PartnerFragment.PartnerTypeComplete += PartnerFragment_PartnerTypeComplete;
+                    SetPartnerFrag();
                 }
                 else if (stage == RegistrationStage.Capturing.ToString())
-                {                                         
-                    
-                    RegViewPager.SetCurrentItem(4, isSmoothScroll);
-                    CaptureFragment.ProfileCaptured += DriverCaptureFragment_ProfileCaptured;
+                {
+                    SetCaptureFrag();
                 }
                 else if (stage == RegistrationStage.CarRegistering.ToString())
                 {
-                    
-                    RegViewPager.SetCurrentItem(5, isSmoothScroll);
-                    CarRegFragment.CarRegComplete += CarRegFragment_CarRegComplete;
-                }
-
-                else if (stage == RegistrationStage.CarCapturing.ToString())
-                {
-                    
-                    RegViewPager.SetCurrentItem(6, isSmoothScroll);
-                    CarPicsFragment.CarCaptureComplete += CarPicsFragment_CarCaptureComplete;
+                    SetCarRegFrag();
                 }
 
                 else if (stage == RegistrationStage.Agreement.ToString())
                 {
-                    
-                    RegViewPager.SetCurrentItem(7, isSmoothScroll);
-                    AckFragment.OnSkip += AckFragment_OnSkip;
+                    SetAckFrag();
                 }
             }
             else
@@ -126,6 +109,17 @@ namespace Cab360Driver.Activities
         private void SetParentFrag()
         {
             RegViewPager.SetCurrentItem(0, isSmoothScroll);
+        }
+
+        private void SetSignInFrag()
+        {
+            RegViewPager.SetCurrentItem(1, isSmoothScroll);
+            SignInFragment.onRegUncompleteListener += SignInFragment_onRegUncompleteListener;
+        }
+
+        private void SignInFragment_onRegUncompleteListener(object sender, DriverSignInFragment.RegUncompleteArgs e)
+        {
+            GetStage(e.StageReached);
         }
 
         private void SetRegisterFrag()
@@ -140,19 +134,9 @@ namespace Cab360Driver.Activities
             SetSignInFrag();
         }
 
-        private void SetSignInFrag()
-        {
-            RegViewPager.SetCurrentItem(1, isSmoothScroll);
-            SignInFragment.onRegUncompleteListener += SignInFragment_onRegUncompleteListener;
-        }
-
-        private void SignInFragment_onRegUncompleteListener(object sender, DriverSignInFragment.RegUncompleteArgs e)
-        {
-            GetStage(e.StageReached);
-        }
-
         private void SetPartnerFrag()
         {
+            
             RegViewPager.SetCurrentItem(3, isSmoothScroll);
             PartnerFragment.PartnerTypeComplete += PartnerFragment_PartnerTypeComplete;
         }
@@ -163,12 +147,6 @@ namespace Cab360Driver.Activities
             CaptureFragment.ProfileCaptured += DriverCaptureFragment_ProfileCaptured;
         }
 
-        private void SetCarCaptFrag()
-        {
-            RegViewPager.SetCurrentItem(6, isSmoothScroll);
-            CarPicsFragment.CarCaptureComplete += CarPicsFragment_CarCaptureComplete;
-        }
-
         private void SetCarRegFrag()
         {
             RegViewPager.SetCurrentItem(5, isSmoothScroll);
@@ -177,34 +155,31 @@ namespace Cab360Driver.Activities
 
         private void SetAckFrag()
         {
-            RegViewPager.SetCurrentItem(7, isSmoothScroll);
-            AckFragment.OnSkip += AckFragment_OnSkip;
-        }
-
-
-        //events
-        private void AckFragment_OnSkip(object sender, EventArgs e)
-        {
-            var intent = new Intent(this, typeof(MainActivity));
-            StartActivity(intent);
-            Finish();
+            
+            RegViewPager.SetCurrentItem(6, isSmoothScroll);
         }
 
         private void RegisterFragment_SignUpSuccess(object sender, DriverRegisterFragment.SignUpSuccessArgs e)
         {
-            bool status = e.IsCompleted;
-            if(status == true)
+            if (e.IsCompleted == true)
             {
                 SetPartnerFrag();
+            }
+            else
+            {
+                return;
             }
         }
 
         private void PartnerFragment_PartnerTypeComplete(object sender, DriverPartnerFragment.PartnerEventArgs e)
         {
-            bool isSuccess = e.IsPartnerComplete;
-            if (isSuccess is true)
+            if (e.IsPartnerComplete == true)
             {
                 SetCaptureFrag();
+            }
+            else
+            {
+                return;
             }
         }
 
@@ -214,11 +189,6 @@ namespace Cab360Driver.Activities
         }
 
         private void CarRegFragment_CarRegComplete(object sender, EventArgs e)
-        {
-            SetCarCaptFrag();
-        }
-
-        private void CarPicsFragment_CarCaptureComplete(object sender, EventArgs e)
         {
             SetAckFrag();
         }
@@ -230,12 +200,14 @@ namespace Cab360Driver.Activities
             {
                 noNetBottomSheet = new NoNetBottomSheet(_context);
                 noNetBottomSheet.Cancelable = false;
-                noNetBottomSheet.Show(_context.SupportFragmentManager, "nonet");
+                AndroidX.Fragment.App.FragmentTransaction ft = _context.SupportFragmentManager.BeginTransaction();
+                ft.Add(noNetBottomSheet, "no_net");
+                ft.CommitAllowingStateLoss();
             }
             else
             {
-                Toast.MakeText(_context, "Online", ToastLength.Long).Show();
-            } 
+                return;
+            }
         }
 
         public static void ShowProgressDialog()
@@ -249,17 +221,15 @@ namespace Cab360Driver.Activities
 
         public static void CloseProgressDialog()
         {
-            if (loadingDialog != null)
-            {
-                if (loadingDialog.IsShowing)
-                {
-                    loadingDialog.DismissWithAnimation();
-                    loadingDialog = null;
-                }
-            }
-            else
+            if (loadingDialog == null)
             {
                 return;
+            }
+
+            if (loadingDialog.IsShowing)
+            {
+                loadingDialog.DismissWithAnimation();
+                loadingDialog = null;
             }
         }
 
@@ -313,19 +283,16 @@ namespace Cab360Driver.Activities
 
         public override void OnBackPressed()
         {
-            if(RegViewPager.CurrentItem == 1 || RegViewPager.CurrentItem == 2)
+            switch (RegViewPager.CurrentItem)
             {
-                RegViewPager.SetCurrentItem(0, isSmoothScroll);
+                case 1:
+                case 2:
+                    RegViewPager.SetCurrentItem(0, isSmoothScroll);
+                    break;
+                default:
+                    Finish();
+                    break;
             }
-            else
-            {
-                Finish();
-            }
-        }
-
-        protected override void OnSaveInstanceState(Bundle outState)
-        {
-
         }
     }
 }

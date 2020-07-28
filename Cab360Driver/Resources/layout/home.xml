@@ -1,77 +1,82 @@
-
-<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
 	xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     tools:ignore="HardcodedText">
 
+    <fragment
+		android:id="@+id/map"
+		android:layout_height="match_parent"
+		android:layout_width="match_parent"
+		class="com.google.android.gms.maps.SupportMapFragment"
+	/>
+
     <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="wrap_content"
+        android:layout_gravity="top"
+        android:padding="16dp"
+        android:clipToPadding="false">
 
-        <fragment
-		    android:id="@+id/map"
-		    android:layout_height="match_parent"
-		    android:layout_width="match_parent"
-		    class="com.google.android.gms.maps.SupportMapFragment"
-	    />
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/togleDestinationFab"
+            app:fabSize="mini"
+            app:backgroundTint="@android:color/white"
+            android:src="@android:drawable/ic_menu_search"
+            app:tint="@android:color/black"
+            />
 
-        <RelativeLayout
-            android:layout_width="112dp"
+        <TextSwitcher
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/loc_switcher"
+            android:layout_gravity="center"
+        />
+
+        <Refractored.Controls.CircleImageView
+            android:layout_width="48dp"
             android:layout_height="48dp"
-            android:background="@drawable/temperature_background"
-            android:id="@+id/frameLayout_online"
-            android:layout_gravity="right|top"
-            android:elevation="2dp"
-            android:layout_marginTop="16dp"
-            android:padding="2dp">
-
-            <Refractored.Controls.CircleImageView
-                android:layout_width="40dp"
-                android:layout_height="40dp"
-                android:id="@+id/user_img"
-                android:layout_centerVertical="true"
-                android:layout_margin="2dp"
-                android:src="@drawable/ic_user"
-                android:scaleType="centerCrop"
-                app:civ_border_width="2dp"
-                app:civ_border_color="@color/colorAccent"
-                
+            android:id="@+id/home_iv"
+            android:layout_gravity="end"
+            android:src="@drawable/user"
+            android:scaleType="centerCrop"
+            android:elevation="@dimen/design_fab_elevation"
+            android:clickable="true"
+            app:civ_border_width="2dp"
+            app:civ_border_color="@android:color/white"
             />
+    </FrameLayout>
 
-            <TextSwitcher
-                android:id="@+id/ts_temperature"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerVertical="true"
-                android:layout_toEndOf="@+id/user_img"
-            />
-        </RelativeLayout>
+	<ImageView
+		android:id="@+id/centerMarker"
+		android:layout_height="48dp"
+		android:layout_width="48dp"
+		android:layout_gravity="center"
+		android:visibility="invisible"
+		android:src="@drawable/pin"
+        android:contentDescription="@string/icon_content_description"
+	/>
 
-	    <ImageView
-		    android:id="@+id/centerMarker"
-		    android:layout_height="48dp"
-		    android:layout_width="48dp"
-		    android:layout_gravity="center"
-		    android:visibility="invisible"
-		    android:src="@drawable/ic_pin"
-            android:contentDescription="@string/icon_content_description"
-	    />
+    <androidx.cardview.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="32dp"
+        android:paddingTop="4dp"
+        android:clipToPadding="false"
+        android:layout_gravity="bottom"
+        app:cardCornerRadius="5dp"
+        app:cardBackgroundColor="@color/colorTransparentWhite_95"
+        android:visibility="invisible">
 
         <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="140dp"
-            android:orientation="vertical"
-            android:background="@drawable/bg_bottomsheet_dg"
-            android:layout_gravity="bottom"
-            android:id="@+id/linear_home1"
-            android:layout_marginStart="16dp"
-            android:layout_marginEnd="16dp"
-            android:layout_marginBottom="32dp"
-            android:elevation="2dp"
-            android:paddingTop="4dp"
-            android:visibility="invisible">
+            android:layout_height="168dp"
+            android:id="@+id/linear_home1">
 
             <Refractored.Controls.CircleImageView
                 android:layout_width="56dp"
@@ -79,21 +84,18 @@
                 android:id="@+id/rider_iv"
                 android:layout_alignParentStart="true"
                 android:layout_alignParentTop="true"
-                android:src="@drawable/ic_account_plchldr"
+                android:src="@drawable/user"
                 android:layout_marginEnd="8dp"
                 android:layout_marginStart="8dp"
                 android:layout_marginTop="8dp"
                 android:scaleType="centerCrop"
-                app:civ_border_width="2dp"
-                app:civ_border_color="@color/colorPrimary"
             />
 
             <TextView
                 android:id="@+id/riderNameText"
                 android:text="Janet Jackson"
-                android:textStyle="bold"
                 android:layout_centerVertical="true"
-                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:textAppearance="?attr/textAppearanceHeadline6"
                 android:layout_height="wrap_content"
                 android:layout_width="match_parent"
                 android:layout_marginStart="8dp"
@@ -113,90 +115,64 @@
                 android:layout_toEndOf="@+id/rider_iv"
                 android:layout_below="@+id/riderNameText"
                 android:text="Something must kill a man"
-                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:textAppearance="?attr/textAppearanceSubtitle1"
+            />
+
+            <com.google.android.material.floatingactionbutton.FloatingActionButton
+                android:id="@+id/cancelTripButton"
+                android:layout_alignParentRight="true"
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
+                android:src="@drawable/ic_cancel"
+                app:fabSize="mini"
+                app:elevation="4dp"
+                android:layout_marginEnd="16dp"
+                android:clickable="true"
+                app:tint="@null"
+                app:backgroundTint="@android:color/white"
+                android:layout_below="@+id/rider_details_tv"
+                />
+                
+            <com.google.android.material.floatingactionbutton.FloatingActionButton
+                android:id="@+id/callRiderButton"
+                android:layout_marginRight="10dp"
+                android:layout_toLeftOf="@+id/cancelTripButton"
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
+                android:src="@drawable/ic_call"
+                app:fabSize="mini"
+                app:elevation="4dp"
+                app:tint="@null"
+                app:backgroundTint="@android:color/white"
+                android:layout_below="@+id/rider_details_tv"
+            />
+
+            <com.google.android.material.floatingactionbutton.FloatingActionButton                                         
+                android:id="@+id/navigateButton"
+                android:layout_marginRight="10dp"
+                android:layout_toLeftOf="@+id/callRiderButton"
+                android:layout_below="@+id/rider_details_tv"
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
+                android:src="@drawable/ic_navigate"
+                app:fabSize="mini"
+                app:elevation="4dp"
+                app:tint="@null"
+                app:backgroundTint="@android:color/white"
             />
         
-        <FrameLayout
-            android:layout_width="match_parent"
-            android:layout_height="64dp"
-            android:background="#fafafa"
-            android:layout_alignParentBottom="true">
-
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/tripButton"
-                android:layout_height="wrap_content"
+                android:layout_height="56dp"
                 android:layout_width="match_parent"
+                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                app:strokeWidth="2dp"
                 android:text="Arrived PickUp"
+                android:layout_alignParentBottom="true"
                 android:textAllCaps="true"                
                 android:layout_margin="8dp"
-                app:strokeWidth="2dp"
-                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
-                android:textAppearance="?android:attr/textAppearanceButton"
                 />
-        </FrameLayout>
         
-
         </RelativeLayout>
-
-    </FrameLayout>
-
-    <RelativeLayout
-        android:layout_height="wrap_content"
-        android:layout_width="match_parent"
-        app:layout_anchor="@+id/linear_home1"
-        app:layout_anchorGravity="top"
-        android:layout_marginEnd="16dp"
-        android:layout_marginStart="16dp"
-        android:visibility="invisible">
-
-        <com.google.android.material.floatingactionbutton.FloatingActionButton
-            android:id="@+id/cancelTripButton"
-            android:layout_centerVertical="true"
-            android:layout_alignParentRight="true"
-            android:layout_height="wrap_content"
-            android:layout_width="wrap_content"
-            android:src="@drawable/ic_cancel"
-            app:fabSize="mini"
-            app:elevation="4dp"
-            android:layout_marginTop="8dp"
-            android:layout_marginBottom="8dp"
-            android:layout_marginEnd="16dp"
-            android:clickable="true"
-            app:tint="@null"
-            app:backgroundTint="@android:color/white"
-            />
-                
-        <com.google.android.material.floatingactionbutton.FloatingActionButton
-            android:id="@+id/callRiderButton"
-            android:layout_marginRight="10dp"
-            android:layout_toLeftOf="@+id/cancelTripButton"
-            android:layout_centerVertical="true"
-            android:layout_height="wrap_content"
-            android:layout_width="wrap_content"
-            android:src="@drawable/ic_call"
-            app:fabSize="mini"
-            app:elevation="4dp"
-            android:layout_marginTop="8dp"
-            android:layout_marginBottom="8dp"
-            app:tint="@null"
-            app:backgroundTint="@android:color/white"
-        />
-
-        <com.google.android.material.floatingactionbutton.FloatingActionButton                                         
-            android:id="@+id/navigateButton"
-            android:layout_marginRight="10dp"
-            android:layout_toLeftOf="@+id/callRiderButton"
-            android:layout_centerVertical="true"
-            android:layout_height="wrap_content"
-            android:layout_width="wrap_content"
-            android:src="@drawable/ic_navigate"
-            app:fabSize="mini"
-            app:elevation="4dp"
-            android:layout_marginTop="8dp"
-            android:layout_marginBottom="8dp"
-            app:tint="@null"
-            app:backgroundTint="@android:color/white"
-        />
-    </RelativeLayout>
-
-</androidx.coordinatorlayout.widget.CoordinatorLayout>
+    </androidx.cardview.widget.CardView>
+</FrameLayout>

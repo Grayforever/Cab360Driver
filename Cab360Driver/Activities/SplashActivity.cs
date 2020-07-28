@@ -10,23 +10,33 @@ using Firebase.Auth;
 
 namespace Cab360Driver.Activities
 {
-    [Activity(MainLauncher = true, ScreenOrientation = Android.Content.PM.ScreenOrientation.Portrait)]
+    [Activity(Theme ="@style/AppTheme", MainLauncher = true, ScreenOrientation = Android.Content.PM.ScreenOrientation.Portrait)]
     public class SplashActivity : AppCompatActivity
     {
+        ISharedPreferences preferences = Application.Context.GetSharedPreferences("userInfo", FileCreationMode.Private);
+        ISharedPreferencesEditor editor;
         protected override void OnCreate(Bundle savedInstanceState)
         {
             base.OnCreate(savedInstanceState);
-        }
+            string firstRun = preferences.GetString("firstRun", "");
 
-        protected override void OnResume()
-        {
-            base.OnResume();
-            RouteToAppropriatePage(AppDataHelper.GetCurrentUser());
+            if (firstRun != "" && firstRun != "reg")
+            {
+                StartActivity(typeof(MainActivity));
+                Finish();
+            }
+            else
+            {
+                editor = preferences.Edit();
+                editor.PutString("firstRun", "reg");
+                editor.Commit();
+                RouteToAppropriatePage(AppDataHelper.GetCurrentUser());
+            }
         }
 
         private void RouteToAppropriatePage(FirebaseUser currUser)
         {
-            if(currUser is null)
+            if (currUser == null)
             {
                 StartActivity(typeof(OnboardingActivity));
                 Finish();
@@ -39,34 +49,27 @@ namespace Cab360Driver.Activities
 
         private void CheckStatus(string uid)
         {
-            var fireDataRef = AppDataHelper.GetDatabase().GetReference($"Drivers/{uid}");
-            fireDataRef.Child(StringConstants.StageofRegistration)
-                .AddValueEventListener(new SingleValueListener(snapshot=> {
-                    if (snapshot.Exists())
-                    {
-                        var stage = snapshot.Value.ToString();
-                        if (stage == $"{RegistrationStage.RegistrationDone}")
-                        {
-                            StartActivity(typeof(MainActivity));
-                            Finish();
-                        }
-                        else
-                        {
-                            var intentSub = new Intent(this, typeof(OnboardingActivity));
-                            intentSub.PutExtra("stage", stage);
-                            StartActivity(intentSub);
-                            Finish();
-                        }
-                    }
-                    else
-                    {
-                        StartActivity(typeof(OnboardingActivity));
-                        Finish();
-                    }
-                }, error=> 
+            var fireDataRef = AppDataHelper.GetDatabase().GetReference($"Drivers/{uid}/{StringConstants.StageofRegistration}");
+            fireDataRef.AddValueEventListener(new SingleValueListener(snapshot => 
+            {
+                if (snapshot.Exists())
                 {
-                    Toast.MakeText(this, error.Message, ToastLength.Short).Show();
-                }));
+                    var stage = snapshot.Value.ToString();
+
+                    var intentSub = new Intent(this, typeof(OnboardingActivity));
+                    intentSub.PutExtra("stage", stage);
+                    StartActivity(intentSub);
+                    Finish();
+                }
+                else
+                {
+                    StartActivity(typeof(OnboardingActivity));
+                    Finish();
+                }
+            }, error =>
+            {
+                Toast.MakeText(this, error.Message, ToastLength.Short).Show();
+            }));
         }
     }
 }

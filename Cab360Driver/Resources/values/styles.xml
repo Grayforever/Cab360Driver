@@ -5,20 +5,16 @@
   <!-- Base application theme. -->
   <style name="AppTheme" parent="Theme.MaterialComponents.Light.NoActionBar">
     <item name="colorPrimary">@color/colorPrimary</item>
-    <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+    <item name="colorPrimaryDark">@android:color/white</item>
     <item name="colorAccent">@color/colorAccent</item>
     <item name="windowNoTitle">true</item>
-    <item name="windowActionModeOverlay">true</item>
-    <item name="android:windowContentTransitions">true</item>
     <item name="textInputStyle">@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox</item>
-  </style>
-
-  <style name="AppTheme.MainScreen" parent="AppTheme">
-    <item name="android:statusBarColor">@color/status_bar_color</item>
+    <item name="android:windowLightStatusBar">true</item>
   </style>
 
   <style name="AppTheme.DialogWhenLarge" parent="Theme.MaterialComponents.Light.DialogWhenLarge">
     <item name="windowNoTitle">true</item>
+    <item name="android:windowLightStatusBar">false</item>
   </style>
 
   <style name="AppTheme.ModalDialog" parent="ThemeOverlay.MaterialComponents.BottomSheetDialog">
@@ -35,6 +31,14 @@
     <item name="android:textColor">@android:color/white</item>
     <item name="android:textStyle">bold</item>
     <item name="android:gravity">center</item>
+  </style>
+
+  <style name="OnlineTextView">
+    <item name="android:textSize">24sp</item>
+    <item name="android:textColor">@android:color/black</item>
+    <item name="android:textStyle">bold</item>
+    <item name="android:gravity">center</item>
+    <item name="android:ellipsize">end</item>
   </style>
     
 </resources>

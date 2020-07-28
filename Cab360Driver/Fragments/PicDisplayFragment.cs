@@ -11,6 +11,8 @@ namespace Cab360Driver.Fragments
     {
         private Bitmap _bitmap;
         private int _rotation;
+        private CircleImageView profileImage;
+
         public event EventHandler RetakePic;
         public event EventHandler SavePic;
 
@@ -34,36 +36,30 @@ namespace Cab360Driver.Fragments
         public override void OnViewCreated(View view, Bundle savedInstanceState)
         {
             base.OnViewCreated(view, savedInstanceState);
-            var profileImage = view.FindViewById<CircleImageView>(Resource.Id.preview_iv);
+            profileImage = view.FindViewById<CircleImageView>(Resource.Id.preview_iv);
 
             var retakeBtn = view.FindViewById<MaterialButton>(Resource.Id.prev_retake_btn);
             var saveBtn = view.FindViewById<MaterialButton>(Resource.Id.prev_save_btn);
             retakeBtn.Click += RetakeBtn_Click;
             saveBtn.Click += SaveBtn_Click;
 
-            if (_bitmap != null)
-            {
-                profileImage.SetImageBitmap(_bitmap);
-                profileImage.Rotation = -_rotation;
-            }
-            else
-            {
+            if (_bitmap == null)
                 return;
-            }   
 
+            profileImage.SetImageBitmap(_bitmap);
+            profileImage.Rotation = -_rotation;
         }
 
         private void RetakeBtn_Click(object sender, EventArgs e)
         {
             RetakePic.Invoke(this, new EventArgs());
-            _bitmap = null;
-            Dismiss();
+            DismissAllowingStateLoss();
         }
 
         private void SaveBtn_Click(object sender, EventArgs e)
         {
             SavePic.Invoke(this, new EventArgs());
-            Dismiss();
+            DismissAllowingStateLoss();
         }
     }
 }

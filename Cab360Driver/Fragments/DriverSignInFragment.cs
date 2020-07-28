@@ -21,6 +21,8 @@ namespace Cab360Driver.Fragments
     public class DriverSignInFragment : AndroidX.Fragment.App.Fragment
     {
         public event EventHandler<RegUncompleteArgs> onRegUncompleteListener;
+        ISharedPreferences preferences = Application.Context.GetSharedPreferences("userInfo", FileCreationMode.Private);
+        ISharedPreferencesEditor editor;
         public class RegUncompleteArgs : EventArgs
         {
             public string StageReached { get; set; }
@@ -67,8 +69,7 @@ namespace Cab360Driver.Fragments
                                 {
                                     if (t.IsSuccessful)
                                     {
-                                        var fireDb = AppDataHelper.GetDatabase();
-                                        var dataRef = fireDb.GetReference("Drivers/" + AppDataHelper.GetCurrentUser().Uid);
+                                        var dataRef = AppDataHelper.GetDatabase().GetReference("Drivers/" + AppDataHelper.GetCurrentUser().Uid);
                                         dataRef.AddValueEventListener(new SingleValueListener(d =>
                                         {
                                             if (!d.Exists())
@@ -77,29 +78,20 @@ namespace Cab360Driver.Fragments
                                             var stage = (d.Child(StringConstants.StageofRegistration) != null) ? d.Child(StringConstants.StageofRegistration).Value.ToString() : "";
                                             if (stage != $"{RegistrationStage.RegistrationDone}")
                                             {
+                                                editor = preferences.Edit();
+                                                editor.PutString("firstRun", "reg");
+                                                editor.Commit();
                                                 OnboardingActivity.CloseProgressDialog();
                                                 onRegUncompleteListener?.Invoke(this, new RegUncompleteArgs { StageReached = stage });
                                             }
                                             else
                                             {
-                                                string fname, lname, email, phone, city;
-                                                fname = (d.Child("fname") != null) ? d.Child("fname").Value.ToString() : "";
-                                                lname = (d.Child("lname") != null) ? d.Child("lname").Value.ToString() : "";
-                                                email = (d.Child("email") != null) ? d.Child("email").Value.ToString() : "";
-                                                phone = (d.Child("phone") != null) ? d.Child("phone").Value.ToString() : "";
-                                                city = (d.Child("city") != null) ? d.Child("city").Value.ToString() : "";
+                                                editor = preferences.Edit();
+                                                editor.PutString("firstRun", "regd");
+                                                editor.Commit();
 
-                                                ISharedPreferencesEditor editor = StringConstants.GetEditor();
-                                                editor.PutString("fname", fname);
-                                                editor.PutString("lname", lname);
-                                                editor.PutString("email", email);
-                                                editor.PutString("phone", phone);
-                                                editor.PutString("city", city);
-                                                editor.Apply();
-
-                                                OnboardingActivity.CloseProgressDialog();
-                                                var intent = new Intent(Activity, typeof(MainActivity));
-                                                intent.AddFlags(ActivityFlags.ClearTop | ActivityFlags.ClearTask | ActivityFlags.NewTask);
+                                                var intent = new Intent(Context, typeof(MainActivity));
+                                                intent.SetFlags(ActivityFlags.ClearTask | ActivityFlags.ClearTop | ActivityFlags.NewTask);
                                                 StartActivity(intent);
                                             }
 

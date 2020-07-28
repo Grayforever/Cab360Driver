@@ -1,359 +1,237 @@
-
-<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:fitsSystemWindows="true"
-    tools:ignore="HardcodedText">
-    
-    <com.google.android.material.appbar.AppBarLayout
-        android:layout_width="match_parent"
-        android:layout_height="144dp"
-        android:id="@+id/appbar_account"
-        android:fitsSystemWindows="true"
-        android:minWidth="@dimen/abc_action_bar_default_height_material">
+    android:scrollbars="none"
+    android:fillViewport="true"
+    android:background="@android:color/background_light"
+    app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
-        <com.google.android.material.appbar.CollapsingToolbarLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:id="@+id/collapsing_toolbar_layout"
-            app:contentScrim="@android:color/transparent"
-            app:layout_scrollFlags="exitUntilCollapsed|scroll"
-            app:statusBarScrim="@android:color/transparent">
-
-            <Cab360Driver.Utils.ProfileHeaderBitmap
-                android:id="@+id/profile_header_bg"
-                android:layout_width="match_parent"
-                android:layout_height="144dp"
-                android:background="@android:color/white"
-                android:fitsSystemWindows="true"
-                android:scaleType="centerCrop"
-                app:layout_collapseMode="parallax"
-                app:layout_collapseParallaxMultiplier="0.75" />
-
-            <androidx.appcompat.widget.Toolbar
-                android:id="@+id/toolbar_account"
-                android:layout_width="match_parent"
-                android:layout_height="@dimen/abc_action_bar_default_height_material"
-                android:background="@android:color/transparent"
-                app:layout_collapseMode="pin">
-
-                <LinearLayout
-                    android:id="@+id/profile_title_container"
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:orientation="vertical">
-
-                    <androidx.legacy.widget.Space
-                        android:layout_width="1dp"
-                        android:layout_height="0dp"
-                        android:layout_weight="1" />
-
-                    <TextView
-                        android:id="@+id/profile_title_user"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:ellipsize="end"
-                        android:gravity="center_vertical"
-                        android:maxLines="1"
-                        android:textAppearance="?attr/textAppearanceBody1"
-                        android:textColor="@android:color/white"
-                        />
-
-                    <TextView
-                        android:id="@+id/profile_title_count"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginBottom="6dp"
-                        android:gravity="center_vertical"
-                        android:textAppearance="?attr/textAppearanceBody2"
-                        android:textColor="@android:color/white"
-                        />
-                </LinearLayout>
-
-            </androidx.appcompat.widget.Toolbar>
-
-        </com.google.android.material.appbar.CollapsingToolbarLayout>
-
-        
-    </com.google.android.material.appbar.AppBarLayout>
-
-    <androidx.core.widget.NestedScrollView
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:scrollbars="none"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior">
+        android:padding="16dp"
+        android:clipToPadding="false">
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="vertical"
-            android:clipChildren="false">
+        <androidx.cardview.widget.CardView
+            android:layout_width="0dp"
+            android:layout_height="256dp"
+            android:id="@+id/account_card1"
+            app:cardCornerRadius="5dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
-                android:layout_height="160dp"
-                android:clipToPadding="false"
-                android:paddingTop="38dp"
-                android:paddingStart="16dp"
-                android:paddingEnd="16dp"
-                android:paddingBottom="8dp">
+                android:layout_height="match_parent"
+                android:padding="8dp"
+                android:clipToPadding="false">
 
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/tv_username"
+                <ImageView
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
+                    android:src="@drawable/gear_option"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    android:clickable="true"
+                    android:padding="8dp"
+                    />
+
+                <Refractored.Controls.CircleImageView
+                    android:layout_width="96dp"
+                    android:layout_height="96dp"
+                    android:id="@+id/acount_profile_iv"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
-                    android:textAppearance="?attr/textAppearanceHeadline6"
-                />
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintVertical_bias="0.2"
+                    android:src="@drawable/ic_user"
+                    app:civ_border_width="2dp"
+                    app:civ_border_color="@android:color/white"
+                    android:elevation="@dimen/design_fab_elevation"
+                    />
 
                 <TextView
-                    android:layout_width="match_parent"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:id="@+id/tv_car_details"
+                    android:id="@+id/account_username_tv"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/tv_username"
+                    android:textAppearance="?attr/textAppearanceHeadline6"
+                    app:layout_constraintTop_toBottomOf="@+id/acount_profile_iv"
+                    android:text="Samuel Inkoom"
+                    android:maxLines="1"
+                    android:ellipsize="end"
+                    android:gravity="center"
+                    />
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/account_jointime_tv"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/account_username_tv"
+                    app:layout_constraintBottom_toTopOf="@+id/account_septor"
                     android:textAppearance="?attr/textAppearanceBody1"
-                />
+                    android:text="Driving since 2001"
+                    android:gravity="center"
+                    />
 
-                <RelativeLayout
+                <View
                     android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/rl1_account"
-                    android:layout_marginTop="12dp"
+                    android:layout_height="1dp"
+                    android:id="@+id/account_septor"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/tv_car_details">
-
-                    <ImageView
-                        android:layout_width="16dp"
-                        android:layout_height="16dp"
-                        android:id="@+id/pin"
-                        android:layout_alignParentStart="true"
-                        android:layout_alignParentTop="true"
-                        android:layout_marginEnd="4dp"
-                        android:src="@drawable/ic_location"
-                        android:tint="@android:color/darker_gray"
-                        android:layout_centerVertical="true"
-                        />
-
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:id="@+id/tv_user_from"
-                        android:layout_centerVertical="true"
-                        android:layout_toEndOf="@+id/pin"
-                        android:textAppearance="?attr/textAppearanceBody2"
+                    app:layout_constraintBottom_toTopOf="@+id/acoount_const1"
+                    app:layout_constraintTop_toBottomOf="@+id/account_jointime_tv"
+                    android:background="@android:color/darker_gray"
+                    android:layout_marginTop="8dp"
                     />
-                </RelativeLayout>
 
-                <RelativeLayout
+                <androidx.constraintlayout.widget.ConstraintLayout
                     android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/rl2_account"
-                    android:layout_marginTop="12dp"
+                    android:layout_height="0dp"
+                    android:id="@+id/acoount_const1"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintEnd_toStartOf="@+id/rl3_account"
-                    app:layout_constraintBottom_toBottomOf="parent">
-
-                    <ImageView
-                        android:layout_width="16dp"
-                        android:layout_height="16dp"
-                        android:id="@+id/rides"
-                        android:layout_alignParentStart="true"
-                        android:layout_alignParentTop="true"
-                        android:layout_marginEnd="4dp"
-                        android:src="@drawable/ic_car"
-                        android:tint="@color/colorPrimary"
-                        android:layout_centerVertical="true"
-                        />
-
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:id="@+id/tv_rides_tot"
-                        android:layout_centerVertical="true"
-                        android:layout_toEndOf="@+id/rides"
-                        android:textAppearance="?attr/textAppearanceBody2"
-                        android:textStyle="bold"
-                    />
-                </RelativeLayout>
-
-                <RelativeLayout
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/rl3_account"
-                    android:layout_marginTop="12dp"
-                    app:layout_constraintStart_toEndOf="@+id/rl2_account"
-                    app:layout_constraintEnd_toStartOf="@+id/rl4_account"
-                    app:layout_constraintBottom_toBottomOf="parent">
-
-                    <ImageView
-                        android:layout_width="16dp"
-                        android:layout_height="16dp"
-                        android:id="@+id/stars"
-                        android:layout_alignParentStart="true"
-                        android:layout_alignParentTop="true"
-                        android:layout_marginEnd="4dp"
-                        android:src="@drawable/ic_star"
-                        android:tint="@color/colorPrimary"
-                        android:layout_centerVertical="true"
-                        />
-
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:id="@+id/tv_rides_tot"
-                        android:layout_centerVertical="true"
-                        android:layout_toEndOf="@+id/stars"
-                        android:textAppearance="?attr/textAppearanceBody2"
-                        android:textStyle="bold"
-                    />
-                </RelativeLayout>
-
-                <RelativeLayout
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/rl4_account"
-                    android:layout_marginTop="12dp"
-                    app:layout_constraintStart_toEndOf="@+id/rl3_account"
                     app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintBottom_toBottomOf="parent">
+                    app:layout_constraintTop_toBottomOf="@+id/account_septor"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    android:padding="8dp">
 
-                    <ImageView
-                        android:layout_width="16dp"
-                        android:layout_height="16dp"
-                        android:id="@+id/years"
-                        android:layout_alignParentStart="true"
-                        android:layout_alignParentTop="true"
-                        android:layout_marginEnd="4dp"
-                        android:src="@drawable/ic_year"
-                        android:tint="@color/colorPrimary"
-                        android:layout_centerVertical="true"
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:text="45"
+                        android:id="@+id/account_counter_tv"
+                        android:gravity="center"
+                        android:textAppearance="?attr/textAppearanceBody1"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintEnd_toStartOf="@+id/account_counter2_tv"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintBottom_toTopOf="@+id/account_rides_hdr_tv"
                         />
 
                     <TextView
-                        android:layout_width="match_parent"
+                        android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:id="@+id/tv_rides_tot"
-                        android:layout_centerVertical="true"
-                        android:layout_toEndOf="@+id/years"
-                        android:textAppearance="?attr/textAppearanceBody2"
+                        android:text="Rides"
+                        android:id="@+id/account_rides_hdr_tv"
+                        android:gravity="center"
+                        android:textAppearance="?attr/textAppearanceBody1"
                         android:textStyle="bold"
-                    />
-                </RelativeLayout>
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintEnd_toStartOf="@+id/account_ratings_hdr_tv"
+                        app:layout_constraintTop_toBottomOf="@+id/account_counter_tv"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        />
 
-                
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:text="1200"
+                        android:id="@+id/account_counter2_tv"
+                        android:gravity="center"
+                        android:textAppearance="?attr/textAppearanceBody1"
+                        app:layout_constraintStart_toEndOf="@+id/account_counter_tv"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintBottom_toTopOf="@+id/account_ratings_hdr_tv"
+                        />
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:text="Ratings"
+                        android:id="@+id/account_ratings_hdr_tv"
+                        android:gravity="center"
+                        android:textAppearance="?attr/textAppearanceBody1"
+                        android:textStyle="bold"
+                        app:layout_constraintStart_toEndOf="@+id/account_rides_hdr_tv"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/account_counter2_tv"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        />
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
             </androidx.constraintlayout.widget.ConstraintLayout>
 
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:background="@android:color/darker_gray"
-                
-                />
+        </androidx.cardview.widget.CardView>
 
-            <RelativeLayout
-                android:layout_width="match_parent"
-                android:layout_height="38dp"
-                android:layout_marginTop="30dp"
-                android:layout_marginBottom="8dp"
-                android:clipToPadding="false">
+        <TextView
+            android:id="@+id/tv_comp_hd"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:textAppearance="?attr/textAppearanceHeadline6"
+            android:layout_marginStart="@dimen/recycler_view_left_offset"
+            android:text="Compliments"
+            app:layout_constraintStart_toStartOf="parent"
+            android:layout_marginTop="16dp"
+            app:layout_constraintEnd_toStartOf="@+id/frameLayout"
+            app:layout_constraintTop_toBottomOf="@+id/account_card1"
+            app:layout_constraintWidth_percent="0.7"
+            />
 
-                <TextView
-                    android:id="@+id/tv_comp_hd"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_vertical"
-                    android:textAppearance="?attr/textAppearanceHeadline6"
-                    android:layout_marginStart="@dimen/recycler_view_left_offset"
-                    android:text="Rider compliments"
-                    android:layout_centerVertical="true"
-                    />
+        <FrameLayout
+            android:layout_width="0dp"
+            android:layout_height="32dp"
+            android:background="@drawable/temperature_background"
+            android:id="@+id/frameLayout"
+            android:elevation="4dp"
+            app:layout_constraintStart_toEndOf="@+id/tv_comp_hd"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_marginTop="16dp"
+            app:layout_constraintTop_toBottomOf="@+id/account_card1">
 
-                <FrameLayout
-                    android:layout_width="85dp"
-                    android:layout_height="match_parent"
-                    android:layout_alignParentEnd="true"
-                    android:background="@drawable/temperature_background"
-                    android:layout_centerVertical="true"
-                    android:id="@+id/frameLayout">
-
-                    <TextSwitcher
-                        android:id="@+id/ts_compliValues"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center"/>
-
-                </FrameLayout>
-
-            </RelativeLayout>
-
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/recycler_view"
-                android:layout_width="match_parent"
-                android:layout_height="210dp"
-                android:layout_marginTop="8dp"
-                android:layout_marginStart="@dimen/recycler_view_left_offset"
-                android:clipChildren="false"
-                android:overScrollMode="never"
-                app:layoutManager="com.ramotion.cardslider.CardSliderLayoutManager"
-                app:viewUpdater="id.Cab360Driver.SliderCard.CardsUpdater"
-                />
-
-            <FrameLayout
-                android:layout_width="match_parent"
+            <TextSwitcher
+                android:id="@+id/ts_compliValues"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="15dp">
+                android:layout_gravity="center"/>
 
-                <TextSwitcher
-                    android:id="@+id/ts_compliments"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_vertical"
-                    android:layout_marginStart="@dimen/left_offset"/>
+        </FrameLayout>
 
-            </FrameLayout>
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recycler_view"
+            android:layout_width="0dp"
+            android:layout_height="210dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginStart="@dimen/recycler_view_left_offset"
+            android:clipChildren="false"
+            android:overScrollMode="never"
+            android:clipToPadding="false"
+            app:layoutManager="com.ramotion.cardslider.CardSliderLayoutManager"
+            app:viewUpdater="id.Cab360Driver.SliderCard.CardsUpdater"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tv_comp_hd"
+            app:layout_constraintBottom_toTopOf="@+id/account_frame2"
+            />
 
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:background="@android:color/darker_gray"
-                android:layout_marginTop="8dp"
-                />
+        <FrameLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:id="@+id/account_frame2"
+            android:layout_marginTop="15dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/recycler_view">
 
-        </LinearLayout>
+            <TextSwitcher
+                android:id="@+id/ts_compliments"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_marginStart="@dimen/left_offset"/>
 
-    </androidx.core.widget.NestedScrollView>
+        </FrameLayout>
 
-    <FrameLayout
-        android:id="@+id/header_layout"
-        android:layout_width="80dp"
-        android:layout_height="80dp"
-        android:layout_marginLeft="14dp"
-        app:layout_anchor="@+id/appbar_account"
-        app:layout_anchorGravity="bottom|right|start"
-        app:layout_behavior="Cab360Driver.Utils.ProfileBtnBehavior">
 
-        <de.hdodenhof.circleimageview.CircleImageView
-            android:id="@+id/profile_header_avatar"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:contentDescription="TODO"
-            android:src="@drawable/ic_user" />
 
-        <ImageView
-            android:id="@+id/profile_person_verified"
-            android:layout_width="24dp"
-            android:layout_height="24dp"
-            android:layout_gravity="bottom|right"
-            android:contentDescription="TODO"
-            android:src="@drawable/green_dot_small"
-            android:visibility="visible" />
-    </FrameLayout>
-    
-</androidx.coordinatorlayout.widget.CoordinatorLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</androidx.core.widget.NestedScrollView>

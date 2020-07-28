@@ -1,8 +1,10 @@
 ﻿using Android.OS;
 using Android.Views;
 using Android.Widget;
+using Cab360Driver.DataModels;
+using Cab360Driver.EventListeners;
 using Cab360Driver.Helpers;
-using Firebase.Auth;
+using Firebase;
 using Firebase.Database;
 using Java.Util;
 using System;
@@ -11,32 +13,18 @@ namespace Cab360Driver.Fragments
 {
     public class CollectPaymentFragment : AndroidX.Fragment.App.DialogFragment
     {
-        private readonly double _fares;
-        private readonly double _distance;
-        private readonly string _from;
-        private readonly string _to;
-        private FirebaseUser currUser;
-
-        public event EventHandler<PaymentCollectedEventArgs> PaymentCollected;
-        public class PaymentCollectedEventArgs : EventArgs
+        private RideDetails _rideDetails;
+        private double _fare;
+        public CollectPaymentFragment(RideDetails rideDetails, double fare)
         {
-            public DatabaseReference DataRef { get; set; }
-        }
-
-        public CollectPaymentFragment(double fares, double distance, string from, string to)
-        {
-            _fares = fares;
-            _distance = distance;
-            _from = from;
-            _to = to;
+            _rideDetails = rideDetails;
+            _fare = fare;
         }
 
         public override void OnCreate(Bundle savedInstanceState)
         {
             base.OnCreate(savedInstanceState);
             SetStyle(StyleNormal, Resource.Style.AppTheme_DialogWhenLarge);
-            currUser = AppDataHelper.GetCurrentUser();
-            // Create your fragment here
         }
 
         public override View OnCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
@@ -58,36 +46,68 @@ namespace Cab360Driver.Fragments
             var toText = (TextView)view.FindViewById(Resource.Id.fare_to_txt);
             var collectPayButton = (Button)view.FindViewById(Resource.Id.collectPayButton);
 
-            totalfaresText.Text = $"¢{_fares}";
-            totalDistance.Text = $"{_distance}km";
-            fromText.Text = _from;
-            toText.Text = _to;
+            totalfaresText.Text = "Gh¢" + _fare;
+            totalDistance.Text = _rideDetails.Distance + "km";
+            fromText.Text = _rideDetails.PickupAddress;
+            toText.Text = _rideDetails.DestinationAddress;
 
             collectPayButton.Click += (s1, e1) =>
             {
-                var dataObject = HashEarnings();
-                var mEarningsRef = AppDataHelper.GetDatabase().GetReference($"Drivers/{currUser.Uid}/MyEarnings/{DateTime.UtcNow}");
-                mEarningsRef.SetValue(dataObject)
-                    .AddOnSuccessListener(new OnSuccessListener(result =>
+                var earnRef = AppDataHelper.GetDatabase().GetReference($"Drivers/{AppDataHelper.GetCurrentUser().Uid}/earnings");
+                earnRef.AddValueEventListener(new SingleValueListener(
+                    snapshot =>
                     {
-                        PaymentCollected?.Invoke(this, new PaymentCollectedEventArgs { DataRef = mEarningsRef });
-                    }))
-                    .AddOnFailureListener(new OnFailureListener(e =>
+                        if (!snapshot.Exists())
+                        {
+                            return;
+                        }
+
+                        double exist_earn = double.Parse(snapshot.Child("tot_earnings").Value.ToString());
+                        double totEarn = _fare + exist_earn;
+
+                        HashMap earnInfo = new HashMap();
+                        earnInfo.Put("date", DateTime.UtcNow.Date.ToString());
+                        earnInfo.Put("fare", _fare.ToString());
+                        earnInfo.Put("from", _rideDetails.PickupAddress);
+                        earnInfo.Put("to", _rideDetails.DestinationAddress);
+                        earnInfo.Put("rider_phone", _rideDetails.RiderPhone);
+
+                        earnRef.Child("rides").Child(_rideDetails.RideId).SetValue(earnInfo).AddOnCompleteListener(new OnCompleteListener(
+                        async t =>
+                        {
+                            try
+                            {
+                                if (t.IsSuccessful)
+                                {
+                                    await earnRef.Child("tot_earnings").SetValueAsync(totEarn.ToString());
+                                }
+                                else
+                                {
+                                    throw t.Exception;
+                                    
+                                }
+                            }
+                            catch (DatabaseException de)
+                            {
+                                Toast.MakeText(Context, de.Message, ToastLength.Short).Show();
+                            }
+                            catch (FirebaseNetworkException fne)
+                            {
+                                Toast.MakeText(Context, fne.Message, ToastLength.Short).Show();
+                            }
+                            catch (Exception e)
+                            {
+                                Toast.MakeText(Context, e.Message, ToastLength.Short).Show();
+                            }
+
+
+                        }));
+                    },
+                    error =>
                     {
-                        Toast.MakeText(Activity, e.Message, ToastLength.Short).Show();
+                        Toast.MakeText(Activity, error.Message, ToastLength.Short).Show();
                     }));
             };
         }
-
-        private HashMap HashEarnings()
-        {
-            HashMap earnMap = new HashMap();
-            earnMap.Put("totalDistance", _distance);
-            earnMap.Put("rideFare", _fares);
-            earnMap.Put("from", _from);
-            earnMap.Put("to", _to);
-            return earnMap;
-        }
-
     }
 }

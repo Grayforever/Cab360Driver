@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="16dp"
+    android:clipToPadding="false">
+
+    <androidx.cardview.widget.CardView
+        android:layout_width="0dp"
+        android:layout_height="128dp"
+        android:id="@+id/with_cv1"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:cardBackgroundColor="@color/colorPrimary"
+        app:cardCornerRadius="5dp"
+        app:cardElevation="8dp">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:padding="8dp"
+            android:clipToPadding="false">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:id="@+id/with_hdr"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                android:textAppearance="?attr/textAppearanceBody1"
+                android:text="Withdraw"
+                android:textColor="@android:color/white"
+                />
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:id="@+id/with_bal_txt"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                android:textAppearance="?attr/textAppearanceHeadline5"
+                android:text="Gh¢0.00"
+                android:textStyle="bold"
+                android:textColor="@color/switcher_off_color"
+                app:layout_constraintVertical_bias="0.31"
+                />
+
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:id="@+id/with_hdr2"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/with_bal_txt"
+                app:layout_constraintBottom_toTopOf="@+id/with_hdr3"
+                android:textAppearance="?attr/textAppearanceBody2"
+                android:text="Out of"
+                android:textColor="@android:color/white"
+                />
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:id="@+id/with_hdr3"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toStartOf="@+id/with_yes_btn"
+                app:layout_constraintBottom_toBottomOf="parent"
+                android:textAppearance="?attr/textAppearanceHeadline6"
+                android:text="Gh¢0.00"
+                android:textColor="@color/switcher_on_color"
+                />
+
+            <com.google.android.material.button.MaterialButton
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:id="@+id/with_yes_btn"
+                app:layout_constraintStart_toEndOf="@+id/with_hdr3"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                android:text="Withdraw"
+                android:textSize="16sp"
+                android:layout_marginTop="4dp"
+                app:backgroundTint="@color/switcher_off_color"
+                />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+       
+    </androidx.cardview.widget.CardView>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

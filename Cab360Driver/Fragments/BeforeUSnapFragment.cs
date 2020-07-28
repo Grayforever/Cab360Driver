@@ -7,7 +7,7 @@ namespace Cab360Driver.Fragments
 {
     public class BeforeUSnapFragment : AndroidX.Fragment.App.DialogFragment
     {
-        public event EventHandler<CamArgs> StartCameraAsync;
+        public event EventHandler StartCameraAsync;
         public override void OnCreate(Bundle savedInstanceState)
         {
             base.OnCreate(savedInstanceState);
@@ -24,13 +24,8 @@ namespace Cab360Driver.Fragments
 
         private void Btn_take_Click(object sender, EventArgs e)
         {
-            StartCameraAsync.Invoke(this, new CamArgs { Tag = Tag});
-            Dismiss();
-        }
-
-        public class CamArgs : EventArgs
-        {
-            public string Tag { get; set; }
+            StartCameraAsync.Invoke(this, new EventArgs());
+            DismissAllowingStateLoss();
         }
     }
 }

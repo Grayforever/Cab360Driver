@@ -5,7 +5,48 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:ignore="HardcodedText"
-    android:padding="16dp">
+    android:padding="16dp"
+    android:clipToPadding="false">
+
+    <com.airbnb.lottie.LottieAnimationView
+	    android:id="@+id/animation_view"
+	    android:layout_width="0dp"
+	    android:layout_height="0dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/congrats_hdr"
+	    app:lottie_fileName="success-animation.json"
+	    app:lottie_loop="true"
+	    app:lottie_autoPlay="true" />
+
+    <TextView
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:id="@+id/congrats_hdr"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/animation_view"
+        app:layout_constraintBottom_toTopOf="@+id/congrats_txt"
+        android:text="Congratulations"
+        android:layout_marginBottom="16dp"
+        android:textAppearance="?attr/textAppearanceHeadline5"
+        android:gravity="center"
+        />
+
+    <TextView
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:id="@+id/congrats_txt"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/congrats_hdr"
+        app:layout_constraintBottom_toTopOf="@+id/visit_site_btn"
+        android:textAppearance="?attr/textAppearanceSubtitle2"
+        android:text="Your account has been successfully created. Please visit our site for more information or skip to continue."
+        android:textAlignment="center"
+        android:layout_marginBottom="8dp"
+        />
 
     <com.google.android.material.button.MaterialButton
         android:layout_width="0dp"
@@ -16,6 +57,7 @@
         app:strokeWidth="2dp"
         app:layout_constraintEnd_toStartOf="@+id/skip_btn"
         app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/congrats_txt"
         android:text="Visit site"
         android:textSize="16sp"
         android:layout_marginEnd="4dp"

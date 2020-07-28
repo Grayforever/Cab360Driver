@@ -1,18 +1,18 @@
-﻿using Android.Content;
+﻿using Android.App;
+using Android.Content;
 using Android.OS;
 using Android.Views;
-using Android.Widget;
+using Cab360Driver.Activities;
 using Cab360Driver.EnumsConstants;
 using Cab360Driver.Helpers;
 using Google.Android.Material.Button;
-using System;
 
 namespace Cab360Driver.Fragments
 {
     public class AckFragment : AndroidX.Fragment.App.Fragment
     {
-        public event EventHandler OnSkip;
-
+        ISharedPreferences preferences = Application.Context.GetSharedPreferences("userInfo", FileCreationMode.Private);
+        ISharedPreferencesEditor editor;
         public override void OnCreate(Bundle savedInstanceState)
         {
             base.OnCreate(savedInstanceState);
@@ -35,15 +35,32 @@ namespace Cab360Driver.Fragments
             var skip_btn = view.FindViewById<MaterialButton>(Resource.Id.skip_btn);
             skip_btn.Click += (s1, e1) =>
             {
-                if (AppDataHelper.GetCurrentUser().Uid != null)
+                if (AppDataHelper.GetCurrentUser().Uid == null)
                 {
+                    return;
+                }
+                else
+                {
+                    OnboardingActivity.ShowProgressDialog();
                     var dataRef = AppDataHelper.GetDatabase().GetReference($"Drivers/{AppDataHelper.GetCurrentUser().Uid}/{StringConstants.StageofRegistration}");
                     dataRef.SetValue(RegistrationStage.RegistrationDone.ToString())
                     .AddOnSuccessListener(new OnSuccessListener(r =>
                     {
-                        OnSkip?.Invoke(this, new EventArgs());
-                    })).AddOnFailureListener(new OnFailureListener(e => { Toast.MakeText(Activity, e.Message, ToastLength.Short).Show(); }));
+                        editor = preferences.Edit();
+                        editor.PutString("firstRun", "regd");
+                        editor.Commit();
+
+                        OnboardingActivity.CloseProgressDialog();
+                        var intent = new Intent(Context, typeof(MainActivity));
+                        intent.SetFlags(ActivityFlags.ClearTask | ActivityFlags.ClearTop | ActivityFlags.NewTask);
+                        StartActivity(intent);
+                    })).AddOnFailureListener(new OnFailureListener(e => 
+                    {
+                        OnboardingActivity.CloseProgressDialog();
+                        OnboardingActivity.ShowErrorDialog(e.Message);
+                    }));
                 }
+                
             };
 
             visit_btn.Click += (s2, e2) =>

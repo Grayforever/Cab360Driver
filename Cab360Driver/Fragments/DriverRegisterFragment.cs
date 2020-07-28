@@ -12,6 +12,7 @@ using Cab360Driver.Helpers;
 using CN.Pedant.SweetAlert;
 using Firebase;
 using Firebase.Auth;
+using Google.Android.Material.AppBar;
 using Google.Android.Material.Button;
 using Google.Android.Material.TextField;
 using Java.Util;
@@ -52,6 +53,12 @@ namespace Cab360Driver.Fragments
             CodeText = view.FindViewById<TextInputLayout>(Resource.Id.drv_signup_code_et);
             PassText = view.FindViewById<TextInputLayout>(Resource.Id.drv_signup_pass_et);
             CityText = view.FindViewById<AppCompatAutoCompleteTextView>(Resource.Id.autocity_et);
+            var regAppBar = view.FindViewById<AppBarLayout>(Resource.Id.signup_appbar);
+
+            var toolbar = regAppBar.FindViewById<AndroidX.AppCompat.Widget.Toolbar>(Resource.Id.main_toolbar);
+            toolbar.Title = "Register";
+            toolbar.InflateMenu(Resource.Menu.help_menu);
+            toolbar.MenuItemClick += Toolbar_MenuItemClick;
 
             FnameText.EditText.AfterTextChanged += EditText_AfterTextChanged;
             LnameText.EditText.AfterTextChanged += EditText_AfterTextChanged;
@@ -114,6 +121,11 @@ namespace Cab360Driver.Fragments
             };
         }
 
+        private void Toolbar_MenuItemClick(object sender, AndroidX.AppCompat.Widget.Toolbar.MenuItemClickEventArgs e)
+        {
+            Toast.MakeText(Context, e.Item.ItemId + "", ToastLength.Short).Show();
+        }
+
         private void EditText_AfterTextChanged(object sender, AfterTextChangedEventArgs e)
         {
             CheckIfEmpty();
@@ -122,6 +134,14 @@ namespace Cab360Driver.Fragments
         private void SaveDriverToDb()
         {
             var DriverRef = AppDataHelper.GetDatabase().GetReference($"Drivers/{ AppDataHelper.GetCurrentUser().Uid}");
+
+            HashMap compliments = new HashMap();
+            compliments.Put("cool_car", "0");
+            compliments.Put("neat_and_tidy", "0");
+            compliments.Put("expert_navigation", "0");
+            compliments.Put("awesome_music", "0");
+            compliments.Put("made_me_laugh", "0");
+
             HashMap driverMap = new HashMap();
             driverMap.Put("fname", fname);
             driverMap.Put("lname", lname);
@@ -129,8 +149,12 @@ namespace Cab360Driver.Fragments
             driverMap.Put("phone", phone);
             driverMap.Put("city", city);
             driverMap.Put("invitecode", code);
+            driverMap.Put("ratings", "0");
+            driverMap.Put("compliments", compliments);
             driverMap.Put("created_at", DateTime.UtcNow.ToString());
+
             
+
             DriverRef.SetValue(driverMap)
                 .AddOnSuccessListener(new OnSuccessListener(r=> 
                 {

@@ -205,7 +205,7 @@ namespace Cab360Driver.Helpers
           
         }
 
-        public async Task<TripReceiptModel> CalculateFares(LatLng firstpoint, LatLng lastpoint)
+        public async Task<double> CalculateFares(LatLng firstpoint, LatLng lastpoint)
         {
             string directionJson = await GetDirectionJsonAsync(firstpoint, lastpoint);
             var directionData = JsonConvert.DeserializeObject<DirectionParser>(directionJson);
@@ -220,9 +220,9 @@ namespace Cab360Driver.Helpers
             double kmfare = (distanceValue / 1000) * distanceFare;
             double minsFares = (durationValue / 60) * timeFare;
             double amount = basefare + kmfare + minsFares;
-            double fare = Math.Floor(amount / 10) * 10;
-            var receipt = new TripReceiptModel("hello", fare, distanceValue, "Kasoa", "Mamobi");
-            return receipt;
+            var fare = Math.Floor(amount / 10) * 10;
+            
+            return fare;
         }
     }
 }

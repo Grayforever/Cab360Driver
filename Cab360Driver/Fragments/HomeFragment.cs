@@ -1,27 +1,37 @@
-﻿using Android.Gms.Location;
+﻿using Android.Content;
+using Android.Gms.Common.Apis;
+using Android.Gms.Location;
 using Android.Gms.Maps;
 using Android.Gms.Maps.Model;
 using Android.OS;
 using Android.Runtime;
 using Android.Views;
 using Android.Widget;
+using Bumptech.Glide;
 using Cab360Driver.EnumsConstants;
+using Cab360Driver.EventListeners;
 using Cab360Driver.Helpers;
+using Cab360Driver.Utils;
 using Google.Android.Material.FloatingActionButton;
+using Java.Lang;
+using Refractored.Controls;
 using System;
-using static Android.Widget.ViewSwitcher;
+using static Android.Content.IntentSender;
 using static Cab360Driver.Helpers.LocationCallbackHelper;
 
 namespace Cab360Driver.Fragments
 {
-    public class HomeFragment : BaseFragment, IOnMapReadyCallback, IViewFactory
+    public class HomeFragment : AndroidX.Fragment.App.Fragment
     {
+        private const int RequestCode = 700;
         public EventHandler<OnLocationCaptionEventArgs> CurrentLocation;
+
+        public event EventHandler ShowNotifs;
+        public event EventHandler onDestClick;
         public GoogleMap mainMap;
 
         //Marker
         ImageView centerMarker;
-
         //Location Client
         LocationRequest mLocationRequest;
         FusedLocationProviderClient locationProviderClient;
@@ -38,11 +48,11 @@ namespace Cab360Driver.Fragments
         FloatingActionButton cancelTripButton;
         FloatingActionButton callRiderButton;
         FloatingActionButton navigateButton;
+        FloatingActionButton ToggleDestBtn;
         Button tripButton;
-
-        private TextSwitcher StatusSwitcher;
-        private readonly string[] status = {"OFFLINE", "ONLINE"};
+        public TextSwitcher locationSwitcher;
         private readonly string[] TripBtnTxt = { "Start Trip", "End Trip", "Arrived Pickup" };
+        private string[] online = { "Online", "Offline" };
 
         //Flags
         bool tripCreated = false;
@@ -55,73 +65,90 @@ namespace Cab360Driver.Fragments
         public event EventHandler TripActionStartTrip;
         public event EventHandler TripActionArrived;
         public event EventHandler TripActionEndTrip;
-
-
+        private string profileUrl;
+        private _BaseCircleImageView profileImg;
 
         public override void OnCreate(Bundle savedInstanceState)
         {
             base.OnCreate(savedInstanceState);
             CreateLocationRequest();
+            var dbRef = AppDataHelper.GetDatabase().GetReference($"Drivers/{AppDataHelper.GetCurrentUser().Uid}");
+            dbRef.AddValueEventListener(new SingleValueListener(snapshot => 
+            {
+                if (snapshot.Exists())
+                {
+                    profileUrl = snapshot.Child("profile_img_url").Value.ToString();
+                    Glide.With(Context)
+                        .Load(profileUrl)
+                        .Into(profileImg)
+                        .WaitForLayout();
+                }
+            }, error => 
+            {
+                
+            }));
         }
 
-        public override View ProvideYourFragmentView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
+        public override View OnCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
         {
             var view = inflater.Inflate(Resource.Layout.home, container, false);
-            InitControls(view);
+            SupportMapFragment mapFragment = ChildFragmentManager.FindFragmentById(Resource.Id.map).JavaCast<SupportMapFragment>();
+            mapFragment.GetMapAsync(new OnMapReady(map =>
+            {
+                mainMap = map;
+            }));
+            profileImg = (_BaseCircleImageView)view.FindViewById(Resource.Id.home_iv);
+            profileImg.Click += ProfileImg_Click;
             return view;
         }
 
-        private void InitControls(View view)
+        private void ProfileImg_Click(object sender, EventArgs e)
         {
-            SupportMapFragment mapFragment = ChildFragmentManager.FindFragmentById(Resource.Id.map).JavaCast<SupportMapFragment>();
-            centerMarker = (ImageView)view.FindViewById(Resource.Id.centerMarker);
-            mapFragment.GetMapAsync(this);
+            ShowNotifs?.Invoke(this, new EventArgs());
+        }
 
-            StatusSwitcher = (TextSwitcher)view.FindViewById(Resource.Id.ts_temperature);
-            InitSwitcher();
+        public override void OnViewCreated(View view, Bundle savedInstanceState)
+        {
+            base.OnViewCreated(view, savedInstanceState);
 
+            ToggleDestBtn = (FloatingActionButton)view.FindViewById(Resource.Id.togleDestinationFab);
+            locationSwitcher = (TextSwitcher)view.FindViewById(Resource.Id.loc_switcher);
             cancelTripButton = (FloatingActionButton)view.FindViewById(Resource.Id.cancelTripButton);
             callRiderButton = (FloatingActionButton)view.FindViewById(Resource.Id.callRiderButton);
             navigateButton = (FloatingActionButton)view.FindViewById(Resource.Id.navigateButton);
             tripButton = (Button)view.FindViewById(Resource.Id.tripButton);
             riderNameText = (TextView)view.FindViewById(Resource.Id.riderNameText);
             rideInfoLayout = (RelativeLayout)view.FindViewById(Resource.Id.linear_home1);
+            centerMarker = (ImageView)view.FindViewById(Resource.Id.centerMarker);
 
-            tripButton.Click += TripButton_Click;
-            callRiderButton.Click += CallRiderButton_Click;
-            navigateButton.Click += NavigateButton_Click;
+            ToggleDestBtn.Click += ToggleDestBtn_Click;
+            SetSwitcher();
         }
 
-        public override BaseFragment ProvideYourfragment()
+        private void ToggleDestBtn_Click(object sender, EventArgs e)
         {
-            return new HomeFragment();
+            onDestClick?.Invoke(this, new EventArgs());
         }
 
-        void InitSwitcher()
+        private void SetSwitcher()
         {
+            int[] animH = { Resource.Animation.slide_in_right, Resource.Animation.slide_out_left };
+            int[] animV = { Resource.Animation.slide_in_top, Resource.Animation.slide_out_bottom };
 
-            StatusSwitcher.SetFactory(this);
-            StatusSwitcher.SetInAnimation(Activity, Resource.Animation.slide_in_right);
-            StatusSwitcher.SetOutAnimation(Activity, Resource.Animation.slide_out_left);
-            StatusSwitcher.SetCurrentText(status[0]);
-        }
-
-        public View MakeView()
-        {
-            var textOnline = new TextView(Activity);
-            textOnline.Gravity = GravityFlags.Center| GravityFlags.CenterVertical;
-            textOnline.SetTextAppearance(Resource.Style.TextAppearance_AppCompat_Subhead);
-            return textOnline;
+            locationSwitcher.SetFactory(new TextSwitcherUtil(Resource.Style.OnlineTextView, true, Activity));
+            locationSwitcher.SetInAnimation(Activity, animH[0]);
+            locationSwitcher.SetOutAnimation(Activity, animV[1]);
+            locationSwitcher.SetCurrentText(online[1]);
         }
 
         void NavigateButton_Click(object sender, EventArgs e)
         {
-            Navigate.Invoke(this, new EventArgs());
+            Navigate?.Invoke(this, new EventArgs());
         }
 
         void CallRiderButton_Click(object sender, EventArgs e)
         {
-            CallRider.Invoke(this, new EventArgs());
+            CallRider?.Invoke(this, new EventArgs());
         }
 
         void TripButton_Click(object sender, EventArgs e)
@@ -144,28 +171,9 @@ namespace Cab360Driver.Fragments
 
             if (tripStarted)
             {
-                TripActionEndTrip.Invoke(this, new EventArgs());
+                TripActionEndTrip?.Invoke(this, new EventArgs());
                 return;
             }
-
-        }
-
-        public void OnMapReady(GoogleMap googleMap)
-        {  
-            try
-            {
-                bool success = googleMap.SetMapStyle(MapStyleOptions.LoadRawResourceStyle(Activity, Resource.Raw.gray_mapstyle));
-
-                if (!success)
-                {
-                    Toast.MakeText(Activity, "style passing failed", ToastLength.Short).Show();
-                }
-            }
-            catch (Exception e)
-            {
-                Toast.MakeText(Activity, e.Message, ToastLength.Short).Show();
-            }
-            mainMap = googleMap;
 
         }
 
@@ -176,45 +184,107 @@ namespace Cab360Driver.Fragments
             mLocationRequest.SetFastestInterval(IntegerConstants.GetFastestInterval());
             mLocationRequest.SetPriority(LocationRequest.PriorityHighAccuracy);
             mLocationRequest.SetSmallestDisplacement(IntegerConstants.GetDisplacement());
-            mLocationCallback.MyLocation += MLocationCallback_MyLocation;
             locationProviderClient = LocationServices.GetFusedLocationProviderClient(Activity);
+            CheckLocationSettings();
+        }
+
+        private void CheckLocationSettings()
+        {
+            LocationSettingsRequest.Builder builder = new LocationSettingsRequest.Builder()
+                .AddLocationRequest(mLocationRequest);
+            builder.SetAlwaysShow(true);
+            var task = LocationServices.GetSettingsClient(Activity).CheckLocationSettings(builder.Build());
+            task.AddOnSuccessListener(new OnSuccessListener(t =>
+            {
+                mLocationCallback.MyLocation += MLocationCallback_MyLocation;
+            })).AddOnFailureListener(new OnFailureListener(e =>
+            {
+                int statusCode = ((ApiException)e).StatusCode;
+                switch (statusCode)
+                {
+                    case CommonStatusCodes.ResolutionRequired:
+                        try
+                        {
+                            ResolvableApiException resolvable = (ResolvableApiException)e;
+                            StartIntentSenderForResult(resolvable.Resolution.IntentSender, RequestCode, null, 0, 0, 0, null);
+                        }
+                        catch (SendIntentException)
+                        {
+
+                        }
+                        catch (ClassCastException)
+                        {
+
+                        }
+                        break;
+                    case LocationSettingsStatusCodes.SettingsChangeUnavailable:
+
+                        break;
+                }
+            }));
+        }
+
+        public override void OnActivityResult(int requestCode, int resultCode, Intent data)
+        {
+            base.OnActivityResult(requestCode, resultCode, data);
+            LocationSettingsStates states = LocationSettingsStates.FromIntent(data);
+            switch (requestCode)
+            {
+                case RequestCode:
+                    switch (resultCode)
+                    {
+                        case (int)Android.App.Result.Ok:
+                            mLocationCallback.MyLocation += MLocationCallback_MyLocation;
+                            break;
+
+                        case (int)Android.App.Result.Canceled:
+                            break;
+                        default:
+                            break;
+                    }
+                    break;
+            }
         }
 
         void MLocationCallback_MyLocation(object sender, OnLocationCaptionEventArgs e)
         {
             mLastlocation = e.Location;
-
-            //Update our Lastlocation on the Map
+            CurrentLocation?.Invoke(this, new OnLocationCaptionEventArgs { Location = mLastlocation });
             LatLng myposition = new LatLng(mLastlocation.Latitude, mLastlocation.Longitude);
             mainMap.AnimateCamera(CameraUpdateFactory.NewLatLngZoom(myposition, 15));
-
-            //Sends Location to Mainactivity
-            CurrentLocation?.Invoke(this, new OnLocationCaptionEventArgs { Location = e.Location });
+            //mainMap.AnimateCamera(CameraUpdateFactory.ZoomIn());
+            //CameraPosition cameraPosition = new CameraPosition.Builder()
+            //    .Target(myposition)
+            //    .Zoom(17)
+            //    .Bearing(90)
+            //    .Tilt(30)
+            //    .Build();
+            //mainMap.AnimateCamera(CameraUpdateFactory.NewCameraPosition(cameraPosition));
 
         }
 
-        void StartLocationUpdates()
+        public void StartLocationUpdates()
         {
-            locationProviderClient.RequestLocationUpdates(mLocationRequest, mLocationCallback, null);
+            locationProviderClient?.RequestLocationUpdates(mLocationRequest, mLocationCallback, Looper.MainLooper);
         }
 
-        void StopLocationUpdates()
+        public void StopLocationUpdates()
         {
-            locationProviderClient.RemoveLocationUpdates(mLocationCallback);
+            locationProviderClient?.RemoveLocationUpdates(mLocationCallback);
         }
 
         public void GoOnline()
         {
-            centerMarker.Visibility = ViewStates.Visible;
-            StatusSwitcher.SetText(status[1]);
             StartLocationUpdates();
+            centerMarker.Visibility = ViewStates.Visible;
+            locationSwitcher.SetText(online[0]);
         }
 
         public void GoOffline()
         {
-            centerMarker.Visibility = ViewStates.Invisible;
-            StatusSwitcher.SetText(status[0]);
             StopLocationUpdates();
+            locationSwitcher.SetText(online[1]);
+            centerMarker.Visibility = ViewStates.Invisible;
         }
 
         public void CreateTrip(string ridername)
@@ -239,6 +309,17 @@ namespace Cab360Driver.Fragments
             mainMap.UiSettings.ZoomControlsEnabled = false;
         }
 
-        
+        internal sealed class OnMapReady : Java.Lang.Object, IOnMapReadyCallback
+        {
+            private Action<GoogleMap> _onMapReady;
+            public OnMapReady(Action<GoogleMap> onMapReady)
+            {
+                _onMapReady = onMapReady;
+            }
+            void IOnMapReadyCallback.OnMapReady(GoogleMap googleMap)
+            {
+                _onMapReady?.Invoke(googleMap);
+            }
+        }
     }
 }

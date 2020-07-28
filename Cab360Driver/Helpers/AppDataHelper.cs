@@ -8,11 +8,13 @@ namespace Cab360Driver.Helpers
 {
     public static class AppDataHelper
     {
-        private static readonly ISharedPreferences profilePref = Application.Context.GetSharedPreferences("userInfo", FileCreationMode.Private);
-        private static readonly ISharedPreferences earningsPref = Application.Context.GetSharedPreferences("earningsInfo", FileCreationMode.Private);
-        private static readonly ISharedPreferences ratingsPref = Application.Context.GetSharedPreferences("ratingsInfo", FileCreationMode.Private);
+        private static readonly ISharedPreferences profilePref = Application.Context.GetSharedPreferences("userInfo", 0);
         private static FirebaseAuth FireAuth;
         private static FirebaseDatabase FireDb;
+        private enum IsFirst
+        {
+            Yes, No
+        }
 
         private static FirebaseApp FireApp 
         {
@@ -43,12 +45,6 @@ namespace Cab360Driver.Helpers
             GetFireApp();
             FireDb = FirebaseDatabase.GetInstance(FireApp);
             return FireDb;
-        }
-
-        public static DatabaseReference GetParentReference()
-        {
-            GetDatabase();
-            return FireDb.GetReference("Drivers");
         }
 
         public static DatabaseReference GetAvailDrivRef()
@@ -84,10 +80,7 @@ namespace Cab360Driver.Helpers
 
         public static string CarDetails => profilePref?.GetString("carDetails", "");
 
-        public static string TotRides => earningsPref?.GetString("totRides", "");
-
-        public static string TotEarnings => earningsPref?.GetString("totEarnings", "");
-
         public static string ImgUrl => profilePref?.GetString("img_url", "");
+
     }
 }

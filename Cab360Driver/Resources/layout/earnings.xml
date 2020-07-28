@@ -1,290 +1,277 @@
-
-<androidx.coordinatorlayout.widget.CoordinatorLayout 
+<androidx.core.widget.NestedScrollView
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/earnings_root"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:ignore="HardcodedText">
+    android:fillViewport="true"
+    android:background="@android:color/background_light"
+    app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
-    <include
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        layout="@layout/appbar_main"
-        />
-
-    <androidx.core.widget.NestedScrollView
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:fillViewport="true"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior">
+        android:padding="16dp"
+        android:clipToPadding="false">
 
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:padding="16dp"
-            android:clipToPadding="false">
+        <androidx.cardview.widget.CardView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:id="@+id/earn_head_cv"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:cardCornerRadius="5dp">
 
-            <androidx.cardview.widget.CardView
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:id="@+id/earn_head_cv"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="parent">
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:padding="8dp">
 
-                <RelativeLayout
+                <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:padding="8dp">
+                    android:layout_height="52dp"
+                    android:orientation="vertical"
+                    android:layout_centerVertical="true"
+                    android:layout_alignParentStart="true"
+                    android:layout_toStartOf="@+id/earn_withdraw_btn"
+                    android:layout_marginEnd="2dp">
 
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="52dp"
-                        android:orientation="vertical"
-                        android:layout_centerVertical="true"
-                        android:layout_alignParentStart="true"
-                        android:layout_toStartOf="@+id/earn_withdraw_btn"
-                        android:layout_marginEnd="2dp">
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:textAppearance="?android:attr/textAppearanceSmall"
-                            android:text="Wallet balance"
-                            android:id="@+id/earn_tv1"
-                            />
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:textAppearance="?android:attr/textAppearanceLarge"
-                            android:maxLines="1"
-                            android:textStyle="bold"
-                            android:ellipsize="end"
-                            android:id="@+id/earn_tv2"
-                            android:text="¢0.00"
-                            />
-                    </LinearLayout>
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textAppearance="?android:attr/textAppearanceSmall"
+                        android:text="Wallet balance"
+                        android:id="@+id/earn_tv1"
+                        />
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textAppearance="?android:attr/textAppearanceLarge"
+                        android:maxLines="1"
+                        android:textStyle="bold"
+                        android:ellipsize="end"
+                        android:id="@+id/earn_tv2"
+                        android:text="¢0.00"
+                        />
+                </LinearLayout>
                     
 
-                    <com.google.android.material.button.MaterialButton
-                        android:layout_width="wrap_content"
-                        android:layout_height="56dp"
-                        android:id="@+id/earn_withdraw_btn"
-                        android:layout_alignParentEnd="true"
-                        android:layout_centerVertical="true"
-                        android:text="Withdraw"
-                        android:textSize="16sp"
-                        android:enabled="false"
-                        />
+                <com.google.android.material.button.MaterialButton
+                    android:layout_width="wrap_content"
+                    android:layout_height="56dp"
+                    android:id="@+id/earn_withdraw_btn"
+                    android:layout_alignParentEnd="true"
+                    android:layout_centerVertical="true"
+                    android:text="Withdraw"
+                    android:textSize="16sp"
+                    />
 
-                </RelativeLayout>
+            </RelativeLayout>
 
-            </androidx.cardview.widget.CardView>
+        </androidx.cardview.widget.CardView>
 
-            <androidx.cardview.widget.CardView
-                android:layout_width="0dp"
-                android:layout_height="0dp"
-                android:id="@+id/earn_cv1"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/earn_head_cv"
-                app:layout_constraintBottom_toTopOf="@+id/earn_cv2"
-                android:layout_marginBottom="16dp"
-                android:layout_marginTop="8dp">
+        <androidx.cardview.widget.CardView
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:id="@+id/earn_cv1"
+            app:cardCornerRadius="5dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/earn_head_cv"
+            app:layout_constraintBottom_toTopOf="@+id/earn_cv2"
+            android:layout_marginBottom="16dp"
+            android:layout_marginTop="8dp">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:padding="8dp"
+                android:clipToPadding="false">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="?attr/textAppearanceSubtitle1"
+                    android:id="@+id/summ_txt"
+                    android:text="Summary(Gh¢)"
+                    android:textStyle="bold"
+                    android:padding="3dp"
+                    android:gravity="center_vertical"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintEnd_toStartOf="@+id/chart_type_spinner"
+                    />
+
+                <androidx.appcompat.widget.AppCompatSpinner
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/chart_type_spinner"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintStart_toEndOf="@+id/summ_txt"
+                    />
+
+                <Microcharts.Droid.ChartView
+                    android:id="@+id/earn_chartview"
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/chart_type_spinner"
+                    app:layout_constraintBottom_toTopOf="@+id/earn_separator"
+                    android:layout_marginTop="16dp"
+                    />
+
+                <View
+                    android:layout_width="0dp"
+                    android:layout_height="1dp"
+                    android:id="@+id/earn_separator"
+                    android:background="@color/colorCardTint"
+                    app:layout_constraintTop_toBottomOf="@+id/earn_chartview"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintBottom_toTopOf="@+id/earn_const1"
+                    android:layout_marginTop="4dp"
+                    android:layout_marginBottom="4dp"
+                        
+                    />
 
                 <androidx.constraintlayout.widget.ConstraintLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:padding="8dp"
-                    android:clipToPadding="false">
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/earn_const1"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/earn_separator"
+                    app:layout_constraintBottom_toBottomOf="parent">
 
                     <TextView
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:textAppearance="?attr/textAppearanceSubtitle1"
-                        android:id="@+id/summ_txt"
-                        android:text="Summary"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintWidth_percent="0.5"
+                        android:text="Total trips"
+                        android:id="@+id/earn_tot_trip_hd"
+                        android:textAppearance="?android:attr/textAppearanceSmall"
+                        />
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        app:layout_constraintTop_toBottomOf="@+id/earn_tot_trip_hd"
+                        android:id="@+id/earn_tot_trip_txt"
+                        android:text="0"
                         android:textStyle="bold"
-                        android:padding="3dp"
-                        android:gravity="center_vertical"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="parent"
-                        app:layout_constraintEnd_toStartOf="@+id/chart_type_spinner"
-                        android:textColor="@color/colorAccent"
+                        app:layout_constraintWidth_percent="0.5"
+                        android:textAppearance="?android:attr/textAppearanceMedium"
                         />
 
-                    <androidx.appcompat.widget.AppCompatSpinner
+                    <TextView
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:id="@+id/chart_type_spinner"
                         app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintTop_toTopOf="parent"
-                        app:layout_constraintStart_toEndOf="@+id/summ_txt"
+                        app:layout_constraintWidth_percent="0.5"
+                        android:text="Total distance"
+                        android:textAlignment="textEnd"
+                        android:id="@+id/earn_dist_hd"
+                        android:textAppearance="?android:attr/textAppearanceSmall"
                         />
 
-                    <Microcharts.Droid.ChartView
-                        android:id="@+id/earn_chartview"
-                        android:layout_width="0dp"
-                        android:layout_height="0dp"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintTop_toBottomOf="@+id/chart_type_spinner"
-                        app:layout_constraintBottom_toTopOf="@+id/earn_separator"
-                        android:layout_marginTop="16dp"
-                        />
-
-                    <View
-                        android:layout_width="0dp"
-                        android:layout_height="1dp"
-                        android:id="@+id/earn_separator"
-                        android:background="@color/colorCardTint"
-                        app:layout_constraintTop_toBottomOf="@+id/earn_chartview"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintBottom_toTopOf="@+id/earn_const1"
-                        android:layout_marginTop="4dp"
-                        android:layout_marginBottom="4dp"
-                        
-                        />
-
-                    <androidx.constraintlayout.widget.ConstraintLayout
+                    <TextView
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:id="@+id/earn_const1"
-                        app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintTop_toBottomOf="@+id/earn_separator"
-                        app:layout_constraintBottom_toBottomOf="parent">
-
-                        <TextView
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            app:layout_constraintStart_toStartOf="parent"
-                            app:layout_constraintWidth_percent="0.5"
-                            android:text="Total trips"
-                            android:id="@+id/earn_tot_trip_hd"
-                            android:textAppearance="?android:attr/textAppearanceSmall"
-                            />
-
-                        <TextView
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            app:layout_constraintTop_toBottomOf="@+id/earn_tot_trip_hd"
-                            android:text="190"
-                            android:id="@+id/earn_tot_trip_txt"
-                            app:layout_constraintWidth_percent="0.5"
-                            android:textAppearance="?android:attr/textAppearanceMedium"
-                            />
-
-                        <TextView
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            app:layout_constraintEnd_toEndOf="parent"
-                            app:layout_constraintWidth_percent="0.5"
-                            android:text="Total distance"
-                            android:textAlignment="textEnd"
-                            android:id="@+id/earn_dist_hd"
-                            android:textAppearance="?android:attr/textAppearanceSmall"
-                            />
-
-                        <TextView
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            app:layout_constraintEnd_toEndOf="parent"
-                            app:layout_constraintWidth_percent="0.5"
-                            android:textAlignment="textEnd"
-                            android:id="@+id/earn_tot_dis_txt"
-                            app:layout_constraintTop_toBottomOf="@+id/earn_dist_hd"
-                            android:text="190km"
-                            android:textAppearance="?android:attr/textAppearanceMedium"
-                            />
+                        app:layout_constraintWidth_percent="0.5"
+                        android:textAlignment="textEnd"
+                        android:id="@+id/earn_tot_dis_txt"
+                        app:layout_constraintTop_toBottomOf="@+id/earn_dist_hd"
+                        android:text="190km"
+                        android:textStyle="bold"
+                        android:textAppearance="?android:attr/textAppearanceMedium"
+                        />
 
 
-
-                    </androidx.constraintlayout.widget.ConstraintLayout>
 
                 </androidx.constraintlayout.widget.ConstraintLayout>
-            </androidx.cardview.widget.CardView>
 
-            <androidx.cardview.widget.CardView
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:id="@+id/earn_cv2"
-                app:cardBackgroundColor="@color/colorPrimary"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/earn_cv1"
-                app:layout_constraintBottom_toBottomOf="parent">
+            </androidx.constraintlayout.widget.ConstraintLayout>
+        </androidx.cardview.widget.CardView>
 
-                <RelativeLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:padding="8dp">
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:id="@+id/earn_base_hd"
-                        android:text="Earnings"
-                        android:layout_alignParentStart="true"
-                        android:layout_alignParentTop="true"
-                        android:textAppearance="?android:attr/textAppearanceSmallInverse"
-                        android:textStyle="bold"
-                        />
+        <androidx.cardview.widget.CardView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:id="@+id/earn_cv2"
+            app:cardBackgroundColor="@color/accent_material_light"
+            app:cardCornerRadius="5dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/earn_cv1"
+            app:layout_constraintBottom_toBottomOf="parent">
 
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:id="@+id/earn_trip_hd"
-                        android:layout_below="@+id/earn_base_hd"
-                        android:textAppearance="?android:attr/textAppearanceSmallInverse"
-                        android:text="Trip earnings"
-                        />
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:padding="8dp">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/earn_base_hd"
+                    android:text="Earnings"
+                    android:layout_alignParentStart="true"
+                    android:layout_alignParentTop="true"
+                    android:textAppearance="?android:attr/textAppearanceSmallInverse"
+                    android:textStyle="bold"
+                    />
 
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_below="@+id/earn_trip_hd"
-                        android:textAppearance="?android:attr/textAppearanceSmallInverse"
-                        android:text="Taxes"
-                        />
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/earn_trip_hd"
+                    android:layout_below="@+id/earn_base_hd"
+                    android:textAppearance="?android:attr/textAppearanceSmallInverse"
+                    android:text="Trip earnings"
+                    />
 
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:id="@+id/earn_amt_hd"
-                        android:text="¢2,000.00"
-                        android:layout_alignParentEnd="true"
-                        android:layout_alignParentTop="true"
-                        android:textAppearance="?android:attr/textAppearanceSmallInverse"
-                        android:textStyle="bold"
-                        />
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/earn_trip_hd"
+                    android:textAppearance="?android:attr/textAppearanceSmallInverse"
+                    android:text="Expenses"
+                    />
 
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:id="@+id/earn_trip_txt"
-                        android:layout_alignParentEnd="true"
-                        android:layout_below="@+id/earn_amt_hd"
-                        android:text="¢1,500.00"
-                        android:textAppearance="?android:attr/textAppearanceSmallInverse"
-                        />
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/earn_amt_hd"
+                    android:layout_alignParentEnd="true"
+                    android:layout_alignParentTop="true"
+                    android:textAppearance="?android:attr/textAppearanceSmallInverse"
+                    android:textStyle="bold"
+                    />
 
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:id="@+id/earn_tax_txt"
-                        android:layout_below="@+id/earn_trip_txt"
-                        android:layout_alignParentEnd="true"
-                        android:text="¢500.00"
-                        android:textAppearance="?android:attr/textAppearanceSmallInverse"
-                        />
-                </RelativeLayout>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/earn_trip_txt"
+                    android:layout_alignParentEnd="true"
+                    android:layout_below="@+id/earn_amt_hd"
+                    android:textAppearance="?android:attr/textAppearanceSmallInverse"
+                    />
 
-            </androidx.cardview.widget.CardView>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/earn_tax_txt"
+                    android:layout_below="@+id/earn_trip_txt"
+                    android:layout_alignParentEnd="true"
+                    android:text="¢0.00"
+                    android:textAppearance="?android:attr/textAppearanceSmallInverse"
+                    />
+            </RelativeLayout>
 
-        </androidx.constraintlayout.widget.ConstraintLayout>
-    </androidx.core.widget.NestedScrollView>
+        </androidx.cardview.widget.CardView>
 
-</androidx.coordinatorlayout.widget.CoordinatorLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</androidx.core.widget.NestedScrollView>
