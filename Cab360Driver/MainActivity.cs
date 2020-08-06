@@ -12,7 +12,6 @@ using AndroidX.AppCompat.App;
 using AndroidX.ConstraintLayout.Widget;
 using AndroidX.Core.Content;
 using AndroidX.RecyclerView.Widget;
-using Bitvale.SwitcherLib;
 using Cab360Driver.Adapters;
 using Cab360Driver.DataModels;
 using Cab360Driver.EnumsConstants;
@@ -26,29 +25,29 @@ using Google.Android.Material.BottomSheet;
 using Google.Places;
 using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace Cab360Driver
 {
     [Activity(Label = "@string/app_name", Theme = "@style/AppTheme", 
-        ConfigurationChanges = Android.Content.PM.ConfigChanges.ScreenSize, 
+        ConfigurationChanges = Android.Content.PM.ConfigChanges.ScreenSize| Android.Content.PM.ConfigChanges.SmallestScreenSize| Android.Content.PM.ConfigChanges.ScreenLayout| Android.Content.PM.ConfigChanges.Orientation, 
         ScreenOrientation = Android.Content.PM.ScreenOrientation.Portrait, 
         WindowSoftInputMode = SoftInput.AdjustResize, LaunchMode = Android.Content.PM.LaunchMode.SingleTop)]
 
     public class MainActivity : AppCompatActivity
     {
-        private BottomNavigationView bnve;
-        private SwitcherC onlineSwitcher;
-
         private HomeFragment homeFragment = new HomeFragment();
         private RatingsFragment ratingsFragment = new RatingsFragment();
         private EarningsFragment earningsFragment = new EarningsFragment();
         private AccountFragment accountFragment = new AccountFragment();
+
         private NewRequestFragment newRideDialog;
-        private NotifsRecyclerAdapter adapter;
+        private readonly NotifsRecyclerAdapter adapter;
         private RecyclerView notifsRecycler;
 
-        private const int RequestID = 0;
-        
+        private BottomNavigationView bottomNav;
+        private Bitvale.SwitcherLib.SwitcherC onlineSwitcher;
+
         AvailablityListener availablityListener;
         RideDetailsListener rideDetailsListener;
         NewTripEventListener newTripEventListener;
@@ -60,6 +59,8 @@ namespace Cab360Driver
         private bool isBackground;
         private bool newRideAssigned;
         private RideStatusEnum statusEnum = RideStatusEnum.Normal;
+        private const int RequestID = 0;
+        private const int containerId = Resource.Id.container;
 
         //Datamodels
         private RideDetails newRideDetails;
@@ -69,10 +70,11 @@ namespace Cab360Driver
 
         //Helpers
         private MapFunctionHelper mapHelper;
-        AndroidX.Fragment.App.Fragment activeFragment;
-        AndroidX.Fragment.App.FragmentManager fragmentManager;
+        private AndroidX.Fragment.App.Fragment activeFragment;
+        private AndroidX.Fragment.App.FragmentManager fragmentManager;
         private BottomSheetBehavior NotifBehavior;
-        private List<NotifsDataModel> notifsList;
+        private BottomSheetBehavior QrBehavior;
+        private BottomSheetBehavior defaultBehavior;
         static SwipeControllerUtils sc;
         private const int REQUEST_CODE_PLACE = 99;
 
@@ -81,11 +83,12 @@ namespace Cab360Driver
             base.OnCreate(savedInstanceState);
             SetContentView(Resource.Layout.activity_main);
             MapsInitializer.Initialize(this);
-            onlineSwitcher = FindViewById<SwitcherC>(Resource.Id.switcher);
-            bnve = (BottomNavigationView)FindViewById(Resource.Id.bnve);
-            bnve.NavigationItemSelected += Bnve_NavigationItemSelected;
+            onlineSwitcher = FindViewById<Bitvale.SwitcherLib.SwitcherC>(Resource.Id.switcher);
+            bottomNav = (BottomNavigationView)FindViewById(Resource.Id.bnve);
             LoadFragments();
             InitBottomSheets();
+            
+            bottomNav.NavigationItemSelected += Bnve_NavigationItemSelected;
             onlineSwitcher.SetOnCheckedChangeListener(@checked =>
             {
                 switch (@checked)
@@ -114,160 +117,54 @@ namespace Cab360Driver
             });
         }
 
-        private void InitPlacesApi()
-        {
-            var api_key = GetString(Resource.String.google_api_key);
-
-            if (!PlacesApi.IsInitialized)
-            {
-                PlacesApi.Initialize(this, api_key);
-            }
-        }
-
-        private void SetUpAdapter()
-        {
-            notifsRecycler = FindViewById<RecyclerView>(Resource.Id.nitifs_recycler);
-            notifsList = new List<NotifsDataModel>()
-            {
-                new NotifsDataModel(){Title = "New ride request", Image = Resource.Drawable.tips, DateTime = DateTime.UtcNow},
-                new NotifsDataModel(){Title = "Maintenance section is due", Image = Resource.Drawable.school_bell, DateTime = DateTime.UtcNow},
-                new NotifsDataModel(){Title = "Cash out request not approved", Image = Resource.Drawable.tips, DateTime = DateTime.UtcNow},
-                new NotifsDataModel(){Title = "Application outdated", Image = Resource.Drawable.school_bell, DateTime = DateTime.UtcNow},
-                new NotifsDataModel(){Title = "Covid-19 Awareness notice", Image = Resource.Drawable.tips, DateTime = DateTime.UtcNow},
-                new NotifsDataModel(){Title = "Give back to the society", Image = Resource.Drawable.school_bell, DateTime = DateTime.UtcNow},
-                new NotifsDataModel(){Title = "New ride request", Image = Resource.Drawable.tips, DateTime = DateTime.UtcNow},
-                new NotifsDataModel(){Title = "Maintenance section is due", Image = Resource.Drawable.school_bell, DateTime = DateTime.UtcNow},
-                new NotifsDataModel(){Title = "Cash out request not approved", Image = Resource.Drawable.tips, DateTime = DateTime.UtcNow},
-                new NotifsDataModel(){Title = "Application outdated", Image = Resource.Drawable.school_bell, DateTime = DateTime.UtcNow},
-                new NotifsDataModel(){Title = "Covid-19 Awareness notice", Image = Resource.Drawable.tips, DateTime = DateTime.UtcNow},
-                new NotifsDataModel(){Title = "Give back to the society", Image = Resource.Drawable.school_bell, DateTime = DateTime.UtcNow}
-            };
-            
-            NotifsRecyclerAdapter adapter = new NotifsRecyclerAdapter(notifsList);
-            notifsRecycler.SetLayoutManager(new LinearLayoutManager(this));
-            notifsRecycler.SetAdapter(adapter);
-            SwipeActions sa = new SwipeActions((pos1 => { }), 
-            (pos2 =>
-            {
-                adapter._notificationsList.RemoveAt(pos2);
-                adapter.NotifyItemRemoved(pos2);
-                adapter.NotifyItemRangeChanged(pos2, adapter.ItemCount);
-            }));
-            sc = new SwipeControllerUtils(sa);
-            ItemTouchHelper helper = new ItemTouchHelper(sc);
-            helper.AttachToRecyclerView(notifsRecycler);
-            notifsRecycler.AddItemDecoration(new ItemDecorator(sc));
-        }
-
-        private void InitBottomSheets()
-        {
-            var rootView = (ConstraintLayout)FindViewById(Resource.Id.notifs_root);
-
-            NotifBehavior = BottomSheetBehavior.From(rootView);
-            NotifBehavior.Hideable = true;
-            NotifBehavior.State = BottomSheetBehavior.StateHidden;
-            NotifBehavior.AddBottomSheetCallback(new BottomSheetCallback());
-        }
-
         private void LoadFragments()
         {
             activeFragment = homeFragment;
             fragmentManager = SupportFragmentManager;
             fragmentManager.BeginTransaction()
-                           .Add(Resource.Id.container, earningsFragment, "Earnings")
+                           .Add(containerId, homeFragment, "Home")
+                           .Commit();
+
+            fragmentManager.BeginTransaction()
+                           .Add(containerId, earningsFragment, "Earnings")
                            .Hide(earningsFragment)
                            .Commit();
 
             fragmentManager.BeginTransaction()
-                           .Add(Resource.Id.container, ratingsFragment, "Ratings")
+                           .Add(containerId, ratingsFragment, "Ratings")
                            .Hide(ratingsFragment)
                            .Commit();
 
             fragmentManager.BeginTransaction()
-                            .Add(Resource.Id.container, accountFragment, "Account")
+                           .Add(containerId, accountFragment, "Account")
                            .Hide(accountFragment)
                            .Commit();
-
-            fragmentManager.BeginTransaction()
-                           .Add(Resource.Id.container, homeFragment, "Home")
-                           .Commit();
         }
 
-        protected override void OnStart()
+        private void InitBottomSheets()
         {
-            base.OnStart();
-            player = MediaPlayer.Create(this, Resource.Raw.alert);
-            mapHelper = new MapFunctionHelper(homeFragment.mainMap);
-            CheckSpecialPermission();
-            InitListeners();
-            SetUpAdapter();
-            InitPlacesApi();
-        }
+            var notifRoot = (ConstraintLayout)FindViewById(Resource.Id.notifs_root);
+            var qrRoot = (ConstraintLayout)FindViewById(Resource.Id.qr_root);
+            var closeBottomBtn = FindViewById<TextView>(Resource.Id.notifs_hdr);
+            var qrImageView = FindViewById<ImageView>(Resource.Id.qr_iv);
+            qrImageView.PostDelayed(async ()=> 
+                {
+                    qrImageView.SetImageBitmap(await Task.Run(() => QrGenUtil.TextToImageEncode(AppDataHelper.GetCurrentUser().Uid)));
+                }, 1000);
+            NotifBehavior = BottomSheetBehavior.From(notifRoot);
+            NotifBehavior.Hideable = true;
+            NotifBehavior.State = BottomSheetBehavior.StateHidden;
+            NotifBehavior.AddBottomSheetCallback(new BottomSheetCallback());
 
-        private void InitListeners()
-        {
-            homeFragment.ShowNotifs += HomeFragment_ShowNotifs;
-            homeFragment.onDestClick += HomeFragment_onDestClick;
-            homeFragment.CurrentLocation += HomeFragment_CurrentLocation;
-            homeFragment.TripActionArrived += HomeFragment_TripActionArrived;
-            homeFragment.CallRider += HomeFragment_CallRider;
-            homeFragment.Navigate += HomeFragment_Navigate;
-            homeFragment.TripActionStartTrip += HomeFragment_TripActionStartTrip;
-            homeFragment.TripActionEndTrip += HomeFragment_TripActionEndTrip;
-        }
-
-        private void HomeFragment_ShowNotifs(object sender, EventArgs e)
-        {
-            if(NotifBehavior.State == BottomSheetBehavior.StateHidden)
-            {
-                NotifBehavior.State = BottomSheetBehavior.StateExpanded;
-            }
-            else if (NotifBehavior.State == BottomSheetBehavior.StateExpanded)
+            closeBottomBtn.Click += delegate
             {
                 NotifBehavior.State = BottomSheetBehavior.StateHidden;
-            }
-        }
-
-        private void HomeFragment_onDestClick(object sender, EventArgs e)
-        {
-            StartAutoComplete();
-        }
-
-        private void StartAutoComplete()
-        {
-            List<Place.Field> fields = new List<Place.Field>
-            {
-                Place.Field.Id,
-                Place.Field.Name,
-                Place.Field.LatLng,
-                Place.Field.Address
             };
 
-            Intent intent = new Autocomplete.IntentBuilder(AutocompleteActivityMode.Overlay, fields)
-                .SetCountry("GH")
-                .Build(this);
-
-            StartActivityForResult(intent, REQUEST_CODE_PLACE);
-        }
-
-        protected override void OnActivityResult(int requestCode, [GeneratedEnum] Android.App.Result resultCode, Intent data)
-        {
-            base.OnActivityResult(requestCode, resultCode, data);
-            switch (requestCode)
-            {
-                case REQUEST_CODE_PLACE:
-                    switch (resultCode)
-                    {
-                        case Android.App.Result.Ok:
-                            {
-                                var place = Autocomplete.GetPlaceFromIntent(data);
-                                homeFragment.locationSwitcher.SetText(place.Name);
-                                break;
-                            }
-                    }
-                    break;
-                    
-            }
+            QrBehavior = BottomSheetBehavior.From(qrRoot);
+            QrBehavior.Hideable = true;
+            QrBehavior.State = BottomSheetBehavior.StateHidden;
+            QrBehavior.AddBottomSheetCallback(new BottomSheetCallback());
         }
 
         private void Bnve_NavigationItemSelected(object sender, BottomNavigationView.NavigationItemSelectedEventArgs e)
@@ -283,12 +180,12 @@ namespace Cab360Driver
                     break;
 
                 case Resource.Id.action_home:
-                    fragmentManager.BeginTransaction() 
+                    fragmentManager.BeginTransaction()
                         .Hide(activeFragment)
                         .Show(homeFragment)
                         .Commit();
                     activeFragment = homeFragment;
-                    
+
                     break;
 
                 case Resource.Id.action_rating:
@@ -312,6 +209,86 @@ namespace Cab360Driver
             }
         }
 
+        protected override void OnStart()
+        {
+            base.OnStart();
+            player = MediaPlayer.Create(this, Resource.Raw.alert);
+            mapHelper = new MapFunctionHelper(homeFragment.mainMap);
+            CheckSpecialPermission();
+            InitListeners();
+            SetUpAdapter();
+            InitPlacesApi();
+        }
+
+        private bool CheckSpecialPermission()
+        {
+            bool permissionGranted = false;
+            if (ContextCompat.CheckSelfPermission(this, Manifest.Permission.AccessFineLocation) != Android.Content.PM.Permission.Granted &&
+                ContextCompat.CheckSelfPermission(this, Manifest.Permission.AccessCoarseLocation) != Android.Content.PM.Permission.Granted)
+            {
+                RequestPermissions(StringConstants.GetLocationPermissiongroup(), RequestID);
+            }
+            else
+            {
+                permissionGranted = true;
+            }
+
+            return permissionGranted;
+        }
+
+        private void InitListeners()
+        {
+            accountFragment.onQrClick += AccountFragment_onQrClick;
+            homeFragment.ShowNotifs += HomeFragment_ShowNotifs;
+            homeFragment.onDestClick += HomeFragment_onDestClick;
+            homeFragment.CurrentLocation += HomeFragment_CurrentLocation;
+            homeFragment.TripActionArrived += HomeFragment_TripActionArrived;
+            homeFragment.CallRider += HomeFragment_CallRider;
+            homeFragment.Navigate += HomeFragment_Navigate;
+            homeFragment.TripActionStartTrip += HomeFragment_TripActionStartTrip;
+            homeFragment.TripActionEndTrip += HomeFragment_TripActionEndTrip;
+        }
+
+        private void AccountFragment_onQrClick(object sender, EventArgs e)
+        {
+            defaultBehavior = QrBehavior;
+            BottomSheetToggle();
+        }
+
+        private void SetUpAdapter()
+        {
+            notifsRecycler = FindViewById<RecyclerView>(Resource.Id.nitifs_recycler);
+            List<NotifsDataModel> notifsList = new List<NotifsDataModel>()
+            {
+                new NotifsDataModel(){Title = "New ride request", Image = Resource.Drawable.tips, DateTime = DateTime.UtcNow},
+                new NotifsDataModel(){Title = "Maintenance section is due", Image = Resource.Drawable.school_bell, DateTime = DateTime.UtcNow},
+            };
+
+            NotifsRecyclerAdapter adapter = new NotifsRecyclerAdapter(notifsList);
+            notifsRecycler.SetLayoutManager(new LinearLayoutManager(this));
+            notifsRecycler.SetAdapter(adapter);
+            SwipeActions sa = new SwipeActions((pos1 => { }),
+            (pos2 =>
+            {
+                adapter._notificationsList.RemoveAt(pos2);
+                adapter.NotifyItemRemoved(pos2);
+                adapter.NotifyItemRangeChanged(pos2, adapter.ItemCount);
+            }));
+            sc = new SwipeControllerUtils(sa);
+            ItemTouchHelper helper = new ItemTouchHelper(sc);
+            helper.AttachToRecyclerView(notifsRecycler);
+            notifsRecycler.AddItemDecoration(new ItemDecorator(sc));
+        }
+
+        private void InitPlacesApi()
+        {
+            if (PlacesApi.IsInitialized)
+            {
+                return;
+            }
+            PlacesApi.Initialize(this, GetString(Resource.String.google_api_key));
+        }
+
         public async void HomeFragment_TripActionEndTrip(object sender, EventArgs e)
         {
             homeFragment.ResetAfterTrip();
@@ -332,7 +309,7 @@ namespace Cab360Driver
             startTripAlert.SetContentText("Sure to start trip?");
             startTripAlert.SetCancelText("No");
             startTripAlert.SetConfirmText("Yes");
-            startTripAlert.SetConfirmClickListener(new SweetConfirmClick(s=> 
+            startTripAlert.SetConfirmClickListener(new SweetConfirmClick(s =>
             {
                 statusEnum = RideStatusEnum.Ontrip;
                 newTripEventListener.UpdateStatus(statusEnum);
@@ -440,6 +417,136 @@ namespace Cab360Driver
             }
         }
 
+        private void HomeFragment_ShowNotifs(object sender, EventArgs e)
+        {
+            defaultBehavior = NotifBehavior;
+            BottomSheetToggle();
+        }
+
+        private void BottomSheetToggle()
+        {
+            if (defaultBehavior != null)
+            {
+                switch (defaultBehavior.State)
+                {
+                    case BottomSheetBehavior.StateHidden:
+                        defaultBehavior.State = BottomSheetBehavior.StateExpanded;
+                        break;
+                    case BottomSheetBehavior.StateExpanded:
+                        defaultBehavior.State = BottomSheetBehavior.StateHidden;
+                        break;
+                }
+            }
+            else
+            {
+                return;
+            }
+        }
+
+        private void HomeFragment_onDestClick(object sender, EventArgs e)
+        {
+            StartAutoComplete();
+        }
+
+        private void StartAutoComplete()
+        {
+            List<Place.Field> fields = new List<Place.Field>
+            {
+                Place.Field.Id,
+                Place.Field.Name,
+                Place.Field.LatLng,
+                Place.Field.Address
+            };
+
+            Intent intent = new Autocomplete.IntentBuilder(AutocompleteActivityMode.Overlay, fields)
+                .SetCountry("GH")
+                .Build(this);
+
+            StartActivityForResult(intent, REQUEST_CODE_PLACE);
+        }
+
+        protected async override void OnActivityResult(int requestCode, [GeneratedEnum] Android.App.Result resultCode, Intent data)
+        {
+            base.OnActivityResult(requestCode, resultCode, data);
+            switch (requestCode)
+            {
+                case REQUEST_CODE_PLACE:
+                    switch (resultCode)
+                    {
+                        case Android.App.Result.Ok:
+                            {
+                                var place = Autocomplete.GetPlaceFromIntent(data);
+                                switch (availablityStatus)
+                                {
+                                    case true:
+                                        mapHelper.DrawTripOnMap(await mapHelper.GetDirectionJsonAsync(mLastLatLng, place.LatLng));
+                                        homeFragment.locationSwitcher.SetText(place.Name);
+                                        break;
+                                    default:
+                                        Toast.MakeText(this, "Please go online first", ToastLength.Short).Show();
+                                        break;
+                                }
+                                break;
+                            }
+
+                        case Android.App.Result.Canceled:
+                            break;
+                        case Android.App.Result.FirstUser:
+                            break;
+                    }
+                    break;
+                default:
+                    break;
+            }
+        }
+
+        private void CreateNewRequestDialog()
+        {
+            if (newRideDetails != null)
+            {
+                newRideDialog = new NewRequestFragment(newRideDetails);
+                newRideDialog.Show(SupportFragmentManager, "Request");
+
+                player.Start();
+
+                newRideDialog.OnDismiss(new OnDialogCancel(null, () =>
+                {
+                    if (player.IsPlaying && newRideDialog != null)
+                    {
+                        player.Stop();
+                        newRideDialog.DismissAllowingStateLoss();
+                        newRideDialog = null;
+
+                        availablityListener.ReActivate();
+                    }
+                }));
+
+                newRideDialog.RideAccepted += async (s2, e2) =>
+                {
+                    statusEnum = RideStatusEnum.Accepted;
+                    newTripEventListener = new NewTripEventListener(newRideDetails.RideId, mLastLocation);
+                    newTripEventListener.Create();
+
+                    if (player.IsPlaying && newRideDialog != null)
+                    {
+                        player.Stop();
+
+                        newRideDialog.DismissAllowingStateLoss();
+                        newRideDialog = null;
+                    }
+
+                    homeFragment.CreateTrip(newRideDetails.RiderName);
+
+                    LatLng pickupLatLng = new LatLng(newRideDetails.PickupLat, newRideDetails.PickupLng);
+                    mapHelper.DrawTripOnMap(await mapHelper.GetDirectionJsonAsync(mLastLatLng, pickupLatLng));
+                };
+            }
+            else
+            {
+                return;
+            }
+        }
+
         private void OpenGoogleMap(string uriString)
         {
             Android.Net.Uri googleMapIntentUri = Android.Net.Uri.Parse(uriString);
@@ -452,17 +559,17 @@ namespace Cab360Driver
 
         private void TakeDriverOnline()
         {
-            if(mLastLocation != null)
+            if (mLastLocation == null)
+            {
+                return;
+            }
+            else
             {
                 availablityListener = new AvailablityListener(this);
                 availablityListener.Create(mLastLocation);
                 availablityListener.RideAssigned += AvailablityListener_RideAssigned;
                 availablityListener.RideTimedOut += AvailablityListener_RideTimedOut;
                 availablityListener.RideCancelled += AvailablityListener_RideCancelled;
-            }
-            else
-            {
-                return;
             }
         }
 
@@ -534,56 +641,7 @@ namespace Cab360Driver
             {
                 CreateNewRequestDialog();
             }
-        }
-
-        private void CreateNewRequestDialog()
-        {
-            if(newRideDetails != null)
-            {
-                newRideDialog = new NewRequestFragment(newRideDetails);
-                newRideDialog.Show(SupportFragmentManager, "Request");
-
-                player.Start();
-
-                newRideDialog.OnDismiss(new OnDialogCancel(null, () =>
-                {
-                    //Stop Alert
-                    if (player.IsPlaying && newRideDialog != null)
-                    {
-                        player.Stop();
-                        newRideDialog.DismissAllowingStateLoss();
-                        newRideDialog = null;
-
-                        availablityListener.ReActivate();
-                    }
-                }));
-
-                newRideDialog.RideAccepted += async (s2, e2) =>
-                {
-                    statusEnum = RideStatusEnum.Accepted;
-                    newTripEventListener = new NewTripEventListener(newRideDetails.RideId, mLastLocation);
-                    newTripEventListener.Create();
-
-                    if (player.IsPlaying && newRideDialog != null)
-                    {
-                        player.Stop();
-
-                        newRideDialog.DismissAllowingStateLoss();
-                        newRideDialog = null;
-                    }
-                     
-                    homeFragment.CreateTrip(newRideDetails.RiderName);
-                    
-                    LatLng pickupLatLng = new LatLng(newRideDetails.PickupLat, newRideDetails.PickupLng);
-                    mapHelper.DrawTripOnMap(await mapHelper.GetDirectionJsonAsync(mLastLatLng, pickupLatLng));
-                };
-            }
-            else
-            {
-                return;
-            }
-            
-        }
+        }    
 
         private void AvailablityListener_RideCancelled(object sender, EventArgs e)
         {
@@ -608,22 +666,6 @@ namespace Cab360Driver
             ft.CommitAllowingStateLoss();
         }
 
-        private bool CheckSpecialPermission()
-        {
-            bool permissionGranted = false;
-            if (ContextCompat.CheckSelfPermission(this, Manifest.Permission.AccessFineLocation) != Android.Content.PM.Permission.Granted &&
-                ContextCompat.CheckSelfPermission(this, Manifest.Permission.AccessCoarseLocation) != Android.Content.PM.Permission.Granted)
-            {
-                RequestPermissions(StringConstants.GetLocationPermissiongroup(), RequestID);
-            }
-            else
-            {
-                permissionGranted = true;
-            }
-
-            return permissionGranted;
-        }
-
         protected override void OnPause()
         {
             base.OnPause();
@@ -640,5 +682,19 @@ namespace Cab360Driver
                 newRideAssigned = false;
             }
         }
+
+        public override void OnBackPressed()
+        {
+            switch (defaultBehavior.State)
+            {
+                case BottomSheetBehavior.StateExpanded:
+                case BottomSheetBehavior.StateHalfExpanded:
+                    defaultBehavior.State = BottomSheetBehavior.StateHidden;
+                    break;
+                default:
+                    base.OnBackPressed();
+                    break;
+            }
+        } 
     }
 }

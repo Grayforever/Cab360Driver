@@ -72,21 +72,29 @@ namespace Cab360Driver.Fragments
         {
             base.OnCreate(savedInstanceState);
             CreateLocationRequest();
-            var dbRef = AppDataHelper.GetDatabase().GetReference($"Drivers/{AppDataHelper.GetCurrentUser().Uid}");
-            dbRef.AddValueEventListener(new SingleValueListener(snapshot => 
+            if(AppDataHelper.GetCurrentUser() != null)
             {
-                if (snapshot.Exists())
+                var dbRef = AppDataHelper.GetDatabase().GetReference($"Drivers/{AppDataHelper.GetCurrentUser().Uid}");
+                dbRef.AddValueEventListener(new SingleValueListener(snapshot =>
                 {
-                    profileUrl = snapshot.Child("profile_img_url").Value.ToString();
-                    Glide.With(Context)
-                        .Load(profileUrl)
-                        .Into(profileImg)
-                        .WaitForLayout();
-                }
-            }, error => 
+                    if (snapshot.Exists())
+                    {
+                        profileUrl = snapshot.Child("profile_img_url").Value.ToString();
+                        Glide.With(Context)
+                            .Load(profileUrl)
+                            .Into(profileImg)
+                            .WaitForLayout();
+                    }
+                }, error =>
+                {
+
+                }));
+            }
+            else
             {
-                
-            }));
+                return;
+            }
+            
         }
 
         public override View OnCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)

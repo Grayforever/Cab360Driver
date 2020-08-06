@@ -129,10 +129,10 @@ namespace Cab360Driver.Fragments
                 return;
             }
 
-            List<Entry> DataEntry = new List<Entry>();
+            List<ChartEntry> DataEntry = new List<ChartEntry>();
             for (int i = Math.Max(earningList.Count - 5, 0); i < earningList.Count; ++i)
             {
-                DataEntry.Add(new Entry(float.Parse(earningList[i].Fare))
+                DataEntry.Add(new ChartEntry(float.Parse(earningList[i].Fare))
                 {
                     Label = $"Ride {i + 1}",
                     ValueLabel = earningList[i].Fare,
@@ -146,7 +146,7 @@ namespace Cab360Driver.Fragments
                     var chartRader = new RadarChart()
                     {
                         Entries = DataEntry,
-                        LabelTextSize = textSize
+                        IsAnimated = true
                     };
 
                     ChartView.Chart = chartRader;
@@ -156,7 +156,7 @@ namespace Cab360Driver.Fragments
                     var chartPoint = new PointChart()
                     {
                         Entries = DataEntry,
-                        LabelTextSize = textSize
+                        IsAnimated = true
                     };
 
                     ChartView.Chart = chartPoint;
@@ -166,7 +166,7 @@ namespace Cab360Driver.Fragments
                     var chartLine = new LineChart()
                     {
                         Entries = DataEntry,
-                        LabelTextSize = textSize
+                        IsAnimated = true
                     };
 
                     ChartView.Chart = chartLine;
@@ -176,7 +176,7 @@ namespace Cab360Driver.Fragments
                     var chart = new RadarChart()
                     {
                         Entries = DataEntry,
-                        LabelTextSize = textSize
+                        IsAnimated = true
                     };
 
                     ChartView.Chart = chart;

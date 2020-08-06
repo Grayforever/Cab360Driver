@@ -54,4 +54,8 @@
 	<include
         layout="@layout/notifications"
         />
+
+	<include
+        layout="@layout/qr_bottomsheet"
+        />
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

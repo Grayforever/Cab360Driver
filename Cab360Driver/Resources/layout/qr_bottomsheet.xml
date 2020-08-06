@@ -1,0 +1,90 @@
+
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:id="@+id/qr_root"
+    android:padding="16dp"
+    android:clipToPadding="false"
+    android:background="#e8e8e8"
+    tools:ignore="HardcodedText"
+    app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior"
+    android:clickable="true"
+    android:focusable="true"
+    android:focusableInTouchMode="true">
+
+    <Refractored.Controls.CircleImageView
+        android:layout_width="56dp"
+        android:layout_height="56dp"
+        android:id="@+id/qr_user_iv"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/qr_card"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="1.4"
+        android:src="@drawable/user"
+        android:elevation="4dp"
+        app:civ_border_width="2dp"
+        app:civ_border_color="@android:color/white"
+        />
+
+    <androidx.cardview.widget.CardView
+        android:layout_width="0dp"
+        android:layout_height="360dp"
+        android:id="@+id/qr_card"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:cardCornerRadius="5dp">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:padding="8dp"
+            android:clipToPadding="false">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/qr_user_iv"
+                app:layout_constraintBottom_toTopOf="@+id/qr_iv"
+                android:layout_marginBottom="16dp"
+                android:text="Ride ID"
+                android:textAppearance="?attr/textAppearanceHeadline5"
+                android:gravity="center"
+                />
+
+            <ImageView
+                android:layout_width="240dp"
+                android:layout_height="240dp"
+                android:id="@+id/qr_iv"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintVertical_bias="0.8"
+                android:src="@drawable/qr_code"
+                />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </androidx.cardview.widget.CardView>
+
+    <TextView
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/qr_card"
+        android:layout_marginTop="16dp"
+        android:layout_marginBottom="16dp"
+        android:text="Once on a ride, a qr will be generated for that particular ride. Riders scan this qr to confirm authenticity of the ride."
+        android:textAppearance="?attr/textAppearanceBody2"
+        android:gravity="center"
+        />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

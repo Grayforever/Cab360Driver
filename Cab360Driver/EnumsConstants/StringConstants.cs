@@ -15,9 +15,6 @@ namespace Cab360Driver.EnumsConstants
         {
             Manifest.Permission.AccessCoarseLocation,
             Manifest.Permission.AccessFineLocation,
-            Manifest.Permission.ReadExternalStorage,
-            Manifest.Permission.WriteExternalStorage,
-            Manifest.Permission.Camera
         };
 
         public static string GetGateway()

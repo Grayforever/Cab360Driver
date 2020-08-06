@@ -1,101 +1,159 @@
-﻿using Android.Content;
-using Android.OS;
+﻿using Android.OS;
 using Android.Views;
 using Android.Widget;
-using AndroidX.Annotations;
+using AndroidX.Palette.Graphics;
 using AndroidX.RecyclerView.Widget;
+using Bumptech.Glide;
 using Cab360Driver.Adapters;
 using Cab360Driver.EventListeners;
 using Cab360Driver.Helpers;
 using Cab360Driver.Utils;
 using Ramotion.CardSliderLib;
-using System.Threading.Tasks;
+using Refractored.Controls;
+using System;
+using static AndroidX.Palette.Graphics.Palette;
 
 namespace Cab360Driver.Fragments
 {
     public class AccountFragment : AndroidX.Fragment.App.Fragment
     {
-        private readonly int[] pics = { Resource.Drawable.music, Resource.Drawable.cool_car, Resource.Drawable.friendly, 
-            Resource.Drawable.neat, Resource.Drawable.expert_nav };
-        private readonly string[] compliments = { "Awesome music", "Cool car", "Made me laugh", 
-            "Neat and tidy", "Expert navigation" };
+        private readonly int[] pics = { Resource.Drawable.music, Resource.Drawable.cool_car, Resource.Drawable.friendly, Resource.Drawable.neat, Resource.Drawable.expert_nav };
+        private readonly string[] compliments = { "Awesome music", "Cool car", "Made me laugh", "Neat and tidy", "Expert navigation" };
         private string[] compliValues = new string[4];
-        private SliderAdapter sliderAdapter => new SliderAdapter(pics, 5, OnCardClickListener);
 
+        private SliderAdapter sliderAdapter => new SliderAdapter(pics, 5, OnCardClickListener);
+        public event EventHandler onQrClick;
         private CardSliderLayoutManager layoutManger;
         private RecyclerView recyclerView;
         private TextSwitcher complimentsSwitcher;
         private TextSwitcher compliValuesSwitcher;
 
-
-
         private int currentPosition;
+        private TextView fullNameTv;
+        private TextView drivingSinceTv;
+        private ImageView settingsIv;
+        private _BaseCircleImageView profileIv;
+        private TextView ratingTv;
+        private TextView ridesTv;
 
         public override void OnCreate(Bundle savedInstanceState)
         {
             base.OnCreate(savedInstanceState);
-        }
 
-        private async void GetDbAsync()
-        {
-            if(AppDataHelper.GetCurrentUser() == null)
-            {
-                return;
-            }
-            else
-            {
-                await Task.Run(() =>
-                {
-                    var compliRef = AppDataHelper.GetDatabase().GetReference($"Drivers/{AppDataHelper.GetCurrentUser().Uid}/compliments");
-                    compliRef.AddValueEventListener(new SingleValueListener(
-                        snapshot =>
-                        {
-                            if (snapshot.Exists())
-                            {
-                                string cool_car = snapshot.Child("cool_car").Value.ToString();
-                                string awesome_music = snapshot.Child("awesome_music").Value.ToString();
-                                string friendly = snapshot.Child("made_me_laugh").Value.ToString();
-                                string nav = snapshot.Child("expert_navigation").Value.ToString();
-                                string neat = snapshot.Child("neat_and_tidy").Value.ToString();
+            //Palette.From(bitmap).Generate(new PaletteAsyncListener(palette=> 
+            //{
+            //    Palette.Swatch vibrant = palette.VibrantSwatch;
+            //    if(vibrant != null)
+            //    {
+            //        fullNameTv.SetTextColor((ColorStateList)vibrant.TitleTextColor);
+            //    }
 
-                                compliValues = new string[]{ awesome_music, cool_car, friendly, neat, nav };
-                                compliValuesSwitcher.SetCurrentText(compliValues[0]);
-                            }
-                        },
-                       error =>
-                       {
-                           Toast.MakeText(Activity, error.Message, ToastLength.Short).Show();
-                       }));
-                    compliRef.KeepSynced(true);
-                });
-            }
+            //})); 
         }
 
         public override View OnCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
         {
-            var view = inflater.Inflate(Resource.Layout.account, container, false);
-            InitRecyclerView(view);
-            InitSwitchers(view);
-            GetDbAsync();
-            return view;
+            return inflater.Inflate(Resource.Layout.account, container, false);
         }
 
-        private void InitRecyclerView(View view)
+        public override void OnViewCreated(View view, Bundle savedInstanceState)
         {
+            base.OnViewCreated(view, savedInstanceState);
+
             recyclerView = (RecyclerView)view.FindViewById(Resource.Id.recycler_view);
+            complimentsSwitcher = (TextSwitcher)view.FindViewById(Resource.Id.ts_compliments);
+            compliValuesSwitcher = (TextSwitcher)view.FindViewById(Resource.Id.ts_compliValues);
+            fullNameTv = view.FindViewById<TextView>(Resource.Id.account_username_tv);
+            drivingSinceTv = view.FindViewById<TextView>(Resource.Id.account_jointime_tv);
+            settingsIv = view.FindViewById<ImageView>(Resource.Id.account_settings_iv);
+            profileIv = view.FindViewById<_BaseCircleImageView>(Resource.Id.acount_profile_iv);
+            ratingTv = view.FindViewById<TextView>(Resource.Id.account_counter_tv);
+            ridesTv = view.FindViewById<TextView>(Resource.Id.account_counter2_tv);
+
+            //recycler
             recyclerView.SetAdapter(sliderAdapter);
             recyclerView.HasFixedSize = true;
             recyclerView.AddOnScrollListener(
                 new MyRvOnScrollListener(
                     null,
-                    (rv, newState)=> {
+                    (rv, newState) => {
                         if (newState == RecyclerView.ScrollStateIdle)
                             OnActiveCardChange();
                     })
                 );
             layoutManger = (CardSliderLayoutManager)recyclerView.GetLayoutManager();
             recyclerView.SetLayoutManager(layoutManger);
-            new CardSnapHelper().AttachToRecyclerView(recyclerView);
+            CardSnapHelper cardSnapHelper = new CardSnapHelper();
+            cardSnapHelper.AttachToRecyclerView(recyclerView);
+
+            //switcher
+            complimentsSwitcher.SetFactory(new TextSwitcherUtil(Resource.Style.ComplimentsTextView, false, Activity));
+            complimentsSwitcher.SetCurrentText(compliments[0]);
+            compliValuesSwitcher.SetFactory(new TextSwitcherUtil(Resource.Style.CompliValuesTextView, false, Activity));
+
+            var settingsBtn = view.FindViewById<ImageView>(Resource.Id.account_settings_iv);
+            settingsBtn.Click += SettingsBtn_Click;
+            var qrBtn = view.FindViewById<ImageView>(Resource.Id.account_qr_iv);
+            qrBtn.Click += QrBtn_Click;
+            SetDb();
+
+        }
+
+        private void QrBtn_Click(object sender, EventArgs e)
+        {
+            onQrClick?.Invoke(this, new EventArgs());
+        }
+
+        private void SettingsBtn_Click(object sender, EventArgs e)
+        {
+            var ft = ChildFragmentManager.BeginTransaction();
+            ft.Add(new SettingsFragment(), "settings");
+            ft.CommitAllowingStateLoss();
+        }
+
+        private void SetDb()
+        {
+            switch (AppDataHelper.GetCurrentUser())
+            {
+                case null:
+                    return;
+                default:
+                    {
+                        var compliRef = AppDataHelper.GetDatabase().GetReference($"Drivers/{AppDataHelper.GetCurrentUser().Uid}");
+                        compliRef.AddValueEventListener(new SingleValueListener(
+                            snapshot =>
+                            {
+                                if (snapshot.Exists())
+                                {
+                                    fullNameTv.Text = $"{snapshot.Child("fname").Value} {snapshot.Child("lname").Value}";
+                                    drivingSinceTv.Text = $"Driving since {DateTime.Parse(snapshot.Child("created_at").Value.ToString()).Year}";
+                                    ratingTv.Text = snapshot.Child("ratings").Value.ToString();
+
+                                    Glide.With(Context)
+                                    .Load(snapshot.Child("profile_img_url").Value.ToString())
+                                    .Into(profileIv);
+
+                                    string cool_car = snapshot.Child("compliments").Child("cool_car") == null ? "" : snapshot.Child("compliments").Child("cool_car").Value.ToString();
+                                    string awesome_music = snapshot.Child("compliments").Child("awesome_music") == null ? "" : snapshot.Child("compliments").Child("awesome_music").Value.ToString();
+                                    string friendly = snapshot.Child("compliments").Child("made_me_laugh") == null ? "" : snapshot.Child("compliments").Child("made_me_laugh").Value.ToString();
+                                    string nav = snapshot.Child("compliments").Child("expert_navigation") == null ? "" : snapshot.Child("compliments").Child("expert_navigation").Value.ToString();
+                                    string neat = snapshot.Child("compliments").Child("neat_and_tidy") == null ? "" : snapshot.Child("compliments").Child("neat_and_tidy").Value.ToString();
+                                    compliValues = new string[] { awesome_music, cool_car, friendly, neat, nav };
+                                    compliValuesSwitcher.SetCurrentText(compliValues[0]);
+                                }
+                                else
+                                {
+                                    return;
+                                }
+                            },
+                           error =>
+                           {
+                               Toast.MakeText(Activity, error.Message, ToastLength.Short).Show();
+                           }));
+                        compliRef.KeepSynced(true);
+                        break;
+                    }
+            }
         }
 
         public void OnActiveCardChange()
@@ -141,17 +199,6 @@ namespace Cab360Driver.Fragments
             currentPosition = pos;
         }
 
-        private void InitSwitchers(View view)
-        {
-            complimentsSwitcher = (TextSwitcher)view.FindViewById(Resource.Id.ts_compliments);
-            complimentsSwitcher.SetFactory(new TextSwitcherUtil(Resource.Style.ComplimentsTextView, false, Activity));
-            complimentsSwitcher.SetCurrentText(compliments[0]);
-
-            compliValuesSwitcher = (TextSwitcher)view.FindViewById(Resource.Id.ts_compliValues);
-            compliValuesSwitcher.SetFactory(new TextSwitcherUtil(Resource.Style.CompliValuesTextView, false, Activity));
-            
-        }
-
         private View.IOnClickListener OnCardClickListener => new MyViewOnClickListener(
             v =>
             {
@@ -176,5 +223,18 @@ namespace Cab360Driver.Fragments
                 }
             }
         );
+
+        internal sealed class PaletteAsyncListener : Java.Lang.Object, IPaletteAsyncListener
+        {
+            private Action<Palette> _onGenerated;
+            public PaletteAsyncListener(Action<Palette> onGenerated)
+            {
+                _onGenerated = onGenerated;
+            }
+            public void OnGenerated(Palette palette)
+            {
+                _onGenerated?.Invoke(palette);
+            }
+        }
     }
 }

@@ -9,6 +9,7 @@ using Cab360Driver.Adapters;
 using Cab360Driver.EnumsConstants;
 using Cab360Driver.EventListeners;
 using Cab360Driver.Helpers;
+using Cab360Driver.Utils;
 using CN.Pedant.SweetAlert;
 using Firebase;
 using Firebase.Auth;
@@ -128,6 +129,7 @@ namespace Cab360Driver.Fragments
 
         private void EditText_AfterTextChanged(object sender, AfterTextChangedEventArgs e)
         {
+            
             CheckIfEmpty();
         }
 

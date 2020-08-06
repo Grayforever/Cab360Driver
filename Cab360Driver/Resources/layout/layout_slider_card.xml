@@ -5,7 +5,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     app:cardCornerRadius="@dimen/card_corner_radius"
-    app:cardPreventCornerOverlap="false">
+    app:cardPreventCornerOverlap="false"
+    android:clipToPadding="false">
 
     <ImageView
         android:id="@+id/image"
