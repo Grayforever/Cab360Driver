@@ -149,7 +149,7 @@ namespace Cab360Driver
             var qrImageView = FindViewById<ImageView>(Resource.Id.qr_iv);
             qrImageView.PostDelayed(async ()=> 
                 {
-                    qrImageView.SetImageBitmap(await Task.Run(() => QrGenUtil.TextToImageEncode(AppDataHelper.GetCurrentUser().Uid)));
+                    qrImageView.SetImageBitmap(await Task.Run(() => new QrGenUtil().TextToImageEncode(AppDataHelper.GetCurrentUser().Uid)));
                 }, 1000);
             NotifBehavior = BottomSheetBehavior.From(notifRoot);
             NotifBehavior.Hideable = true;
@@ -676,11 +676,12 @@ namespace Cab360Driver
         {
             base.OnResume();
             isBackground = false;
-            if (newRideAssigned)
+            if (!newRideAssigned)
             {
-                CreateNewRequestDialog();
-                newRideAssigned = false;
+                return;
             }
+            CreateNewRequestDialog();
+            newRideAssigned = false;
         }
 
         public override void OnBackPressed()

@@ -27,11 +27,15 @@ namespace Cab360Driver.Fragments
         private TextView totalTripTxt;
         private TextView totBalanceTxt;
         private string tot_earnings;
+
+        //flag
+        private bool isDataLoaded = false;
         private float textSize => Context.Resources.GetDimension(Resource.Dimension.abc_text_size_body_1_material);
 
         public override void OnCreate(Bundle savedInstanceState)
         {
             base.OnCreate(savedInstanceState);
+            ///RetainInstance = true;
             HasOptionsMenu = true;
             
         }
@@ -64,11 +68,10 @@ namespace Cab360Driver.Fragments
             var earnAmtTxt = view.FindViewById<TextView>(Resource.Id.earn_trip_txt);
             var earnTrip = view.FindViewById<TextView>(Resource.Id.earn_trip_txt);
 
-            GetDbAsync();
             withdrawBtn.Click += WithdrawBtn_Click;
             ChartTypespinner.Adapter = adapter;
             ChartTypespinner.ItemSelected += ChartTypespinner_ItemSelected;
-            
+            GetDbAsync();
         }
 
         private async void GetDbAsync()
@@ -93,10 +96,12 @@ namespace Cab360Driver.Fragments
                                                      Date = ride.Child("date").Value.ToString()
                                                  }
                                                  select earnModel);
-                            DrawChart(0);
+                            
+                            totBalanceTxt.PostDelayed(() => {totBalanceTxt.Text = $"Gh¢{tot_earnings}.00";}, 1000);
 
-                            totBalanceTxt.Text = $"Gh¢{tot_earnings}.00";
-                            totalTripTxt.Text = earningList.Count.ToString();
+                            totalTripTxt.PostDelayed(() => { totalTripTxt.Text = earningList.Count.ToString(); }, 1000);
+                            isDataLoaded = true;
+                            DrawChartAsync(0);
                         }
                         else
                         {
@@ -119,17 +124,18 @@ namespace Cab360Driver.Fragments
 
         private void ChartTypespinner_ItemSelected(object sender, AdapterView.ItemSelectedEventArgs e)
         {
-            DrawChart(e.Position);
+            DrawChartAsync(e.Position);
         }
 
-        private void DrawChart(int chartIndex)
+        private async void DrawChartAsync(int chartIndex)
         {
+            await Task.Delay(1000);
             if(earningList.Count == 0)
             {
                 return;
             }
 
-            List<ChartEntry> DataEntry = new List<ChartEntry>();
+            var DataEntry = new List<ChartEntry>();
             for (int i = Math.Max(earningList.Count - 5, 0); i < earningList.Count; ++i)
             {
                 DataEntry.Add(new ChartEntry(float.Parse(earningList[i].Fare))
@@ -146,7 +152,8 @@ namespace Cab360Driver.Fragments
                     var chartRader = new RadarChart()
                     {
                         Entries = DataEntry,
-                        IsAnimated = true
+                        IsAnimated = true,
+                        LabelTextSize = textSize
                     };
 
                     ChartView.Chart = chartRader;
@@ -156,7 +163,8 @@ namespace Cab360Driver.Fragments
                     var chartPoint = new PointChart()
                     {
                         Entries = DataEntry,
-                        IsAnimated = true
+                        IsAnimated = true,
+                        LabelTextSize = textSize
                     };
 
                     ChartView.Chart = chartPoint;
@@ -166,7 +174,8 @@ namespace Cab360Driver.Fragments
                     var chartLine = new LineChart()
                     {
                         Entries = DataEntry,
-                        IsAnimated = true
+                        IsAnimated = true,
+                        LabelTextSize = textSize
                     };
 
                     ChartView.Chart = chartLine;
@@ -176,7 +185,8 @@ namespace Cab360Driver.Fragments
                     var chart = new RadarChart()
                     {
                         Entries = DataEntry,
-                        IsAnimated = true
+                        IsAnimated = true,
+                        LabelTextSize = textSize
                     };
 
                     ChartView.Chart = chart;
@@ -188,6 +198,16 @@ namespace Cab360Driver.Fragments
         {
             Android.Graphics.Color c = new Android.Graphics.Color((int)(Java.Lang.Math.Random() * 0x1000000));
             return "#" + c.R.ToString("X2") + c.G.ToString("X2") + c.B.ToString("X2");
+        }
+
+        public override void OnResume()
+        {
+            base.OnResume();
+            if (isDataLoaded != true)
+            {
+                return;
+            }
+            DrawChartAsync(0);
         }
     }
 }

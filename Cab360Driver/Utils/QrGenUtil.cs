@@ -5,10 +5,10 @@ using Java.Lang;
 
 namespace Cab360Driver.Utils
 {
-    public static class QrGenUtil
+    public class QrGenUtil
     {
         private const int QRCodeWidth = 500;
-        public static Bitmap TextToImageEncode(string value)
+        public Bitmap TextToImageEncode(string value)
         {
             BitMatrix bitMatrix;
             try

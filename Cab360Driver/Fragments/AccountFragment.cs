@@ -125,9 +125,21 @@ namespace Cab360Driver.Fragments
                             {
                                 if (snapshot.Exists())
                                 {
-                                    fullNameTv.Text = $"{snapshot.Child("fname").Value} {snapshot.Child("lname").Value}";
-                                    drivingSinceTv.Text = $"Driving since {DateTime.Parse(snapshot.Child("created_at").Value.ToString()).Year}";
-                                    ratingTv.Text = snapshot.Child("ratings").Value.ToString();
+                                    fullNameTv.PostDelayed(() => 
+                                    { 
+                                        fullNameTv.Text = $"{snapshot.Child("fname").Value} {snapshot.Child("lname").Value}"; 
+                                    }, 1000);
+
+                                    drivingSinceTv.PostDelayed(() => 
+                                    { 
+                                        drivingSinceTv.Text = $"Driving since {DateTime.Parse(snapshot.Child("created_at").Value.ToString()).Year}"; 
+                                    }, 1000);
+
+                                    ratingTv.PostDelayed(() => 
+                                    {
+                                        ratingTv.Text = snapshot.Child("ratings").Value.ToString();
+                                    }, 1000);
+                                    
 
                                     Glide.With(Context)
                                     .Load(snapshot.Child("profile_img_url").Value.ToString())
@@ -138,8 +150,10 @@ namespace Cab360Driver.Fragments
                                     string friendly = snapshot.Child("compliments").Child("made_me_laugh") == null ? "" : snapshot.Child("compliments").Child("made_me_laugh").Value.ToString();
                                     string nav = snapshot.Child("compliments").Child("expert_navigation") == null ? "" : snapshot.Child("compliments").Child("expert_navigation").Value.ToString();
                                     string neat = snapshot.Child("compliments").Child("neat_and_tidy") == null ? "" : snapshot.Child("compliments").Child("neat_and_tidy").Value.ToString();
+                                    
                                     compliValues = new string[] { awesome_music, cool_car, friendly, neat, nav };
-                                    compliValuesSwitcher.SetCurrentText(compliValues[0]);
+                                    compliValuesSwitcher.PostDelayed(() => { compliValuesSwitcher.SetCurrentText(compliValues[0]); }, 1000);
+                                    
                                 }
                                 else
                                 {
